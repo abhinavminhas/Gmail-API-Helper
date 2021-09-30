@@ -16,7 +16,7 @@ jobs:
         fetch-depth: 0
 
     - name: Nuget Restore
-      run: nuget restore -Verbosity quiet
+      run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
     - name: Setup-MSBuild
       uses: microsoft/setup-msbuild@v1
