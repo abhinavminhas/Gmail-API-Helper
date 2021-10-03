@@ -9,12 +9,18 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+        dotnet: [ '2.1.x' ]
+        
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-
+      
+      if: ${{ matrix.os == 'windows-latest' }}
     - name: Nuget Restore
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
@@ -26,9 +32,10 @@ jobs:
       run: |
         msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
         
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+    - name: Dotnet ${{ matrix.dotnet }}
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
       with:
-        name: trxer-console
-        path: ${{ github.workspace }}
-        retention-days: 90
+        dotnet-version: ${{ matrix.dotnet }}
+    - run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj
