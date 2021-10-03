@@ -24,7 +24,7 @@ jobs:
     - name: Build
       id: build
       run: |
-        msbuild GmailAPIHelper.sln /t:GmailAPIHelper\GmailAPIHelper.csproj;GmailAPIHelper.NET.Tests.csproj /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+        msbuild /t:GmailAPIHelper.NET.Tests\GmailAPIHelper.NET.Tests.csproj /t:build /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
