@@ -8,12 +8,8 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ windows-latest, ubuntu-latest ]
-        dotnet: [ '2.1.x' ]
+  build-DOTNET:
+    runs-on:  windows-latest
         
     steps:
     - uses: actions/checkout@v2
@@ -21,21 +17,28 @@ jobs:
         fetch-depth: 0
         
     - name: Nuget Restore
-      if: ${{ matrix.os == 'windows-latest' }}
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
     - name: Setup-MSBuild
-      if: ${{ matrix.os == 'windows-latest' }}
       uses: microsoft/setup-msbuild@v1
 
     - name: Build
-      if: ${{ matrix.os == 'windows-latest' }}
       id: build
       run: |
         msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
-      
+  
+  build-CORE:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        dotnet: [ '2.1.x' ]
+        
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 
     - name: Dotnet ${{ matrix.dotnet }}
-      if: ${{ matrix.os == 'ubuntu-latest' }}
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ matrix.dotnet }}
