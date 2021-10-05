@@ -9,25 +9,32 @@ on:
 
 jobs:
   build-DOTNETFRAMEWORK:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+        dotnet-version: [ '4.6.x', '4.7.x', '4.8.x' ]
         
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
         
     - name: Nuget Restore
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
-    - name: Setup-MSBuild
+    - name: Setup-MSBuild ${{ matrix.dotnet-version }}
       uses: microsoft/setup-msbuild@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
       
     - name: Build
       id: build
       run: |
         msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
     
-    - name: Setup VSTest
+    - name: Setup-VSTest
       uses: darenm/Setup-VSTest@v1
       
     - name: Run Tests
@@ -41,9 +48,11 @@ jobs:
         dotnet-version: [ '2.1.x', '3.1.x', '5.0.x' ]
         
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
       with:
-        fetch-depth: 0 
+        fetch-depth: 0
+
     - name: Dotnet ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v1
       with:
