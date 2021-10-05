@@ -8,8 +8,8 @@ on:
     branches: [ main ]
 
 jobs:
-  build-DOTNET:
-    runs-on:  windows-latest
+  build-DOTNETFRAMEWORK:
+    runs-on: windows-latest
         
     steps:
     - uses: actions/checkout@v2
@@ -21,13 +21,19 @@ jobs:
 
     - name: Setup-MSBuild
       uses: microsoft/setup-msbuild@v1
-
+      
     - name: Build
       id: build
       run: |
         msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+    
+    - name: Setup VSTest
+      uses: darenm/Setup-VSTest@v1
+      
+    - name: Run Tests
+      run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll
   
-  build-CORE:
+  build-DOTNETCORE:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
