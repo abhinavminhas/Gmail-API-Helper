@@ -38,19 +38,20 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macOS-latest ]
-        dotnet: [ '2.1.x', '3.1.x', '5.0.x' ]
+        dotnet-version: [ '2.1.x', '3.1.x', '5.0.x' ]
         
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0 
-    - name: Dotnet ${{ matrix.dotnet }}
+    - name: Dotnet ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ matrix.dotnet }}
+        dotnet-version: ${{ matrix.dotnet-version }}
     
     - name: Build
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
     
     - name: Test
+        if ${{ matrix.dotnet == '2.1.x' }}
       run: dotnet test --no-restore --verbosity normal
