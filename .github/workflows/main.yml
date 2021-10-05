@@ -1,4 +1,4 @@
-#CI/SCHEDULE/MANUAL TRIGGER
+#CI/MANUAL TRIGGER
 name: Build
 
 on: 
@@ -6,9 +6,10 @@ on:
     branches: [ main, dev ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-DotNet:
+  DotNet_OS-VSVersion:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -40,7 +41,7 @@ jobs:
     - name: Run Tests
       run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll
   
-  build-DotNetCore:
+  DotNetCore_OS-Version:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
