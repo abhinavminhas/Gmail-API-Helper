@@ -8,12 +8,12 @@ on:
     branches: [ main ]
 
 jobs:
-  build-DOTNETFRAMEWORK:
+  build-DotNet:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ windows-latest ]
-        dotnet-version: [ '4.6.x', '4.7.x', '4.8.x' ]
+        vs-version: [ '15.9.x']
         
     steps:
     - name: Checkout Repository
@@ -24,10 +24,10 @@ jobs:
     - name: Nuget Restore
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
-    - name: Setup-MSBuild ${{ matrix.dotnet-version }}
+    - name: Setup-MSBuild ${{ matrix.vs-version }}
       uses: microsoft/setup-msbuild@v1
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        vs-version: ${{ matrix.vs-version }}
       
     - name: Build
       id: build
@@ -40,7 +40,7 @@ jobs:
     - name: Run Tests
       run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll
   
-  build-DOTNETCORE:
+  build-DotNetCore:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
