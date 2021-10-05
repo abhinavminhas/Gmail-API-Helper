@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest ]
-        vs-version: [ '15.9.x']
+        vs-version: [ '15.9']
         
     steps:
     - name: Checkout Repository
@@ -24,7 +24,7 @@ jobs:
     - name: Nuget Restore
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
-    - name: Setup-MSBuild ${{ matrix.vs-version }}
+    - name: Setup-MSBuild VS-Version (${{ matrix.vs-version }})
       uses: microsoft/setup-msbuild@v1
       with:
         vs-version: ${{ matrix.vs-version }}
@@ -53,7 +53,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Dotnet ${{ matrix.dotnet-version }}
+    - name: Dotnet Version (${{ matrix.dotnet-version }})
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
