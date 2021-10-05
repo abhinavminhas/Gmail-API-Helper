@@ -50,7 +50,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet }}
     
     - name: Build
-    - run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
+      run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
     
     - name: Test
       run: dotnet test --no-restore --verbosity normal
