@@ -1,0 +1,9 @@
+{
+  "access_token": "ya29.a0ARrdaM8O7IesH6nUboMrV5wSZ5Vrv-tBPO66OIrau_ifQ1u2eJoxfX0yVveTNlnYhnbSDxU5-XVZsILlAi0Iya9wuluLbPOD_FhjKJJ2cpQoSYdzUbF8R2MzDFSfSRZ-FrfLKOOiqquq1mbFebJZRJuZji0n",
+  "token_type": "Bearer",
+  "expires_in": 3599,
+  "refresh_token": "1//0g-MbJseanvHjCgYIARAAGBASNwF-L9IrDXYKQIwnf-dX8qfoQUrCdBYBJpv0gBZoRzeg6StRihAuolHis43FhyUzcpgZSSvVXYw",
+  "scope": "https://www.googleapis.com/auth/gmail.modify",
+  "Issued": "2021-10-05T16:31:22.182+11:00",
+  "IssuedUtc": "2021-10-05T05:31:22.182Z"
+}

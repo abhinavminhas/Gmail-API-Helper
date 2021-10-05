@@ -10,7 +10,7 @@ namespace GmailAPIHelper.CORE.Tests
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test1_DotNetCore_GetLatestMessage()
         {
-            var message = GmailHelper.GetGmailService(ApplicatioName)
+            var message = GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.WORKING_DIRECTORY)
                 .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'TEST']in:inbox is:read", markRead: true);
             TestContext.WriteLine(message);
         }
