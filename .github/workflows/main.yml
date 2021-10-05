@@ -53,5 +53,5 @@ jobs:
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
     
     - name: Test
-      if: ${{ matrix.dotnet == '2.1.x' }}
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
       run: dotnet test --no-restore --verbosity normal
