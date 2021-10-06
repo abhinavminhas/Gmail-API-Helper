@@ -153,7 +153,7 @@ namespace GmailAPIHelper
                 var requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
                 if (requiredMessagePart != null)
                 {
-                    byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/'));
+                    byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+").Replace("=", "+"));
                     requiredMessage = Encoding.UTF8.GetString(data);
                     if (markRead)
                     {
