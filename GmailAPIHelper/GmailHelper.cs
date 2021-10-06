@@ -81,11 +81,12 @@ namespace GmailAPIHelper
         /// Connects to the 'Gmail Service'.
         /// </summary>
         /// <param name="applicationName">'Application Name' value created in Gmail API Console.</param>
-        /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
+        /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.
+        /// Default value - 'WORKING_DIRECTORY'.</param>
         /// <param name="tokenPath">'token.json' path to save generated token from gmail authentication/authorization. 
         /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is users folder.</param>
         /// <returns>Gmail Service.</returns>
-        public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType, string tokenPath = "")
+        public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType = TokenPathType.WORKING_DIRECTORY, string tokenPath = "")
         {
             _scopes = new List<string>();
             _applicationName = applicationName;
