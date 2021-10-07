@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace GmailAPIHelper
@@ -23,7 +24,7 @@ namespace GmailAPIHelper
         private static string _applicationName;
 
         /// <summary>
-        /// 'Token Path Types' enum.
+        /// 'Token Path Type' enum.
         /// 'HOME' - Home Directory.
         /// 'WORKING_DIRECTORY' - Working Directory.
         /// 'CUSTOM' - Custom Path.
@@ -33,6 +34,17 @@ namespace GmailAPIHelper
             HOME = 1,
             WORKING_DIRECTORY = 2,
             CUSTOM = 3
+        }
+
+        /// <summary>
+        /// 'Email Content Type' enum.
+        /// 'PLAIN' - 'text/plain'.
+        /// 'HTML' - 'text/html'.
+        /// </summary>
+        public enum EmailContentType
+        {
+            PLAIN = 1,
+            HTML = 2
         }
 
         /// <summary>
@@ -92,6 +104,7 @@ namespace GmailAPIHelper
             _applicationName = applicationName;
             _scopes.Add(GmailService.Scope.GmailReadonly);
             _scopes.Add(GmailService.Scope.GmailModify);
+            _scopes.Add(GmailService.Scope.GmailSend);
             UserCredential credential;
             using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
             {
@@ -117,10 +130,10 @@ namespace GmailAPIHelper
         /// <summary>
         /// Returns Gmail latest message body text for a specified query criteria.
         /// </summary>
-        /// <param name="gmailService">'Gmail' service value.</param>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="markRead">Boolean value to mark retrieved latest email read/unread. Default - 'false'.</param>
-        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)', takes from credentials.json</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <returns>Email message body in Text/Plain.</returns>
         public static string GetLatestMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
         {
@@ -167,6 +180,81 @@ namespace GmailAPIHelper
             }
             else
                 return null;
+        }
+
+        /// <summary>
+        /// Sends Gmail message.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="emailContentType">'EmailContentType' enum value. 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
+        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids.</param>
+        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids.</param>
+        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids.</param>
+        /// <param name="subject">'Subject' for email value.</param>
+        /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me")
+        {
+            var service = gmailService;
+            string payload = "";
+            var toList = to.Split(',');
+            foreach (var email in toList)
+                if (!email.IsValidEmail())
+                    throw new Exception(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
+            if (cc != "")
+            {
+                var ccList = cc.Split(',');
+                foreach (var email in ccList)
+                    if (!email.IsValidEmail())
+                        throw new Exception(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
+            }
+            if (bcc != "")
+            {
+                var bccList = cc.Split(',');
+                foreach (var email in bccList)
+                    if (!email.IsValidEmail())
+                    throw new Exception(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
+            }
+            if (emailContentType.Equals(EmailContentType.PLAIN))
+            {
+                payload = $"To: {to}\r\n" +
+                               $"Cc: {cc}\r\n" +
+                               $"Bcc: {bcc}\r\n" +
+                               $"Subject: {subject}\r\n" +
+                               "Content-Type: text/plain; charset=utf-8\r\n\r\n" +
+                               $"{body}";
+            }
+            else if (emailContentType.Equals(EmailContentType.HTML))
+            {
+                payload = $"To: {to}\r\n" +
+                               $"Cc: {cc}\r\n" +
+                               $"Bcc: {bcc}\r\n" +
+                               $"Subject: {subject}\r\n" +
+                               "Content-Type: text/html; charset=utf-8\r\n\r\n" +
+                               $"{body}";
+            }
+            byte[] data = Encoding.UTF8.GetBytes(payload);
+            var rawMessage = Convert.ToBase64String(data).Replace("+", "-").Replace("/", "_").Replace("=", "");
+            var message = new Message
+            {
+                Raw = rawMessage
+            };
+            var sendRequest = service.Users.Messages.Send(message, userId);
+            sendRequest.Execute();
+        }
+
+        /// <summary>
+        /// Checks email format.
+        /// </summary>
+        /// <param name="email">Email to validate.</param>
+        /// <returns>Boolean value for is valid email or not.</returns>
+        internal static bool IsValidEmail(this string email)
+        {
+            string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" 
+                            + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" 
+                            + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
+            var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+            return regex.IsMatch(email);
         }
 
         /// <summary>

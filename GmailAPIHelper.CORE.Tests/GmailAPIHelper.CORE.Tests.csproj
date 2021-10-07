@@ -20,6 +20,12 @@
     <None Update="credentials.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestFiles\HTMLEmail.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFiles\PlainEmail.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
