@@ -41,11 +41,11 @@ namespace GmailAPIHelper.CORE.Tests
         {
             var path = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
+                path = Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+                path = Environment.CurrentDirectory + "/TestFiles/HTMLEmail.txt";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+                path = Environment.CurrentDirectory + "/TestFiles/HTMLEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.HTML, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "EMAIL WITH HTML TEXT", body: body);
