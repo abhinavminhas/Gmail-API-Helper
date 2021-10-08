@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 
 namespace GmailAPIHelper.NET.Tests
 {
     [TestClass]
     public class GmailTests : TestBase
     {
-
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test1_GetLatestMessage()
@@ -21,7 +21,7 @@ namespace GmailAPIHelper.NET.Tests
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_SendMessage_PlainText()
         {
-            var body = System.IO.File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+            var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "EMAIL WITH PLAIN TEXT", body: body);
         }
@@ -30,19 +30,18 @@ namespace GmailAPIHelper.NET.Tests
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_SendMessage_HtmlText()
         {
-            var body = System.IO.File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt");
+            var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt");
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.HTML, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "EMAIL WITH HTML TEXT", body: body);
         }
 
         [TestMethod]
-        [DoNotParallelize]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_MoveMessageToTrash()
         {
             //Test Data
             var subject = Guid.NewGuid().ToString();
-            var body = System.IO.File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+            var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
 
@@ -50,6 +49,26 @@ namespace GmailAPIHelper.NET.Tests
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
                 .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'" + subject + "']in:inbox is:unread");
             Assert.IsTrue(isMovedToTrash);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_MoveMessagesToTrash()
+        {
+            //Test Data
+            var subject = new string[2];
+            for (int i = 0; i < 2; i++)
+            {
+                subject[i] = "TEST MOVE MESSAGES TO TRASH " + Guid.NewGuid().ToString();
+                var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+                GmailHelper.GetGmailService(ApplicatioName)
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject[i], body: body);
+            }
+
+            //Test Run
+            var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'TEST MOVE MESSAGES TO TRASH']in:inbox is:unread");
+            Assert.AreEqual(2, countOfMessagesMovedToTrash);
         }
     }
 }
