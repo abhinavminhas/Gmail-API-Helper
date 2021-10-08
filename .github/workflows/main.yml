@@ -70,10 +70,12 @@ jobs:
       
     - name: Find And Replace Values
       if: ${{ matrix.dotnet-version == '2.1.x' }}
-      uses: datamonsters/replace-action@v2
+      uses: jacobtomlinson/gha-find-replace@v2
       with:
-        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/credentials.json'
-        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
+          find: "__ACCESSTOKEN__"
+          replace: "${{ secrets.ACCESS_TOKEN }}"
+          include: "Google.Apis.Auth.OAuth2.Responses.TokenResponse-user"
+      
     
     - name: Upload Artifact
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.dotnet-version == '2.1.x' }}
