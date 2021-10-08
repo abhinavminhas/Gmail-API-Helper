@@ -26,7 +26,7 @@ jobs:
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
     - name: Find And Replace Values
-      uses: datamonsters/replace-action
+      uses: datamonsters/replace-action@v2
       with:
         files: 'token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,credentials.json'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
@@ -66,7 +66,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
     
     - name: Find And Replace Values
-      uses: datamonsters/replace-action
+      uses: datamonsters/replace-action@v2
       with:
         files: 'token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,credentials.json'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
