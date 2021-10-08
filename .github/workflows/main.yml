@@ -80,5 +80,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build_files
-        path: ${{ github.workspace }}
+        path: ${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1
         retention-days: 90
