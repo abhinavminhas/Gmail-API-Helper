@@ -28,7 +28,7 @@ jobs:
     - name: Find And Replace Values
       uses: datamonsters/replace-action@v2
       with:
-        files: 'token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,credentials.json'
+        files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\credentials.json'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
 
     - name: Setup-MSBuild VS-Version (${{ matrix.vs-version }})
@@ -68,7 +68,7 @@ jobs:
     - name: Find And Replace Values
       uses: datamonsters/replace-action@v2
       with:
-        files: 'token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,credentials.json'
+        files: '${{ github.workspace }}/GmailAPIHelper.NET.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,${{ github.workspace }}/GmailAPIHelper.NET.Tests/bin/Release/netcoreapp2.1/credentials.json'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
         
     - name: Build
