@@ -77,4 +77,4 @@ jobs:
     
     - name: Test
       if: ${{ matrix.dotnet-version == '2.1.x' }}
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --configuration Release --no-restore --verbosity normal
