@@ -75,6 +75,10 @@ jobs:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/credentials.json'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
     
-    - name: Test
-      if: ${{ matrix.dotnet-version == '2.1.x' }}
-      run: dotnet test --configuration Release --no-restore --verbosity normal
+    - name: Upload Artifact
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.dotnet-version == '2.1.x' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: build_files
+        path: ${{ github.workspace }}
+        retention-days: 90
