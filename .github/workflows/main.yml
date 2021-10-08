@@ -74,7 +74,7 @@ jobs:
       with:
           find: "__ACCESSTOKEN__"
           replace: "${{ secrets.ACCESS_TOKEN }}"
-          include: "Google.Apis.Auth.OAuth2.Responses.TokenResponse-user"
+          include: "${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user"
       
     
     - name: Upload Artifact
