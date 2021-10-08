@@ -69,6 +69,7 @@ jobs:
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
       
     - name: Find And Replace Values
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
       uses: datamonsters/replace-action@v2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/credentials.json'
