@@ -1,7 +1,7 @@
 #CI/MANUAL TRIGGER
 name: Build
 
-on: 
+on:
   push:
     branches: [ main, dev ]
   pull_request:
@@ -38,8 +38,8 @@ jobs:
     - name: Find And Replace Values
       uses: datamonsters/replace-action@v2
       with:
-        files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\credentials.json'
-        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
+        files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
+        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
         
     - name: Setup-VSTest
       uses: darenm/Setup-VSTest@v1
@@ -51,8 +51,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [  ubuntu-latest ]
-        dotnet-version: [ '2.1.x' ]
+        os: [ windows-latest, ubuntu-latest, macOS-latest ]
+        dotnet-version: [ '2.1.x', '3.1.x', '5.0.x' ]
         
     steps:
     - name: Checkout Repository
