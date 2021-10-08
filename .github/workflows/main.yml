@@ -25,6 +25,12 @@ jobs:
     - name: Nuget Restore
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
+    - name: Find And Replace Values
+      uses: datamonsters/replace-action
+      with:
+        files: 'token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,credentials.json'
+        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
+
     - name: Setup-MSBuild VS-Version (${{ matrix.vs-version }})
       uses: microsoft/setup-msbuild@v1
       with:
@@ -59,6 +65,12 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
     
+    - name: Find And Replace Values
+      uses: datamonsters/replace-action
+      with:
+        files: 'token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user,credentials.json'
+        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }},__CLIENTID__=${{ secrets.CLIENT_ID }}'
+        
     - name: Build
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
     
