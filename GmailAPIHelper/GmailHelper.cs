@@ -129,13 +129,13 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail latest message body text for a specified query criteria.
+        /// Returns Gmail latest message body plain text for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="markRead">Boolean value to mark retrieved latest email read/unread. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Email message body in Text/Plain.</returns>
+        /// <returns>Email message body in 'text/plain' format.</returns>
         public static string GetLatestMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
         {
             var service = gmailService;
@@ -164,7 +164,13 @@ namespace GmailAPIHelper
                 var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
                 messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
                 var latestMessageDetails = messageRequest.Execute();
-                var requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
+                MessagePart requiredMessagePart = null;
+                if (latestMessageDetails.Payload.MimeType == "text/plain")
+                    requiredMessagePart = latestMessageDetails.Payload;
+                else if (latestMessageDetails.Payload.MimeType == "text/html")
+                    requiredMessagePart = latestMessageDetails.Payload;
+                else
+                    requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
                 if (requiredMessagePart != null)
                 {
                     byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+").Replace("=", "+"));
