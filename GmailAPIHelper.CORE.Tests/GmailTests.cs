@@ -10,6 +10,28 @@ namespace GmailAPIHelper.CORE.Tests
     {
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_EmailContentType()
+        {
+            Assert.AreEqual("PLAIN", GmailHelper.EmailContentType.PLAIN.ToString());
+            Assert.AreEqual(1, (int)GmailHelper.EmailContentType.PLAIN);
+            Assert.AreEqual("HTML", GmailHelper.EmailContentType.HTML.ToString());
+            Assert.AreEqual(2, (int)GmailHelper.EmailContentType.HTML);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_TokenPathType()
+        {
+            Assert.AreEqual("HOME", GmailHelper.TokenPathType.HOME.ToString());
+            Assert.AreEqual(1, (int)GmailHelper.TokenPathType.HOME);
+            Assert.AreEqual("WORKING_DIRECTORY", GmailHelper.TokenPathType.WORKING_DIRECTORY.ToString());
+            Assert.AreEqual(2, (int)GmailHelper.TokenPathType.WORKING_DIRECTORY);
+            Assert.AreEqual("CUSTOM", GmailHelper.TokenPathType.CUSTOM.ToString());
+            Assert.AreEqual(3, (int)GmailHelper.TokenPathType.CUSTOM);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetLatestMessage()
         {
             var message = GmailHelper.GetGmailService(ApplicatioName)
