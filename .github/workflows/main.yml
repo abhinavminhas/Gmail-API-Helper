@@ -79,7 +79,7 @@ jobs:
       if: ${{ matrix.dotnet-version == '2.1.x' }}
       run: dotnet test --configuration Release --no-restore --verbosity normal
 
- TestCleanUp:
+  TestCleanUp:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
