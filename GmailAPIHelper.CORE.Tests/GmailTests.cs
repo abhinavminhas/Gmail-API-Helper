@@ -44,7 +44,7 @@ namespace GmailAPIHelper.CORE.Tests
             var body = File.ReadAllText(path);
             var message = GmailHelper.GetGmailService(ApplicatioName)
                 .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH PLAIN TEXT (TEXT/PLAIN)']in:inbox is:read", markRead: true);
-            Assert.AreEqual(body.Trim(), message.Trim(), false, System.Globalization.CultureInfo.InvariantCulture);
+            Assert.AreEqual(body.Trim(), message.Trim(), false, "LANG=en_US.UTF-8");
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace GmailAPIHelper.CORE.Tests
             var body = File.ReadAllText(path);
             var message = GmailHelper.GetGmailService(ApplicatioName)
                 .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH HTML TEXT (TEXT/HTML)']in:inbox is:read", markRead: true);
-            Assert.AreEqual(body.Trim(), message.Trim(), false, System.Globalization.CultureInfo.InvariantCulture);
+            Assert.AreEqual(body.Trim(), message.Trim(), false, "LANG=en_US.UTF-8");
         }
 
         [TestMethod]
