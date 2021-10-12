@@ -31,12 +31,22 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
-        public void Test1_GetLatestMessage()
+        public void Test_GetLatestMessage_PlainText()
         {
+            var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
             var message = GmailHelper.GetGmailService(ApplicatioName)
-                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'TEST']in:inbox is:read", markRead: true);
-            Assert.IsNotNull(message);
-            TestContext.WriteLine(message);
+                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH PLAIN TEXT (TEXT/PLAIN)']in:inbox is:read", markRead: true);
+            Assert.AreEqual(body, message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_GetLatestMessage_HtmlText()
+        {
+            var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt");
+            var message = GmailHelper.GetGmailService(ApplicatioName)
+                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH HTML TEXT (TEXT/HTML)']in:inbox is:read", markRead: true);
+            Assert.AreEqual(body, message);
         }
 
         [TestMethod]
