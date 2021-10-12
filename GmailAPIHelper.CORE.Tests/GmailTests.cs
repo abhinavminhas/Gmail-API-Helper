@@ -34,34 +34,18 @@ namespace GmailAPIHelper.CORE.Tests
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetLatestMessage_PlainText()
         {
-            var path = "";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
-            var body = File.ReadAllText(path);
             var message = GmailHelper.GetGmailService(ApplicatioName)
                 .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH PLAIN TEXT (TEXT/PLAIN)']in:inbox is:read", markRead: true);
-            Assert.IsTrue(body.Contains(message));
+            Assert.IsNotNull(message);
         }
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetLatestMessage_HtmlText()
         {
-            var path = "";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                path = Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt";
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                path = Environment.CurrentDirectory + "/TestFiles/HTMLEmail.txt";
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                path = Environment.CurrentDirectory + "/TestFiles/HTMLEmail.txt";
-            var body = File.ReadAllText(path);
             var message = GmailHelper.GetGmailService(ApplicatioName)
                 .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH HTML TEXT (TEXT/HTML)']in:inbox is:read", markRead: true);
-            Assert.IsTrue(body.Contains(message));
+            Assert.IsNotNull(message);
         }
 
         [TestMethod]
