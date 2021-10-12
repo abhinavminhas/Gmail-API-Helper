@@ -42,7 +42,7 @@ jobs:
 
     - name: Test CleanUp
       if: ${{ matrix.dotnet-version == '2.1.x' }}
-      run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=TestCleanup /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+      run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=TestCleanup
     
     - name: Upload Coverage To Codecov
       uses: codecov/codecov-action@v1
