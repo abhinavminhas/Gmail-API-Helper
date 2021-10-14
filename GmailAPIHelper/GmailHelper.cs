@@ -58,9 +58,6 @@ namespace GmailAPIHelper
             string credPath = "";
             if (tokenPathType == TokenPathType.HOME)
             {
-                var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                var isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-                var isOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     credPath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\" + "token.json";
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -72,9 +69,6 @@ namespace GmailAPIHelper
             }
             else if (tokenPathType == TokenPathType.WORKING_DIRECTORY)
             {
-                var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                var isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-                var isOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     credPath = Environment.CurrentDirectory + "\\" + "token.json";
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
