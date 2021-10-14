@@ -32,6 +32,56 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetGmailService_TokenPath_Home()
+        {
+            var sourcePath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                sourcePath = Environment.CurrentDirectory + "\\" + "token.json" + "\\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                sourcePath = Environment.CurrentDirectory + "/" + "token.json" + "/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                sourcePath = Environment.CurrentDirectory + "/" + "token.json" + "/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user";
+            var destPath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                destPath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\" + "token.json";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                destPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                destPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
+            Directory.CreateDirectory(destPath);
+            File.Copy(sourcePath, destPath + "/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user", overwrite: true);
+            var message = GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.HOME);
+            Directory.Delete(destPath, recursive: true);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetGmailService_TokenPath_Custom()
+        {
+            var credPath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                credPath = Environment.CurrentDirectory + "\\" + "token.json";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                credPath = Environment.CurrentDirectory + "/" + "token.json";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                credPath = Environment.CurrentDirectory + "/" + "token.json";
+            var message = GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.CUSTOM, credPath);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetGmailService_TokenPath_Custom_EmptyPath()
+        {
+            try
+            {
+                GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.CUSTOM);
+                Assert.Fail("No Argument Exception Thrown.");
+            }
+            catch (ArgumentException) { }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetLatestMessage_PlainText()
         {
             var message = GmailHelper.GetGmailService(ApplicatioName)
