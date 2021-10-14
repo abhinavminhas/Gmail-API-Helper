@@ -129,7 +129,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail latest message body plain text for a specified query criteria.
+        /// Returns Gmail latest message body text for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -170,7 +170,14 @@ namespace GmailAPIHelper
                 else if (latestMessageDetails.Payload.MimeType == "text/html")
                     requiredMessagePart = latestMessageDetails.Payload;
                 else
-                    requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
+                {
+                    if (latestMessageDetails.Payload.Parts != null)
+                    {
+                        requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
+                        if (requiredMessagePart.Body.Data == "" || requiredMessagePart.Body.Data == null)
+                            requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/html");
+                    }
+                }
                 if (requiredMessagePart != null)
                 {
                     byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
