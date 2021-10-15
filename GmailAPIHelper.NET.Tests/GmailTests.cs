@@ -169,6 +169,15 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_MoveMessageToTrash_NoMatchingEmail()
+        {
+            var isMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'Move Email To Trash']in:inbox is:unread");
+            Assert.IsFalse(isMovedToTrash);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_MoveMessagesToTrash()
         {
             //Test Data
