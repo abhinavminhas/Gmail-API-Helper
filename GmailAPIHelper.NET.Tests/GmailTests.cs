@@ -69,6 +69,15 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_GetLatestMessage_Multipart_HtmlText()
+        {
+            var message = GmailHelper.GetGmailService(ApplicatioName)
+                .GetLatestMessage(query: "[subject:'READ EMAIL WITH HTML TEXT (MULTIPART/ALTERNATIVE)']in:inbox is:read", markRead: true);
+            Assert.IsNotNull(message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_GetLatestMessage_NoMatchingEmail()
         {
             var message = GmailHelper.GetGmailService(ApplicatioName)
