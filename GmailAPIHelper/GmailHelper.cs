@@ -326,7 +326,7 @@ namespace GmailAPIHelper
         /// <returns>Boolean value for is valid email or not.</returns>
         internal static bool IsValidEmail(this string email)
         {
-            string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|"
+            string pattern = @"^[^0-9](?!\.)(""([^""\r\\]|\\[""\r\\])*""|"
                             + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)"
                             + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
             var regex = new Regex(pattern, RegexOptions.IgnoreCase);
