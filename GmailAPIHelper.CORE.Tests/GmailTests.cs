@@ -77,6 +77,7 @@ namespace GmailAPIHelper.CORE.Tests
                 GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.CUSTOM);
                 Assert.Fail("No Argument Exception Thrown.");
             }
+            catch (AssertFailedException ex) { throw ex; }
             catch (ArgumentException) { }
         }
 
@@ -130,6 +131,73 @@ namespace GmailAPIHelper.CORE.Tests
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "EMAIL WITH PLAIN TEXT", body: body);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_SendMessage_InvalidToEmail()
+        {
+            var invalidEmailTypes = new string[] { "testgmail.com", "test@gmailcom" , "1test@gmail.com",
+                "test@gmail.com,testgmail.com", "test@gmail.com,test@gmailcom", "test@gmail.com,1test@gmail.com" };
+            foreach (var invalidEmailType in invalidEmailTypes)
+            {
+                try
+                {
+                    GmailHelper.GetGmailService(ApplicatioName).SendMessage(GmailHelper.EmailContentType.PLAIN, invalidEmailType);
+                    Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
+                }
+                catch (AssertFailedException ex) { throw ex; }
+                catch (Exception ex)
+                {
+                    var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
+                    Assert.AreEqual(string.Format("Not a valid 'To' email address. Email: '{0}'", invalidEmail), ex.Message);
+                }
+            }
+            
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_SendMessage_InvalidCcEmail()
+        {
+            var invalidEmailTypes = new string[] { "testgmail.com", "test@gmailcom" , "1test@gmail.com",
+                "test@gmail.com,testgmail.com", "test@gmail.com,test@gmailcom", "test@gmail.com,1test@gmail.com" };
+            foreach (var invalidEmailType in invalidEmailTypes)
+            {
+                try
+                {
+                    GmailHelper.GetGmailService(ApplicatioName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: invalidEmailType);
+                    Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
+                }
+                catch (AssertFailedException ex) { throw ex; }
+                catch (Exception ex)
+                {
+                    var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
+                    Assert.AreEqual(string.Format("Not a valid 'Cc' email address. Email: '{0}'", invalidEmail), ex.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_SendMessage_InvalidBccEmail()
+        {
+            var invalidEmailTypes = new string[] { "testgmail.com", "test@gmailcom" , "1test@gmail.com",
+                "test@gmail.com,testgmail.com", "test@gmail.com,test@gmailcom", "test@gmail.com,1test@gmail.com" };
+            foreach (var invalidEmailType in invalidEmailTypes)
+            {
+                try
+                {
+                    GmailHelper.GetGmailService(ApplicatioName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", bcc: invalidEmailType);
+                    Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
+                }
+                catch (AssertFailedException ex) { throw ex; }
+                catch (Exception ex)
+                {
+                    var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
+                    Assert.AreEqual(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", invalidEmail), ex.Message);
+                }
+            }
         }
 
         [TestMethod]
