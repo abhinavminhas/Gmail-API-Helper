@@ -218,10 +218,10 @@ namespace GmailAPIHelper
             }
             if (bcc != "")
             {
-                var bccList = cc.Split(',');
+                var bccList = bcc.Split(',');
                 foreach (var email in bccList)
                     if (!email.IsValidEmail())
-                    throw new Exception(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
+                        throw new Exception(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
             }
             if (emailContentType.Equals(EmailContentType.PLAIN))
             {
@@ -326,8 +326,8 @@ namespace GmailAPIHelper
         /// <returns>Boolean value for is valid email or not.</returns>
         internal static bool IsValidEmail(this string email)
         {
-            string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" 
-                            + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" 
+            string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|"
+                            + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)"
                             + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
             var regex = new Regex(pattern, RegexOptions.IgnoreCase);
             return regex.IsMatch(email);
