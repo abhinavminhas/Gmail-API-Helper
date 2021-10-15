@@ -119,6 +119,15 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetLatestMessage_NoMatchingEmail()
+        {
+            var message = GmailHelper.GetGmailService(ApplicatioName)
+                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:read", markRead: true);
+            Assert.IsNull(message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_SendMessage_PlainText()
         {
             var path = "";
@@ -244,7 +253,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MoveMessageToTrash_NoMatchingEmail()
         {
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
-                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'Move Email To Trash']in:inbox is:unread");
+                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
             Assert.IsFalse(isMovedToTrash);
         }
 
