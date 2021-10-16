@@ -179,7 +179,7 @@ namespace GmailAPIHelper
                     if (markRead)
                     {
                         var labelToRemove = new List<string> { "UNREAD" };
-                        ModifyMessage(service, latestMessage.Id, labelsToRemove: labelToRemove);
+                        RemoveLabels(service, latestMessage.Id, labelToRemove, userId: userId);
                     }
                 }
                 else
@@ -334,30 +334,19 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Modifies Gmail message for labels criteria supplided.
+        /// Modifies Gmail message for labels to be removed.
         /// </summary>
         /// <param name="service">Gmail Service.</param>
         /// <param name="messageId">'Message Id' to modify.</param>
-        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)', takes from credentials.json</param>
-        /// <param name="labelsToAdd">'Labels' to add</param>
         /// <param name="labelsToRemove">'Labels' to remove.</param>
-        internal static void ModifyMessage(GmailService service, string messageId, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        internal static void RemoveLabels(GmailService service, string messageId, List<string> labelsToRemove, string userId = "me")
         {
-            if (labelsToAdd == null && labelsToRemove == null)
-                throw new Exception("Modify Message: Please provide either labels to modify, 'Labels To Add' or 'Labels to Remove', both cannot be empty.");
-            ModifyMessageRequest mods = new ModifyMessageRequest();
-            if (labelsToAdd != null)
-                mods.AddLabelIds = labelsToAdd;
-            if (labelsToRemove != null)
-                mods.RemoveLabelIds = labelsToRemove;
-            try
+            ModifyMessageRequest mods = new ModifyMessageRequest()
             {
-                service.Users.Messages.Modify(mods, userId, messageId).Execute();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("ERROR: " + ex.Message);
-            }
+                RemoveLabelIds = labelsToRemove
+            };
+            service.Users.Messages.Modify(mods, userId, messageId).Execute();
         }
 
     }
