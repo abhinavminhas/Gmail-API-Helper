@@ -127,7 +127,7 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
-        /// <param name="markRead">Boolean value to mark retrieved latest message read/unread. Default - 'false'.</param>
+        /// <param name="markRead">Boolean value to mark retrieved latest message as read. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <returns>Email message.</returns>
         public static Message GetMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
@@ -169,11 +169,48 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Returns Gmail messages with metadata for a specified query criteria.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="markRead">Boolean value to mark retrieved messages as read. Default - 'false'.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>List of email messages matching the search criteria.</returns>
+        public static List<Message> GetMessages(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
+        {
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+                if (markRead)
+                {
+                    var labelToRemove = new List<string> { "UNREAD" };
+                    RemoveLabels(service, message.Id, labelToRemove, userId: userId);
+                }
+            }
+            return messages;
+        }
+
+        /// <summary>
         /// Returns Gmail latest message body text for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
-        /// <param name="markRead">Boolean value to mark retrieved latest email read/unread. Default - 'false'.</param>
+        /// <param name="markRead">Boolean value to mark retrieved latest email as read. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <returns>Email message body in 'text/plain' format.</returns>
         public static string GetLatestMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
@@ -370,7 +407,7 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="email">Email to validate.</param>
         /// <returns>Boolean value for is valid email or not.</returns>
-        internal static bool IsValidEmail(this string email)
+        private static bool IsValidEmail(this string email)
         {
             string pattern = @"^[^0-9](?!\.)(""([^""\r\\]|\\[""\r\\])*""|"
                             + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)"
@@ -386,7 +423,7 @@ namespace GmailAPIHelper
         /// <param name="messageId">'Message Id' to modify.</param>
         /// <param name="labelsToRemove">'Labels' to remove.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        internal static void RemoveLabels(GmailService service, string messageId, List<string> labelsToRemove, string userId = "me")
+        private static void RemoveLabels(GmailService service, string messageId, List<string> labelsToRemove, string userId = "me")
         {
             ModifyMessageRequest mods = new ModifyMessageRequest()
             {
