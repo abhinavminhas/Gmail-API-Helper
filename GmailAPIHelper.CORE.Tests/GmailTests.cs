@@ -155,7 +155,7 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_GetLatestMessage_MultipleMacthingEmails()
+        public void Test_GetLatestMessage_MultipleMatchingEmails()
         {
             var message = GmailHelper.GetGmailService(ApplicatioName)
                 .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
