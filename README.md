@@ -18,4 +18,4 @@ The [Gmail API](https://developers.google.com/gmail/api) is used to interact wit
 ## .NET Supported Versions
 
 Gmail API solution is built on .NetStandard 2.0  
-<img src="https://user-images.githubusercontent.com/17473202/137575806-fdebc1ff-4741-4ada-8974-0459c6e27830.png" width="80%"/>
+<img src="https://user-images.githubusercontent.com/17473202/137575806-fdebc1ff-4741-4ada-8974-0459c6e27830.png" />
