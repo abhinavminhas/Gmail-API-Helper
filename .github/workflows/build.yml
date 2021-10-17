@@ -1,0 +1,81 @@
+#CI/MANUAL TRIGGER
+name: Build
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  DotNet_OS-VSVersion:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+        vs-version: [ '15.9']
+        
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        
+    - name: Nuget Restore
+      run: nuget restore GmailAPIHelper.sln -Verbosity quiet
+
+    - name: Setup-MSBuild VS-Version (${{ matrix.vs-version }})
+      uses: microsoft/setup-msbuild@v1
+      with:
+        vs-version: ${{ matrix.vs-version }}
+      
+    - name: Build
+      id: build
+      run: |
+        msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+    
+    - name: Find And Replace Values
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
+        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
+        
+    - name: Setup-VSTest
+      uses: darenm/Setup-VSTest@v1
+      
+    - name: Test
+      run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll /TestCaseFilter:"TestCategory=GMAIL-TESTS-DOTNETFRAMEWORK"
+    
+  
+  DotNetCore_OS-Version:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macOS-latest ]
+        dotnet-version: [ '2.1.x', '3.1.x', '5.0.x' ]
+        
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Dotnet Version (${{ matrix.dotnet-version }})
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+        
+    - name: Build
+      run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
+      
+    - name: Find And Replace Values
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
+        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
+    
+    - name: Test
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=GMAIL-TESTS-DOTNETCORE

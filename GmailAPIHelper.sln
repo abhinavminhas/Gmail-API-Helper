@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GmailAPIHelper", "GmailAPIHelper\GmailAPIHelper.csproj", "{0064BDE2-B121-4979-9ADB-EA088B82765F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GmailAPIHelper.NET.Tests", "GmailAPIHelper.NET.Tests\GmailAPIHelper.NET.Tests.csproj", "{D18D1F91-9CC3-4D90-B687-5DDC9816BC57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GmailAPIHelper.CORE.Tests", "GmailAPIHelper.CORE.Tests\GmailAPIHelper.CORE.Tests.csproj", "{676347A7-F8B3-4A5C-9712-DBE06EEECFD1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0064BDE2-B121-4979-9ADB-EA088B82765F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0064BDE2-B121-4979-9ADB-EA088B82765F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0064BDE2-B121-4979-9ADB-EA088B82765F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0064BDE2-B121-4979-9ADB-EA088B82765F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D18D1F91-9CC3-4D90-B687-5DDC9816BC57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D18D1F91-9CC3-4D90-B687-5DDC9816BC57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D18D1F91-9CC3-4D90-B687-5DDC9816BC57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D18D1F91-9CC3-4D90-B687-5DDC9816BC57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{676347A7-F8B3-4A5C-9712-DBE06EEECFD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{676347A7-F8B3-4A5C-9712-DBE06EEECFD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{676347A7-F8B3-4A5C-9712-DBE06EEECFD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{676347A7-F8B3-4A5C-9712-DBE06EEECFD1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC2CD331-0E8C-4635-A29B-23185E7104F0}
+	EndGlobalSection
+EndGlobal

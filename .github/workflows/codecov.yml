@@ -1,0 +1,46 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macOS-latest ]
+        dotnet-version: [ '2.1.x' ]
+        
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Dotnet Version (${{ matrix.dotnet-version }})
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+        
+    - name: Build
+      run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
+      
+    - name: Find And Replace Values
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
+        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
+        
+    - name: Test
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+    
+    - name: Upload Coverage To Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
