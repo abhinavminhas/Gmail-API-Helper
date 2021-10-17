@@ -301,7 +301,7 @@ namespace GmailAPIHelper.CORE.Tests
             var subject = new string[2];
             for (int i = 0; i < 2; i++)
             {
-                subject[i] = "TEST MOVE MESSAGES TO TRASH " + Guid.NewGuid().ToString();
+                subject[i] = "MOVE DOTNETCORE MESSAGES TO TRASH " + Guid.NewGuid().ToString();
                 var path = "";
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
@@ -316,7 +316,7 @@ namespace GmailAPIHelper.CORE.Tests
 
             //Test Run
             var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
-                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'TEST MOVE MESSAGES TO TRASH']in:inbox is:unread");
+                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETCORE MESSAGES TO TRASH']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMovedToTrash);
         }
 
