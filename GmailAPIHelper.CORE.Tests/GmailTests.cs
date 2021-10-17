@@ -83,6 +83,24 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessage()
+        {
+            var message = GmailHelper.GetGmailService(ApplicatioName)
+                .GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+            Assert.IsNotNull(message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessage_NoMatchingEmail()
+        {
+            var message = GmailHelper.GetGmailService(ApplicatioName)
+                .GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:read", markRead: true);
+            Assert.IsNull(message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetLatestMessage_PlainText()
         {
             var message = GmailHelper.GetGmailService(ApplicatioName)
