@@ -123,6 +123,57 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Returns Gmail latest complete message with metadata for a specified query criteria.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="markRead">Boolean value to mark retrieved latest message read/unread. Default - 'false'.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Email message.</returns>
+        public static Message GetMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
+        {
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var requiredLatestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                if (requiredLatestMessage != null)
+                {
+                    var messageRequest = service.Users.Messages.Get(userId, requiredLatestMessage.Id);
+                    messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                    requiredLatestMessage = messageRequest.Execute();
+                    if (markRead)
+                    {
+                        var labelToRemove = new List<string> { "UNREAD" };
+                        RemoveLabels(service, requiredLatestMessage.Id, labelToRemove, userId: userId);
+                    }
+                }
+                else
+                    requiredLatestMessage = null;
+                return requiredLatestMessage;
+            }
+            else
+                return null;
+        }
+
+        /// <summary>
         /// Returns Gmail latest message body text for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
