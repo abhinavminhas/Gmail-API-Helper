@@ -222,5 +222,13 @@ namespace GmailAPIHelper.NET.Tests
                 .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'TEST MOVE MESSAGES TO TRASH']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMovedToTrash);
         }
+
+        [TestMethod]
+        [TestCategory("TestCleanup")]
+        public void Inbox_CleanUp()
+        {
+            GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com]in:inbox is:unread");
+        }
     }
 }
