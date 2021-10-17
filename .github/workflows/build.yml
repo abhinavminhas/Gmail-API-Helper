@@ -47,8 +47,6 @@ jobs:
     - name: Test
       run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll /TestCaseFilter:"TestCategory=GMAIL-TESTS-DOTNETFRAMEWORK"
     
-    - name: Test CleanUp
-      run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll /TestCaseFilter:"TestCategory=TestCleanup"
   
   DotNetCore_OS-Version:
     runs-on: ${{ matrix.os }}
@@ -81,7 +79,3 @@ jobs:
     - name: Test
       if: ${{ matrix.dotnet-version == '2.1.x' }}
       run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=GMAIL-TESTS-DOTNETCORE
-
-    - name: Test CleanUp
-      if: ${{ matrix.dotnet-version == '2.1.x' }}
-      run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=TestCleanup
