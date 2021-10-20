@@ -5,7 +5,7 @@
 ![maintainer](https://img.shields.io/badge/Creator/Maintainer-abhinavminhas-e65c00)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain extension methods in .NET.
+The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain useful extension methods in .NET.
 
 ## Features
 
@@ -74,13 +74,13 @@ Gmail API solution is built on .NetStandard 2.0
 
 9. Include the '**credentials.json**' in the solution project and invoke **GmailHelper.GetGmailService()** function below to generate OAuth token.
    ```
-   GmailHelper.GetGmailService(<Created Application Name>), <Path for 'token.json' with OAuth to be saved>)
+   GmailHelper.GetGmailService(<Created Application Name>, <Path for 'token.json' with OAuth to be saved>)
    ```
-10. Sign-In to the login prompt presented when above line of code is executed with user account used to create app.  
+10. Sign-In to the login prompt presented with user account used to create the app.  
     <img src="https://user-images.githubusercontent.com/17473202/138043907-0d1f6f12-ba23-4331-9bc0-d97ab257e96d.png" />  
     **NOTE:** *'**Google hasn't verified this app**' may be prompted if the app is yet to be verified. Go to '**Advanced**' and continue.*
-11. Select the Gmail API access as added to the scope '**Read, compose, send and permanently delete all your email from Gmail**' and continue.  
+11. Select the Gmail API access as added to the app scope '**Read, compose, send and permanently delete all your email from Gmail**' and continue.  
     <img src="https://user-images.githubusercontent.com/17473202/138043948-dd805f6e-faec-4c05-b164-78aabdca55d7.png" />
 12. Once you see '**Received verification code. You may now close this window.**', you can close the browser window as save the contents of '**token.json**' to reuse until credentials are changed or refreshed.  
-    The token path parameter in **GmailHelper.GetGmailService()** can be used to reuse the generated OAuth token again and again.  
+    The token path parameter in **GmailHelper.GetGmailService()** can be used to save and reuse the generated OAuth token again and again.  
     **NOTE:** *Keep contents of '**token.json**' & '**credentials.json**' safe to avoid misuse. Checkout solution tests for more understanding on usage.*
