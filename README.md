@@ -63,7 +63,7 @@ Gmail API solution is built on .NetStandard 2.0
 
     **NOTE:** *Some added restricted/sensitive scopes may require app verification.*
 
-6. Under '**API & Services**' go to "**Credentials**' and create new credentials of type '**OAuth client ID**'.  
+6. Under '**API & Services**' go to '**Credentials**' and create new credentials of type '**OAuth client ID**'.  
     <img src="https://user-images.githubusercontent.com/17473202/138043764-9dcdb1e4-48f4-45c2-856c-470ca89faae6.png" />
 7. Provide below details
    - Application type as 'Desktop app'
