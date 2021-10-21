@@ -25,13 +25,20 @@ jobs:
     - name: Build
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
       
-    - name: Find And Replace Values
+    - name: Find And Replace Values (OAuth)
       if: ${{ matrix.dotnet-version == '2.1.x' }}
       uses: datamonsters/replace-action@v2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
+
+    - name: Find And Replace Values (Client Secret)
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/credentials.json'
+        replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
         
     - name: Test CleanUp
       if: ${{ matrix.dotnet-version == '2.1.x' }}
-      run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=TestCleanup
+      run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=TestCleanup
