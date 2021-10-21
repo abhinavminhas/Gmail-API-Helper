@@ -35,11 +35,17 @@ jobs:
       run: |
         msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
     
-    - name: Find And Replace Values
+    - name: Find And Replace Values (OAuth)
       uses: datamonsters/replace-action@v2
       with:
         files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
+    
+    - name: Find And Replace Values (Client Secret)
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\credentials.json'
+        replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
         
     - name: Setup-VSTest
       uses: darenm/Setup-VSTest@v1
@@ -69,12 +75,19 @@ jobs:
     - name: Build
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
       
-    - name: Find And Replace Values
+    - name: Find And Replace Values (OAuth)
       if: ${{ matrix.dotnet-version == '2.1.x' }}
       uses: datamonsters/replace-action@v2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
+
+    - name: Find And Replace Values (Client Secret)
+      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/credentials.json'
+        replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
     
     - name: Test
       if: ${{ matrix.dotnet-version == '2.1.x' }}
