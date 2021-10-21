@@ -91,4 +91,4 @@ jobs:
     
     - name: Test
       if: ${{ matrix.dotnet-version == '2.1.x' }}
-      run: dotnet test --configuration Release --no-restore --verbosity normal --filter TestCategory=GMAIL-TESTS-DOTNETCORE
+      run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE
