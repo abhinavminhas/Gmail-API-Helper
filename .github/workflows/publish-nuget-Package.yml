@@ -1,0 +1,25 @@
+name: Publish Nuget Package
+
+env:
+    NUGET_PACKAGE_NAME_VERSION: "GmailHelper.1.0.0.nupkg"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Create Package
+      uses: actions/setup-dotnet@v1
+      with:
+          dotnet-version: '2.1.x'
+          run: dotnet pack --configuration=Release GmailAPIHelper/GmailAPIHelper.csproj
+      
+    - name: Publish Nuget Package
+      run: dotnet nuget push GmailAPIHelper/bin/Release/${{ env.NUGET_PACKAGE_NAME_VERSION }} -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      
