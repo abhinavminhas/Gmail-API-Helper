@@ -2,10 +2,30 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Abhinav Minhas</Authors>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Product>Gmail API Helper</Product>
+    <Description>This solution is the implementation of GMAIL API providing certain useful extension methods.</Description>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/abhinavminhas/Gmail-API-Helper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/abhinavminhas/Gmail-API-Helper</RepositoryUrl>
+    <PackageTags>gmail, gmail api, gmail helper, gmail api helper, email, api</PackageTags>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageId>GmailHelper</PackageId>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReleaseNotes>Gmail API helper release with certain useful extension methods to manipulate gmail messages.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.55.0.2356" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
