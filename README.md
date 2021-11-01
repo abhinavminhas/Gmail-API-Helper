@@ -8,7 +8,8 @@
 The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain useful extension methods in .NET.
 
 ## Download
-The package is available and can be downloaded using [nuget.org](https://www.nuget.org/) package manager. Package Name - [GmailHelper](https://www.nuget.org/packages/GmailHelper/).
+The package is available and can be downloaded using [nuget.org](https://www.nuget.org/) package manager.  
+Package Name - [GmailHelper](https://www.nuget.org/packages/GmailHelper/).
 
 ## Features
 
