@@ -39,7 +39,8 @@ Gmail API solution is built on .NetStandard 2.0
     - Project name
     - Organisation, leave as is if none created.  
 
-        <img src="https://user-images.githubusercontent.com/17473202/138042606-17b8e076-1bb2-4ea5-a722-fdd300204a6a.png" />  
+    <img src="https://user-images.githubusercontent.com/17473202/138042606-17b8e076-1bb2-4ea5-a722-fdd300204a6a.png" />  
+    
 3. Select the created project and go to '**Library**' under '**API & Services**'.  
 
     <img src="https://user-images.githubusercontent.com/17473202/138043014-7f41d875-3fca-4df1-a167-03a976cfb690.png" />  
@@ -71,7 +72,8 @@ Gmail API solution is built on .NetStandard 2.0
 
     On created app under '**Publishing Status**' click  
     - PUBLISH APP  
-    <img src="https://user-images.githubusercontent.com/17473202/138043559-e5d6512b-75eb-4c62-b999-33b213ef74ee.png" />  
+    
+    <img src="https://user-images.githubusercontent.com/17473202/138043559-e5d6512b-75eb-4c62-b999-33b213ef74ee.png" /><br>
     <img src="https://user-images.githubusercontent.com/17473202/138043618-3d23aa98-3869-433e-8831-82ee65823a23.png" />  
 
     **NOTE:** *Some added restricted/sensitive scopes may require app verification.*
@@ -89,7 +91,7 @@ Gmail API solution is built on .NetStandard 2.0
     <img src="https://user-images.githubusercontent.com/17473202/138043843-8bfbdac9-99c1-45d8-91bf-211c246aacda.png" />  
 9. Include the '**credentials.json**' in the solution project and invoke **GmailHelper.GetGmailService()** function below to generate OAuth token.
    ```
-   GmailHelper.GetGmailService(<Created Application Name>, <Path for 'token.json' with OAuth to be saved>)
+   GmailHelper.GetGmailService(<Created Application Name>, <'token.json' path for OAuth to be saved>)
    ```
 10. Sign-In to the login prompt presented with user account used to create the app.  
 
