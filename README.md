@@ -72,7 +72,6 @@ Gmail API solution is built on .NetStandard 2.0
 
     On created app under '**Publishing Status**' click  
     - PUBLISH APP  
-    
     <img src="https://user-images.githubusercontent.com/17473202/138043559-e5d6512b-75eb-4c62-b999-33b213ef74ee.png" /><br>
     <img src="https://user-images.githubusercontent.com/17473202/138043618-3d23aa98-3869-433e-8831-82ee65823a23.png" />  
 
