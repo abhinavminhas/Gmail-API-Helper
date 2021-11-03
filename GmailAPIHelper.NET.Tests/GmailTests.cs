@@ -235,18 +235,17 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_MoveMessagesToTrash()
         {
             //Test Data
-            var subject = new string[2];
+            var subject = "MOVE DOTNETFRAMEWORK MESSAGES TO TRASH " + Guid.NewGuid().ToString();
             for (int i = 0; i < 2; i++)
             {
-                subject[i] = "MOVE DOTNETFRAMEWORK MESSAGES TO TRASH " + Guid.NewGuid().ToString();
                 var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
                 GmailHelper.GetGmailService(ApplicatioName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject[i], body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
             }
 
             //Test Run
             var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
-                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETFRAMEWORK MESSAGES TO TRASH']in:inbox is:unread");
+                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETFRAMEWORK MESSAGES TO TRASH '" + subject + "]in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMovedToTrash);
         }
 
