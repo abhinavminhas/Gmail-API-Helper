@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest ]
-        vs-version: [ '15.9']
+        vs-version: [ '16.1']
         
     steps:
     - name: Checkout Repository
@@ -63,7 +63,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macOS-latest ]
-        dotnet-version: [ '2.1.x', '3.1.x', '5.0.x' ]
+        dotnet-version: [ '3.1.x', '5.0.x' ]
         
     steps:
     - name: Checkout Repository
@@ -80,19 +80,19 @@ jobs:
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
       
     - name: Find And Replace Values (OAuth)
-      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
       uses: datamonsters/replace-action@v2
       with:
-        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
 
     - name: Find And Replace Values (Client Secret)
-      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
       uses: datamonsters/replace-action@v2
       with:
-        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp2.1/credentials.json'
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/credentials.json'
         replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
     
     - name: Test
-      if: ${{ matrix.dotnet-version == '2.1.x' }}
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
       run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE
