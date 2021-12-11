@@ -403,6 +403,53 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Modifies the labels on the message specified for query criteria.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="labelsToAdd">Label values to add. Default - null.</param>
+        /// <param name="labelsToRemove">Label values to remove. Default - null.</param>
+        /// <returns></returns>
+        public static bool ModifyMessage(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
+        {
+            if (labelsToAdd == null && labelsToRemove == null)
+                throw new NullReferenceException("Either 'Labels To Add' or 'Labels to Remove' required.");
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
+                var mods = new ModifyMessageRequest();
+                if (labelsToAdd != null)
+                    mods.AddLabelIds = labelsToAdd;
+                if (labelsToRemove != null)
+                    mods.RemoveLabelIds = labelsToRemove;
+                service.Users.Messages.Modify(mods, userId, latestMessage.Id).Execute();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Checks email format.
         /// </summary>
         /// <param name="email">Email to validate.</param>

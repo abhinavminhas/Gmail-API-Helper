@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -326,6 +327,59 @@ namespace GmailAPIHelper.CORE.Tests
             var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
                 .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETCORE MESSAGES TO TRASH " + subject + "']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMovedToTrash);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_ModifyMessage()
+        {
+            //Test Data
+            var subject = "MODIFY MESSAGE " + Guid.NewGuid().ToString();
+            var path = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            var body = File.ReadAllText(path);
+            GmailHelper.GetGmailService(ApplicatioName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+
+            //Test Run
+            var isModified = GmailHelper.GetGmailService(ApplicatioName)
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
+            Assert.AreEqual(true, isModified);
+            isModified = GmailHelper.GetGmailService(ApplicatioName)
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
+            Assert.AreEqual(true, isModified);
+            isModified = GmailHelper.GetGmailService(ApplicatioName)
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
+            Assert.AreEqual(true, isModified);
+
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_ModifyMessage_NoLabelsSupplied()
+        {
+            try
+            {
+                GmailHelper.GetGmailService(ApplicatioName)
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (NullReferenceException ex) { Assert.AreEqual("Either 'Labels To Add' or 'Labels to Remove' required.", ex.Message); }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_ModifyMessage_NoMatchingEmail()
+        {
+            var isModified = GmailHelper.GetGmailService(ApplicatioName)
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread", labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", }, labelsToRemove: new List<string>() { "UNREAD" });
+            Assert.AreEqual(false, isModified);
         }
 
         [TestMethod]
