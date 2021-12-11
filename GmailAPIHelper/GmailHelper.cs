@@ -366,7 +366,7 @@ namespace GmailAPIHelper
             {
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
-                var sdsf = moveToTrashRequest.Execute();
+                moveToTrashRequest.Execute();
                 return true;
             }
             return false;
