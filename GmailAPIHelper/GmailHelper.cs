@@ -404,6 +404,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Modifies the labels on the message specified for query criteria.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
