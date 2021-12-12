@@ -403,7 +403,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Modifies the labels on the message specified for query criteria.
+        /// Modifies the labels on the latest message for specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
@@ -411,11 +411,16 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - null.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - null.</param>
-        /// <returns></returns>
+        /// <returns>Boolean value to confirm if the email labels were modified or not.</returns>
         public static bool ModifyMessage(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
         {
             if (labelsToAdd == null && labelsToRemove == null)
                 throw new NullReferenceException("Either 'Labels To Add' or 'Labels to Remove' required.");
+            var mods = new ModifyMessageRequest();
+            if (labelsToAdd != null)
+                mods.AddLabelIds = labelsToAdd;
+            if (labelsToRemove != null)
+                mods.RemoveLabelIds = labelsToRemove;
             var service = gmailService;
             List<Message> result = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
@@ -438,13 +443,8 @@ namespace GmailAPIHelper
             if (messages.Count > 0)
             {
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
-                var mods = new ModifyMessageRequest();
-                if (labelsToAdd != null)
-                    mods.AddLabelIds = labelsToAdd;
-                if (labelsToRemove != null)
-                    mods.RemoveLabelIds = labelsToRemove;
-                service.Users.Messages.Modify(mods, userId, latestMessage.Id).Execute();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
                 return true;
             }
             return false;
