@@ -224,6 +224,15 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_MoveMessagesToTrash_NoMatchingEmail()
+        {
+            var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.AreEqual(0, countOfMessagesMovedToTrash);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_MoveMessageToTrash_NoMatchingEmail()
         {
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
