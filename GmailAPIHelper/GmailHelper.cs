@@ -409,8 +409,8 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <param name="labelsToAdd">Label values to add. Default - null.</param>
-        /// <param name="labelsToRemove">Label values to remove. Default - null.</param>
+        /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
+        /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
         /// <returns>Boolean value to confirm if the email labels were modified or not.</returns>
         public static bool ModifyMessage(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
         {
@@ -448,6 +448,46 @@ namespace GmailAPIHelper
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Modifies the labels on the messages for specified query criteria.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
+        /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
+        /// <returns>Count of emails modified.</returns>
+        public static int ModifyMessages(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
+        {
+            if (labelsToAdd == null && labelsToRemove == null)
+                throw new NullReferenceException("Either 'Labels To Add' or 'Labels to Remove' required.");
+            var mods = new ModifyMessageRequest();
+            if (labelsToAdd != null)
+                mods.AddLabelIds = labelsToAdd;
+            if (labelsToRemove != null)
+                mods.RemoveLabelIds = labelsToRemove;
+            int counter = 0;
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, message.Id);
+                modifyMessageRequest.Execute();
+                counter++;
+            }
+            return counter;
         }
 
         /// <summary>
