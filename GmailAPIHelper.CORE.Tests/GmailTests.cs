@@ -276,7 +276,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MoveMessageToTrash()
         {
             //Test Data
-            var subject = Guid.NewGuid().ToString();
+            var subject = "MOVE DOTNETCORE MESSAGE TO TRASH " + Guid.NewGuid().ToString();
             var path = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
@@ -290,7 +290,7 @@ namespace GmailAPIHelper.CORE.Tests
 
             //Test Run
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
-                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'"+ subject + "']in:inbox is:unread");
+                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETCORE MESSAGE TO TRASH " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isMovedToTrash);
         }
 

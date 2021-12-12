@@ -211,14 +211,14 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_MoveMessageToTrash()
         {
             //Test Data
-            var subject = Guid.NewGuid().ToString();
+            var subject = "MOVE DOTNETFRAMEWORK MESSAGE TO TRASH " + Guid.NewGuid().ToString();
             var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
 
             //Test Run
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
-                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'" + subject + "']in:inbox is:unread");
+                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETFRAMEWORK MESSAGE TO TRASH " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isMovedToTrash);
         }
 
