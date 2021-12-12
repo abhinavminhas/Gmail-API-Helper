@@ -334,7 +334,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_ModifyMessage()
         {
             //Test Data
-            var subject = "MODIFY MESSAGE " + Guid.NewGuid().ToString();
+            var subject = "MODIFY DOTNETCORE MESSAGE " + Guid.NewGuid().ToString();
             var path = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
@@ -348,15 +348,14 @@ namespace GmailAPIHelper.CORE.Tests
 
             //Test Run
             var isModified = GmailHelper.GetGmailService(ApplicatioName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
             Assert.AreEqual(true, isModified);
             isModified = GmailHelper.GetGmailService(ApplicatioName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
             Assert.AreEqual(true, isModified);
             isModified = GmailHelper.GetGmailService(ApplicatioName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
             Assert.AreEqual(true, isModified);
-
         }
 
         [TestMethod]

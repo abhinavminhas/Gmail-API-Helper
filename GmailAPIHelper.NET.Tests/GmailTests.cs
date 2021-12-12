@@ -255,22 +255,21 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_ModifyMessage()
         {
             //Test Data
-            var subject = "MODIFY MESSAGE " + Guid.NewGuid().ToString();
+            var subject = "MODIFY DOTNETFRAMEWORK MESSAGE " + Guid.NewGuid().ToString();
             var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
 
             //Test Run
             var isModified = GmailHelper.GetGmailService(ApplicatioName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETFRAMEWORK MESSAGE " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
             Assert.AreEqual(true, isModified);
             isModified = GmailHelper.GetGmailService(ApplicatioName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETFRAMEWORK MESSAGE " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
             Assert.AreEqual(true, isModified);
             isModified = GmailHelper.GetGmailService(ApplicatioName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY MESSAGE " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETFRAMEWORK MESSAGE " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
             Assert.AreEqual(true, isModified);
-
         }
 
         [TestMethod]
