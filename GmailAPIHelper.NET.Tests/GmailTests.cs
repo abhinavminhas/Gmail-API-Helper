@@ -32,6 +32,45 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_GmailService_Dispose()
+        {
+            //Dispose (service argument)
+            var service = GmailHelper.GetGmailService(ApplicatioName);
+            Assert.IsNotNull(service);
+            var message = service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+            Assert.IsNotNull(message);
+            GmailHelper.DisposeGmailService(service);
+            try
+            {
+                service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                Assert.Fail("No Object Disposed Exception Thrown");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (ObjectDisposedException ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("Cannot access a disposed object."));
+            }
+
+            //Dispose (service extension)
+            service = GmailHelper.GetGmailService(ApplicatioName);
+            Assert.IsNotNull(service);
+            message = service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+            Assert.IsNotNull(message);
+            service.DisposeGmailService();
+            try
+            {
+                service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                Assert.Fail("No Object Disposed Exception Thrown");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (ObjectDisposedException ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("Cannot access a disposed object."));
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_GetMessage()
         {
             var message = GmailHelper.GetGmailService(ApplicatioName)

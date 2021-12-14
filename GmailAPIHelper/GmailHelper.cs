@@ -123,6 +123,15 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Disposes Gmail service.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service instance value.</param>
+        public static void DisposeGmailService(this GmailService gmailService)
+        {
+            gmailService.Dispose();
+        }
+
+        /// <summary>
         /// Returns Gmail latest complete message with metadata for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
@@ -160,12 +169,16 @@ namespace GmailAPIHelper
                 if (markRead)
                 {
                     var labelToRemove = new List<string> { "UNREAD" };
-                    RemoveLabels(service, requiredLatestMessage.Id, labelToRemove, userId: userId);
+                    service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
                 }
+                service.DisposeGmailService();
                 return requiredLatestMessage;
             }
             else
+            {
+                service.DisposeGmailService();
                 return null;
+            }
         }
 
         /// <summary>
@@ -199,9 +212,10 @@ namespace GmailAPIHelper
                 if (markRead)
                 {
                     var labelToRemove = new List<string> { "UNREAD" };
-                    RemoveLabels(service, message.Id, labelToRemove, userId: userId);
+                    service.RemoveLabels(message.Id, labelToRemove, userId: userId);
                 }
             }
+            service.DisposeGmailService();
             return messages;
         }
 
@@ -262,15 +276,19 @@ namespace GmailAPIHelper
                     if (markRead)
                     {
                         var labelToRemove = new List<string> { "UNREAD" };
-                        RemoveLabels(service, latestMessage.Id, labelToRemove, userId: userId);
+                        service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
                     }
                 }
                 else
                     requiredMessagePart = null;
+                service.DisposeGmailService();
                 return requiredMessage;
             }
             else
+            {
+                service.DisposeGmailService();
                 return null;
+            }
         }
 
         /// <summary>
@@ -332,6 +350,7 @@ namespace GmailAPIHelper
             };
             var sendRequest = service.Users.Messages.Send(message, userId);
             sendRequest.Execute();
+            service.DisposeGmailService();
         }
 
         /// <summary>
@@ -367,8 +386,10 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
                 moveToTrashRequest.Execute();
+                service.DisposeGmailService();
                 return true;
             }
+            service.DisposeGmailService();
             return false;
         }
 
@@ -399,6 +420,7 @@ namespace GmailAPIHelper
                 moveToTrashRequest.Execute();
                 counter++;
             }
+            service.DisposeGmailService();
             return counter;
         }
 
@@ -445,8 +467,10 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
                 modifyMessageRequest.Execute();
+                service.DisposeGmailService();
                 return true;
             }
+            service.DisposeGmailService();
             return false;
         }
 
@@ -487,6 +511,7 @@ namespace GmailAPIHelper
                 modifyMessageRequest.Execute();
                 counter++;
             }
+            service.DisposeGmailService();
             return counter;
         }
 
@@ -511,7 +536,7 @@ namespace GmailAPIHelper
         /// <param name="messageId">'Message Id' to modify.</param>
         /// <param name="labelsToRemove">'Labels' to remove.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        private static void RemoveLabels(GmailService service, string messageId, List<string> labelsToRemove, string userId = "me")
+        private static void RemoveLabels(this GmailService service, string messageId, List<string> labelsToRemove, string userId = "me")
         {
             ModifyMessageRequest mods = new ModifyMessageRequest()
             {

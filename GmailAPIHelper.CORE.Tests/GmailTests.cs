@@ -51,7 +51,7 @@ namespace GmailAPIHelper.CORE.Tests
                 destPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
             Directory.CreateDirectory(destPath);
             File.Copy(sourcePath, destPath + "/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user", overwrite: true);
-            var message = GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.HOME);
+            GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.HOME);
             Directory.Delete(destPath, recursive: true);
         }
 
@@ -66,7 +66,7 @@ namespace GmailAPIHelper.CORE.Tests
                 credPath = Environment.CurrentDirectory + "/" + "token.json";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 credPath = Environment.CurrentDirectory + "/" + "token.json";
-            var message = GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.CUSTOM, credPath);
+            GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.CUSTOM, credPath);
         }
 
         [TestMethod]
@@ -80,6 +80,45 @@ namespace GmailAPIHelper.CORE.Tests
             }
             catch (AssertFailedException ex) { throw ex; }
             catch (ArgumentException) { }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GmailService_Dispose()
+        {
+            //Dispose (service as argument)
+            var service = GmailHelper.GetGmailService(ApplicatioName);
+            Assert.IsNotNull(service);
+            var message = service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+            Assert.IsNotNull(message);
+            GmailHelper.DisposeGmailService(service);
+            try
+            {
+                service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                Assert.Fail("No Object Disposed Exception Thrown");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (ObjectDisposedException ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("Cannot access a disposed object."));
+            }
+
+            //Dispose (service as extension)
+            service = GmailHelper.GetGmailService(ApplicatioName);
+            Assert.IsNotNull(service);
+            message = service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+            Assert.IsNotNull(message);
+            service.DisposeGmailService();
+            try
+            {
+                service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                Assert.Fail("No Object Disposed Exception Thrown");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (ObjectDisposedException ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("Cannot access a disposed object."));
+            }
         }
 
         [TestMethod]
@@ -208,7 +247,6 @@ namespace GmailAPIHelper.CORE.Tests
                     Assert.AreEqual(string.Format("Not a valid 'To' email address. Email: '{0}'", invalidEmail), ex.Message);
                 }
             }
-            
         }
 
         [TestMethod]
