@@ -14,8 +14,9 @@
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Modify message/messages labels addition.</PackageReleaseNotes>
-    <Version>1.1.0</Version>
+    <PackageReleaseNotes>1. Addition - Dispose gmail service method.
+2. Improvement - Dispose gmail service connection utilised in different extension methods.</PackageReleaseNotes>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
