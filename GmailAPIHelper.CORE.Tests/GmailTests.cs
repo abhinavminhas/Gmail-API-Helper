@@ -51,7 +51,7 @@ namespace GmailAPIHelper.CORE.Tests
                 destPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
             Directory.CreateDirectory(destPath);
             File.Copy(sourcePath, destPath + "/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user", overwrite: true);
-            var message = GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.HOME);
+            GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.HOME);
             Directory.Delete(destPath, recursive: true);
         }
 
@@ -66,7 +66,7 @@ namespace GmailAPIHelper.CORE.Tests
                 credPath = Environment.CurrentDirectory + "/" + "token.json";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 credPath = Environment.CurrentDirectory + "/" + "token.json";
-            var message = GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.CUSTOM, credPath);
+            GmailHelper.GetGmailService(ApplicatioName, GmailHelper.TokenPathType.CUSTOM, credPath);
         }
 
         [TestMethod]
