@@ -169,7 +169,7 @@ namespace GmailAPIHelper
                 if (markRead)
                 {
                     var labelToRemove = new List<string> { "UNREAD" };
-                    RemoveLabels(service, requiredLatestMessage.Id, labelToRemove, userId: userId);
+                    service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
                 }
                 service.DisposeGmailService();
                 return requiredLatestMessage;
@@ -212,7 +212,7 @@ namespace GmailAPIHelper
                 if (markRead)
                 {
                     var labelToRemove = new List<string> { "UNREAD" };
-                    RemoveLabels(service, message.Id, labelToRemove, userId: userId);
+                    service.RemoveLabels(message.Id, labelToRemove, userId: userId);
                 }
             }
             service.DisposeGmailService();
@@ -276,7 +276,7 @@ namespace GmailAPIHelper
                     if (markRead)
                     {
                         var labelToRemove = new List<string> { "UNREAD" };
-                        RemoveLabels(service, latestMessage.Id, labelToRemove, userId: userId);
+                        service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
                     }
                 }
                 else
@@ -536,7 +536,7 @@ namespace GmailAPIHelper
         /// <param name="messageId">'Message Id' to modify.</param>
         /// <param name="labelsToRemove">'Labels' to remove.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        private static void RemoveLabels(GmailService service, string messageId, List<string> labelsToRemove, string userId = "me")
+        private static void RemoveLabels(this GmailService service, string messageId, List<string> labelsToRemove, string userId = "me")
         {
             ModifyMessageRequest mods = new ModifyMessageRequest()
             {
