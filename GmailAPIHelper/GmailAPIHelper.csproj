@@ -14,8 +14,8 @@
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Addition - Dispose gmail service method.
-2. Improvement - Dispose gmail service connection utilised in different extension methods.</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Addition - Dispose Gmail service method.
+2. Improvement - Dispose Gmail service connection utilized in different extension methods.</PackageReleaseNotes>
     <Version>1.2.0</Version>
   </PropertyGroup>
 
