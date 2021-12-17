@@ -104,3 +104,33 @@ Gmail API solution is built on .NetStandard 2.0
 12. Once you see '**Received verification code. You may now close this window.**', you can close the browser window and save the contents of '**token.json**' to reuse until credentials are changed or refreshed. The token path parameter in **GmailHelper.GetGmailService()** can be used to save and reuse the generated OAuth token again and again.  
     
     **NOTE:** *Keep contents of '**token.json**' & '**credentials.json**' safe to avoid misuse. Checkout solution tests for more understanding on usage.*
+13. For concurrent usage create a lock object for extension methods in a non-static class.  
+    **Examples:**
+```
+public class Gmail {
+  private static readonly object _lock = new object();
+
+  public static Message GetMessage() {
+    var service = GmailHelper.GetGmailService(applicationName: "GmailAPIHelper");
+    Message message = null;
+    lock(_lock) {
+      message = GmailHelper.GetMessage(service, query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+    }
+    return message;
+  }
+}
+```
+```
+public class Gmail {
+  private static readonly object _lock = new object();
+
+  public static Message GetMessage() {
+    Message message = null;
+    lock(_lock) {
+      message = GmailHelper.GetGmailService(applicationName: "GmailAPIHelper")
+        .GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+    }
+    return message;
+  }
+}
+```
