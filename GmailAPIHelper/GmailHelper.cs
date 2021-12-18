@@ -425,6 +425,48 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Moves Gmail latest message for a specified query criteria from trash to inbox.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Boolean value to confirm if the email for a criteria was moved to trash or not.</returns>
+        public static bool UntrashMessage(this GmailService gmailService, string query, string userId = "me")
+        {
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                var unTrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
+                unTrashMessageRequest.Execute();
+                var labelToAdd = new List<string> { "INBOX" };
+                service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
+                service.DisposeGmailService();
+                return true;
+            }
+            service.DisposeGmailService();
+            return false;
+        }
+
+        /// <summary>
         /// Modifies the labels on the latest message for specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
@@ -532,7 +574,7 @@ namespace GmailAPIHelper
         /// <summary>
         /// Modifies Gmail message for labels to be removed.
         /// </summary>
-        /// <param name="service">Gmail Service.</param>
+        /// <param name="service">Gmail Service initializer value.</param>
         /// <param name="messageId">'Message Id' to modify.</param>
         /// <param name="labelsToRemove">'Labels' to remove.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
@@ -545,5 +587,20 @@ namespace GmailAPIHelper
             service.Users.Messages.Modify(mods, userId, messageId).Execute();
         }
 
+        /// <summary>
+        /// Modifies Gmail message for labels to be added.
+        /// </summary>
+        /// <param name="service">Gmail Service initializer value.</param>
+        /// <param name="messageId">'Message Id' to modify.</param>
+        /// <param name="labelsToAdd">'Labels' to add.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        private static void AddLabels(this GmailService service, string messageId, List<string> labelsToAdd, string userId = "me")
+        {
+            ModifyMessageRequest mods = new ModifyMessageRequest()
+            {
+                AddLabelIds = labelsToAdd
+            };
+            service.Users.Messages.Modify(mods, userId, messageId).Execute();
+        }
     }
 }
