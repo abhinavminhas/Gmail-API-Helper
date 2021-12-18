@@ -328,6 +328,37 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_UntrashMessages()
+        {
+            //Test Data
+            var subject = "UNTRASH DOTNETFRAMEWORK MESSAGES " + Guid.NewGuid().ToString();
+            for (int i = 0; i < 2; i++)
+            {
+                var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+                GmailHelper.GetGmailService(ApplicatioName)
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            }
+            var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'UNTRASH DOTNETFRAMEWORK MESSAGES " + subject + "']in:inbox is:unread");
+            Assert.AreEqual(2, countOfMessagesMovedToTrash);
+
+            //Test Run
+            var countOfMessagesUntrashed = GmailHelper.GetGmailService(ApplicatioName)
+                .UntrashMessages(query: "[from:test.auto.helper@gmail.com][subject:'UNTRASH DOTNETFRAMEWORK MESSAGES " + subject + "']in:trash is:unread");
+            Assert.AreEqual(2, countOfMessagesUntrashed);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_UntrashMessages_NoMatchingEmail()
+        {
+            var countOfMessagesUntrashed = GmailHelper.GetGmailService(ApplicatioName)
+                .UntrashMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.AreEqual(0, countOfMessagesUntrashed);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_ModifyMessage()
         {
             //Test Data

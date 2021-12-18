@@ -467,6 +467,39 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Moves Gmail messages for a specified query criteria from trash to inbox.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Count of emails moved from trash to inbox.</returns>
+        public static int UntrashMessages(this GmailService gmailService, string query, string userId = "me")
+        {
+            int counter = 0;
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var unTrashMessageRequest = service.Users.Messages.Untrash(userId, message.Id);
+                unTrashMessageRequest.Execute();
+                var labelToAdd = new List<string> { "INBOX" };
+                service.AddLabels(message.Id, labelToAdd, userId: userId);
+                counter++;
+            }
+            service.DisposeGmailService();
+            return counter;
+        }
+
+        /// <summary>
         /// Modifies the labels on the latest message for specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
