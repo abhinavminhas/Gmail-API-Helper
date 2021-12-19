@@ -594,6 +594,8 @@ namespace GmailAPIHelper.CORE.Tests
         {
             GmailHelper.GetGmailService(ApplicatioName)
                 .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com]in:inbox is:unread");
+            GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com]in:spam is:unread");
         }
     }
 }
