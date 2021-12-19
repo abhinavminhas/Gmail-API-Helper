@@ -455,8 +455,8 @@ namespace GmailAPIHelper
             if (messages.Count > 0)
             {
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var unTrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
-                unTrashMessageRequest.Execute();
+                var untrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
+                untrashMessageRequest.Execute();
                 var labelToAdd = new List<string> { "INBOX" };
                 service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
                 service.DisposeGmailService();
@@ -489,8 +489,8 @@ namespace GmailAPIHelper
             } while (!string.IsNullOrEmpty(request.PageToken));
             foreach (var message in result)
             {
-                var unTrashMessageRequest = service.Users.Messages.Untrash(userId, message.Id);
-                unTrashMessageRequest.Execute();
+                var untrashMessageRequest = service.Users.Messages.Untrash(userId, message.Id);
+                untrashMessageRequest.Execute();
                 var labelToAdd = new List<string> { "INBOX" };
                 service.AddLabels(message.Id, labelToAdd, userId: userId);
                 counter++;
