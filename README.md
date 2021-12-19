@@ -17,7 +17,8 @@ The package is available and can be downloaded using [nuget.org](https://www.nug
 2. Retrieve latest email message body based on query search.
 3. Send email messages (text/plain, text/html).
 4. Move email message/messages to trash based on query search.
-5. Modify email message/messages labels based on query search.
+5. Untrash email message/messages and move them to inbox based on query search.
+6. Modify email message/messages labels based on query search.
 
     **NOTE:** *Gmail query search operators information can be found **[here](https://support.google.com/mail/answer/7190)**. For examples checkout solution tests.*
 
