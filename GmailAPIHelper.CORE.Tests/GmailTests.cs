@@ -451,6 +451,38 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_ReportSpam()
+        {
+            //Test Data
+            var subject = "REPORT DOTNETCORE MESSAGE AS SPAM " + Guid.NewGuid().ToString();
+            var path = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            var body = File.ReadAllText(path);
+            GmailHelper.GetGmailService(ApplicatioName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+
+            //Test Run
+            var isReportedSpam = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpam(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETCORE MESSAGE AS SPAM " + subject + "']in:inbox is:unread");
+            Assert.IsTrue(isReportedSpam);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_ReportSpam_NoMatchingEmail()
+        {
+            var isReportedSpam = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpam(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.IsFalse(isReportedSpam);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_ModifyMessage()
         {
             //Test Data
