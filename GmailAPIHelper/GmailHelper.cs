@@ -551,7 +551,7 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <returns>Count of emails marked as spam.</returns>
-        public static int ReportSpams(this GmailService gmailService, string query, string userId = "me")
+        public static int ReportSpamMessages(this GmailService gmailService, string query, string userId = "me")
         {
             var mods = new ModifyMessageRequest
             {

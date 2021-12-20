@@ -483,10 +483,10 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_ReportSpams()
+        public void Test_ReportSpamMessages()
         {
             //Test Data
-            var subject = "REPORT DOTNETCORE MESSAGE SPAMS " + Guid.NewGuid().ToString();
+            var subject = "REPORT DOTNETCORE SPAM MESSAGES " + Guid.NewGuid().ToString();
             for (int i = 0; i < 2; i++)
             {
                 var path = "";
@@ -502,18 +502,18 @@ namespace GmailAPIHelper.CORE.Tests
             }
 
             //Test Run
-            var countOfMessagesMarkedAsSpam = GmailHelper.GetGmailService(ApplicatioName)
-                .ReportSpams(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETCORE MESSAGE SPAMS " + subject + "']in:inbox is:unread");
-            Assert.AreEqual(2, countOfMessagesMarkedAsSpam);
+            var countOfMessagesReportedAsSpam = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessages(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETCORE SPAM MESSAGES " + subject + "']in:inbox is:unread");
+            Assert.AreEqual(2, countOfMessagesReportedAsSpam);
         }
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_ReportSpams_NoMatchingEmail()
+        public void Test_ReportSpamMessages_NoMatchingEmail()
         {
-            var countOfMessagesMarkedAsSpam = GmailHelper.GetGmailService(ApplicatioName)
-                .ReportSpams(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
-            Assert.AreEqual(0, countOfMessagesMarkedAsSpam);
+            var countOfMessagesReportedAsSpam = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.AreEqual(0, countOfMessagesReportedAsSpam);
         }
 
         [TestMethod]
