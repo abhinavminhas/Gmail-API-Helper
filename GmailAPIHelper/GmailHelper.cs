@@ -506,7 +506,7 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <returns>Boolean value to confirm if the email for a criteria was moved to trash or not.</returns>
-        public static bool ReportSpam(this GmailService gmailService, string query, string userId = "me")
+        public static bool ReportSpamMessage(this GmailService gmailService, string query, string userId = "me")
         {
             var mods = new ModifyMessageRequest
             {

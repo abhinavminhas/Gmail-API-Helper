@@ -359,27 +359,27 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
-        public void Test_ReportSpam()
+        public void Test_ReportSpamMessage()
         {
             //Test Data
-            var subject = "REPORT DOTNETFRAMEWORK MESSAGE AS SPAM " + Guid.NewGuid().ToString();
+            var subject = "REPORT DOTNETFRAMEWORK SPAM MESSAGE " + Guid.NewGuid().ToString();
             var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
             GmailHelper.GetGmailService(ApplicatioName)
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
 
             //Test Run
-            var isReportedSpam = GmailHelper.GetGmailService(ApplicatioName)
-                .ReportSpam(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETFRAMEWORK MESSAGE AS SPAM " + subject + "']in:inbox is:unread");
-            Assert.IsTrue(isReportedSpam);
+            var isSpamReported = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETFRAMEWORK SPAM MESSAGE " + subject + "']in:inbox is:unread");
+            Assert.IsTrue(isSpamReported);
         }
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
-        public void Test_ReportSpam_NoMatchingEmail()
+        public void Test_ReportSpamMessage_NoMatchingEmail()
         {
-            var isReportedSpam = GmailHelper.GetGmailService(ApplicatioName)
-                .ReportSpam(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
-            Assert.IsFalse(isReportedSpam);
+            var isSpamReported = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.IsFalse(isSpamReported);
         }
 
         [TestMethod]

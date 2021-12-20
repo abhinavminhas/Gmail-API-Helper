@@ -451,10 +451,10 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_ReportSpam()
+        public void Test_ReportSpamMessage()
         {
             //Test Data
-            var subject = "REPORT DOTNETCORE MESSAGE AS SPAM " + Guid.NewGuid().ToString();
+            var subject = "REPORT DOTNETCORE SPAM MESSAGE " + Guid.NewGuid().ToString();
             var path = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
@@ -467,18 +467,18 @@ namespace GmailAPIHelper.CORE.Tests
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
 
             //Test Run
-            var isReportedSpam = GmailHelper.GetGmailService(ApplicatioName)
-                .ReportSpam(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETCORE MESSAGE AS SPAM " + subject + "']in:inbox is:unread");
-            Assert.IsTrue(isReportedSpam);
+            var isSpamReported = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETCORE SPAM MESSAGE " + subject + "']in:inbox is:unread");
+            Assert.IsTrue(isSpamReported);
         }
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_ReportSpam_NoMatchingEmail()
+        public void Test_ReportSpamMessage_NoMatchingEmail()
         {
-            var isReportedSpam = GmailHelper.GetGmailService(ApplicatioName)
-                .ReportSpam(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
-            Assert.IsFalse(isReportedSpam);
+            var isSpamReported = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.IsFalse(isSpamReported);
         }
 
         [TestMethod]
