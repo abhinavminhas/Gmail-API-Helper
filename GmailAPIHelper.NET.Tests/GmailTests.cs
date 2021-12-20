@@ -384,6 +384,34 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_ReportSpams()
+        {
+            //Test Data
+            var subject = "REPORT DOTNETFRAMEWORK MESSAGE SPAMS " + Guid.NewGuid().ToString();
+            for (int i = 0; i < 2; i++)
+            {
+                var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+                GmailHelper.GetGmailService(ApplicatioName)
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            }
+
+            //Test Run
+            var countOfMessagesMarkedAsSpam = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpams(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETFRAMEWORK MESSAGE SPAMS " + subject + "']in:inbox is:unread");
+            Assert.AreEqual(2, countOfMessagesMarkedAsSpam);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_ReportSpams_NoMatchingEmail()
+        {
+            var countOfMessagesMarkedAsSpam = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpams(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.AreEqual(0, countOfMessagesMarkedAsSpam);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_ModifyMessage()
         {
             //Test Data

@@ -545,6 +545,42 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Marks Gmail messages for a specified query criteria as spam.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Count of emails marked as spam.</returns>
+        public static int ReportSpams(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                AddLabelIds = new List<string> { "SPAM" },
+                RemoveLabelIds = new List<string> { "INBOX" }
+            };
+            int counter = 0;
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, message.Id);
+                modifyMessageRequest.Execute();
+                counter++;
+            }
+            service.DisposeGmailService();
+            return counter;
+        }
+
+        /// <summary>
         /// Modifies the labels on the latest message for specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
