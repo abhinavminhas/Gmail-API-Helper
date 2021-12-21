@@ -514,6 +514,41 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_UnspamMessage()
+        {
+            //Test Data
+            var subject = "UNSPAM DOTNETCORE MESSAGE " + Guid.NewGuid().ToString();
+            var path = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            var body = File.ReadAllText(path);
+            GmailHelper.GetGmailService(ApplicatioName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            var isSpamReported = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETCORE MESSAGE " + subject + "']in:inbox is:unread");
+            Assert.IsTrue(isSpamReported);
+
+            //Test Run
+            var isUnspamed = GmailHelper.GetGmailService(ApplicatioName)
+                .UnspamMessage(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETCORE MESSAGE " + subject + "']in:spam is:unread");
+            Assert.IsTrue(isUnspamed);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_UnspamMessage_NoMatchingEmail()
+        {
+            var isUnspamed = GmailHelper.GetGmailService(ApplicatioName)
+                .UnspamMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.IsFalse(isUnspamed);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_ModifyMessage()
         {
             //Test Data
