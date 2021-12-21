@@ -52,7 +52,7 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
         /// <param name="tokenPath">Token path value in case of 'TokenPathType - CUSTOM' value.</param>
-        /// <returns></returns>
+        /// <returns>Credentials file path.</returns>
         private static string SetCredentialPath(TokenPathType tokenPathType, string tokenPath = "")
         {
             string credPath = "";
@@ -90,7 +90,7 @@ namespace GmailAPIHelper
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.
         /// Default value - 'WORKING_DIRECTORY'.</param>
         /// <param name="tokenPath">'token.json' path to save generated token from gmail authentication/authorization. 
-        /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is users folder.</param>
+        /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is blank, required for TokenPathType - 'CUSTOM'.</param>
         /// <returns>Gmail Service.</returns>
         public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType = TokenPathType.WORKING_DIRECTORY, string tokenPath = "")
         {
@@ -138,7 +138,7 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="markRead">Boolean value to mark retrieved latest message as read. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Email message.</returns>
+        /// <returns>Email message matching the search criteria.</returns>
         public static Message GetMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
         {
             var service = gmailService;
@@ -359,7 +359,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Boolean value to confirm if the email for a criteria was moved to trash or not.</returns>
+        /// <returns>Boolean value to confirm if the email message for a criteria was moved to trash or not.</returns>
         public static bool MoveMessageToTrash(this GmailService gmailService, string query, string userId = "me")
         {
             var service = gmailService;
@@ -399,7 +399,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Count of emails moved to trash.</returns>
+        /// <returns>Count of email messages moved to trash.</returns>
         public static int MoveMessagesToTrash(this GmailService gmailService, string query, string userId = "me")
         {
             int counter = 0;
@@ -430,7 +430,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Boolean value to confirm if the email for a criteria was moved to trash or not.</returns>
+        /// <returns>Boolean value to confirm if the email message for a criteria was untrashed and moved to inbox or not.</returns>
         public static bool UntrashMessage(this GmailService gmailService, string query, string userId = "me")
         {
             var service = gmailService;
@@ -472,7 +472,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Count of emails moved from trash to inbox.</returns>
+        /// <returns>Count of email messages untrashed and moved to inbox.</returns>
         public static int UntrashMessages(this GmailService gmailService, string query, string userId = "me")
         {
             int counter = 0;
@@ -500,12 +500,12 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Mark Gmail latest message for a specified query criteria as spam.
+        /// Marks Gmail latest message for a specified query criteria as spam.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Boolean value to confirm if the email for a criteria was moved to trash or not.</returns>
+        /// <returns>Boolean value to confirm if the email message for a criteria was marked as spam or not.</returns>
         public static bool ReportSpamMessage(this GmailService gmailService, string query, string userId = "me")
         {
             var mods = new ModifyMessageRequest
@@ -550,7 +550,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Count of emails marked as spam.</returns>
+        /// <returns>Count of email messages marked as spam.</returns>
         public static int ReportSpamMessages(this GmailService gmailService, string query, string userId = "me")
         {
             var mods = new ModifyMessageRequest
@@ -589,7 +589,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
-        /// <returns>Boolean value to confirm if the email labels were modified or not.</returns>
+        /// <returns>Boolean value to confirm if the email message labels were modified or not.</returns>
         public static bool ModifyMessage(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
         {
             if (labelsToAdd == null && labelsToRemove == null)
@@ -639,7 +639,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
-        /// <returns>Count of emails modified.</returns>
+        /// <returns>Count of email messages with labels modified.</returns>
         public static int ModifyMessages(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
         {
             if (labelsToAdd == null && labelsToRemove == null)
@@ -675,7 +675,7 @@ namespace GmailAPIHelper
         /// Checks email format.
         /// </summary>
         /// <param name="email">Email to validate.</param>
-        /// <returns>Boolean value for is valid email or not.</returns>
+        /// <returns>Boolean value to confirm if email Id format is valid or not.</returns>
         private static bool IsValidEmail(this string email)
         {
             string pattern = @"^[^0-9](?!\.)(""([^""\r\\]|\\[""\r\\])*""|"
