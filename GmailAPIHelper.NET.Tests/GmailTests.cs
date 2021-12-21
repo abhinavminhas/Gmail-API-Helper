@@ -436,6 +436,37 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_UnspamMessages()
+        {
+            //Test Data
+            var subject = "UNSPAM DOTNETFRAMEWORK MESSAGES " + Guid.NewGuid().ToString();
+            for (int i = 0; i < 2; i++)
+            {
+                var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+                GmailHelper.GetGmailService(ApplicatioName)
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            }
+            var countOfMessagesReportedAsSpam = GmailHelper.GetGmailService(ApplicatioName)
+                .ReportSpamMessages(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETFRAMEWORK MESSAGES " + subject + "']in:inbox is:unread");
+            Assert.AreEqual(2, countOfMessagesReportedAsSpam);
+
+            //Test Run
+            var countOfMessagesUnspamed = GmailHelper.GetGmailService(ApplicatioName)
+                .UnspamMessages(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETFRAMEWORK MESSAGES " + subject + "']in:spam is:unread");
+            Assert.AreEqual(2, countOfMessagesUnspamed);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_UnspamMessages_NoMatchingEmail()
+        {
+            var countOfMessagesUnspamed = GmailHelper.GetGmailService(ApplicatioName)
+                .UnspamMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.AreEqual(0, countOfMessagesUnspamed);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_ModifyMessage()
         {
             //Test Data
