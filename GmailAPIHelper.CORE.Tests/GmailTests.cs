@@ -89,8 +89,6 @@ namespace GmailAPIHelper.CORE.Tests
             //Dispose (service as argument)
             var service = GmailHelper.GetGmailService(ApplicatioName);
             Assert.IsNotNull(service);
-            var message = service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
-            Assert.IsNotNull(message);
             GmailHelper.DisposeGmailService(service);
             try
             {
@@ -106,8 +104,6 @@ namespace GmailAPIHelper.CORE.Tests
             //Dispose (service as extension)
             service = GmailHelper.GetGmailService(ApplicatioName);
             Assert.IsNotNull(service);
-            message = service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
-            Assert.IsNotNull(message);
             service.DisposeGmailService();
             try
             {
