@@ -6,7 +6,7 @@ namespace GmailAPIHelper.NET.Tests
     public class TestBase
     {
         private TestContext _testContextInstance;
-        protected readonly string ApplicatioName = "GmailAPIHelper";
+        protected readonly string ApplicationName = "GmailAPIHelper";
 
         public TestContext TestContext
         {
