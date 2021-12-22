@@ -619,6 +619,41 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_MarkMessagesAsRead()
+        {
+            //Test Data
+            var subject = "MARK DOTNETCORE MESSAGES AS READ " + Guid.NewGuid().ToString();
+            for (int i = 0; i < 2; i++)
+            {
+                var path = "";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+                var body = File.ReadAllText(path);
+                GmailHelper.GetGmailService(ApplicatioName)
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            }
+
+            //Test Run
+            var countOfMessagesMarkedAsRead = GmailHelper.GetGmailService(ApplicatioName)
+                .MarkMessagesAsRead(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETCORE MESSAGES AS READ " + subject + "']in:inbox is:unread");
+            Assert.AreEqual(2, countOfMessagesMarkedAsRead);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_MarkMessagesAsRead_NoMatchingEmail()
+        {
+            var countOfMessagesMarkedAsRead = GmailHelper.GetGmailService(ApplicatioName)
+                .MarkMessagesAsRead(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.AreEqual(0, countOfMessagesMarkedAsRead);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_ModifyMessage()
         {
             //Test Data
@@ -736,6 +771,10 @@ namespace GmailAPIHelper.CORE.Tests
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETCORE MESSAGE AS READ']in:inbox is:read");
             GmailHelper.GetGmailService(ApplicatioName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETFRAMEWORK MESSAGE AS READ']in:inbox is:read");
+            GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessagesToTrash(query: "[subject:'MARK DOTNETCORE MESSAGES AS READ']in:inbox is:read");
+            GmailHelper.GetGmailService(ApplicatioName)
+                .MoveMessagesToTrash(query: "[subject:'MARK DOTNETFRAMEWORK MESSAGES AS READ']in:inbox is:read");
         }
     }
 }
