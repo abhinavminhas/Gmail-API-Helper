@@ -333,7 +333,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MoveMessageToTrash_NoMatchingEmail()
         {
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .MoveMessageToTrash(query: EmailDoesNotExistsSearchQuery);
             Assert.IsFalse(isMovedToTrash);
         }
 
@@ -368,7 +368,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MoveMessagesToTrash_NoMatchingEmail()
         {
             var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .MoveMessagesToTrash(query: EmailDoesNotExistsSearchQuery);
             Assert.AreEqual(0, countOfMessagesMovedToTrash);
         }
 
@@ -403,7 +403,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_UntrashMessage_NoMatchingEmail()
         {
             var isUntrashed = GmailHelper.GetGmailService(ApplicationName)
-                .UntrashMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .UntrashMessage(query: EmailDoesNotExistsSearchQuery);
             Assert.IsFalse(isUntrashed);
         }
 
@@ -441,7 +441,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_UntrashMessages_NoMatchingEmail()
         {
             var countOfMessagesUntrashed = GmailHelper.GetGmailService(ApplicationName)
-                .UntrashMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .UntrashMessages(query: EmailDoesNotExistsSearchQuery);
             Assert.AreEqual(0, countOfMessagesUntrashed);
         }
 
@@ -473,7 +473,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_ReportSpamMessage_NoMatchingEmail()
         {
             var isSpamReported = GmailHelper.GetGmailService(ApplicationName)
-                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .ReportSpamMessage(query: EmailDoesNotExistsSearchQuery);
             Assert.IsFalse(isSpamReported);
         }
 
@@ -508,7 +508,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_ReportSpamMessages_NoMatchingEmail()
         {
             var countOfMessagesReportedAsSpam = GmailHelper.GetGmailService(ApplicationName)
-                .ReportSpamMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .ReportSpamMessages(query: EmailDoesNotExistsSearchQuery);
             Assert.AreEqual(0, countOfMessagesReportedAsSpam);
         }
 
@@ -543,7 +543,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_UnspamMessage_NoMatchingEmail()
         {
             var isUnspamed = GmailHelper.GetGmailService(ApplicationName)
-                .UnspamMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .UnspamMessage(query: EmailDoesNotExistsSearchQuery);
             Assert.IsFalse(isUnspamed);
         }
 
@@ -581,7 +581,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_UnspamMessages_NoMatchingEmail()
         {
             var countOfMessagesUnspamed = GmailHelper.GetGmailService(ApplicationName)
-                .UnspamMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .UnspamMessages(query: EmailDoesNotExistsSearchQuery);
             Assert.AreEqual(0, countOfMessagesUnspamed);
         }
 
@@ -613,7 +613,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MarkMessageAsRead_NoMatchingEmail()
         {
             var isMarkedRead = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessageAsRead(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .MarkMessageAsRead(query: EmailDoesNotExistsSearchQuery);
             Assert.IsFalse(isMarkedRead);
         }
 
@@ -648,7 +648,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MarkMessagesAsRead_NoMatchingEmail()
         {
             var countOfMessagesMarkedAsRead = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessagesAsRead(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .MarkMessagesAsRead(query: EmailDoesNotExistsSearchQuery);
             Assert.AreEqual(0, countOfMessagesMarkedAsRead);
         }
 
@@ -683,7 +683,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MarkMessageAsUnread_NoMatchingEmail()
         {
             var isMarkedUnread = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessageAsUnread(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .MarkMessageAsUnread(query: EmailDoesNotExistsSearchQuery);
             Assert.IsFalse(isMarkedUnread);
         }
 
@@ -721,7 +721,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_MarkMessagesAsUnread_NoMatchingEmail()
         {
             var countOfMessagesMarkedAsUnread = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessagesAsUnread(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .MarkMessagesAsUnread(query: EmailDoesNotExistsSearchQuery);
             Assert.AreEqual(0, countOfMessagesMarkedAsUnread);
         }
 
@@ -761,7 +761,7 @@ namespace GmailAPIHelper.CORE.Tests
             try
             {
                 GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .ModifyMessage(query: EmailDoesNotExistsSearchQuery);
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
@@ -773,7 +773,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_ModifyMessage_NoMatchingEmail()
         {
             var isModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread", labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", }, labelsToRemove: new List<string>() { "UNREAD" });
+                .ModifyMessage(query: EmailDoesNotExistsSearchQuery, labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", }, labelsToRemove: new List<string>() { "UNREAD" });
             Assert.IsFalse(isModified);
         }
 
@@ -816,7 +816,7 @@ namespace GmailAPIHelper.CORE.Tests
             try
             {
                 GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+                .ModifyMessages(query: EmailDoesNotExistsSearchQuery);
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
