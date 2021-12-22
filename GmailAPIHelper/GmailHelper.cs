@@ -90,7 +90,7 @@ namespace GmailAPIHelper
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.
         /// Default value - 'WORKING_DIRECTORY'.</param>
         /// <param name="tokenPath">'token.json' path to save generated token from gmail authentication/authorization. 
-        /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is blank, required for TokenPathType - 'CUSTOM'.</param>
+        /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is blank, required for 'TokenPathType - CUSTOM'.</param>
         /// <returns>Gmail Service.</returns>
         public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType = TokenPathType.WORKING_DIRECTORY, string tokenPath = "")
         {
@@ -662,7 +662,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Modifies the labels on the latest message for specified query criteria.
+        /// Modifies the labels on the latest message for a specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
@@ -712,7 +712,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Modifies the labels on the messages for specified query criteria.
+        /// Modifies the labels on the messages for a specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
