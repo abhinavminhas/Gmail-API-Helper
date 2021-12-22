@@ -520,6 +520,34 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_MarkMessagesAsUnread()
+        {
+            //Test Data
+            var subject = "MARK DOTNETFRAMEWORK MESSAGE AS UNREAD " + Guid.NewGuid().ToString();
+            var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+            GmailHelper.GetGmailService(ApplicatioName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            var isMarkedRead = GmailHelper.GetGmailService(ApplicatioName)
+                .MarkMessageAsRead(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETFRAMEWORK MESSAGE AS UNREAD  " + subject + "']in:inbox is:unread");
+            Assert.IsTrue(isMarkedRead);
+
+            //Test Run
+            var isMarkedUnread = GmailHelper.GetGmailService(ApplicatioName)
+                .MarkMessageAsUnread(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETFRAMEWORK MESSAGE AS UNREAD  " + subject + "']in:inbox is:read");
+            Assert.IsTrue(isMarkedUnread);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_MarkMessagesAsUnread_NoMatchingEmail()
+        {
+            var isMarkedUnread = GmailHelper.GetGmailService(ApplicatioName)
+                .MarkMessageAsUnread(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:unread");
+            Assert.IsFalse(isMarkedUnread);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_ModifyMessage()
         {
             //Test Data
