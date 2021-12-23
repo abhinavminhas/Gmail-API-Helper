@@ -143,6 +143,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -152,7 +153,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -193,6 +193,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -202,7 +203,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -231,6 +231,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -240,7 +241,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -364,6 +364,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -373,7 +374,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -435,6 +435,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -444,7 +445,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -515,6 +515,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -524,7 +525,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -596,6 +596,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -605,7 +606,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -676,6 +676,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -685,7 +686,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -755,6 +755,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -764,7 +765,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -840,6 +840,7 @@ namespace GmailAPIHelper
                 mods.RemoveLabelIds = labelsToRemove;
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -849,7 +850,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
