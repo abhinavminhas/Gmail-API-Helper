@@ -696,13 +696,5 @@ namespace GmailAPIHelper.NET.Tests
             GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETFRAMEWORK MESSAGES AS READ']in:inbox is:read");
         }
-
-        [TestMethod]
-        [TestCategory("TestCleanup")]
-        public void Test()
-        {
-            var labels = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessageLabels(query: "subject:READ EMAIL WITH ATTACHMENTS");
-        }
     }
 }
