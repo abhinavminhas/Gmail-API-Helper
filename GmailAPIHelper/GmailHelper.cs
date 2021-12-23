@@ -52,7 +52,7 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
         /// <param name="tokenPath">Token path value in case of 'TokenPathType - CUSTOM' value.</param>
-        /// <returns></returns>
+        /// <returns>Credentials file path.</returns>
         private static string SetCredentialPath(TokenPathType tokenPathType, string tokenPath = "")
         {
             string credPath = "";
@@ -90,7 +90,7 @@ namespace GmailAPIHelper
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.
         /// Default value - 'WORKING_DIRECTORY'.</param>
         /// <param name="tokenPath">'token.json' path to save generated token from gmail authentication/authorization. 
-        /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is users folder.</param>
+        /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is blank, required for 'TokenPathType - CUSTOM'.</param>
         /// <returns>Gmail Service.</returns>
         public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType = TokenPathType.WORKING_DIRECTORY, string tokenPath = "")
         {
@@ -113,7 +113,7 @@ namespace GmailAPIHelper
                     new FileDataStore(credPath, true)).Result;
             }
             //Create Gmail API service.
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             var service = new GmailService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
@@ -138,7 +138,7 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="markRead">Boolean value to mark retrieved latest message as read. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Email message.</returns>
+        /// <returns>Email message matching the search criteria.</returns>
         public static Message GetMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
         {
             var service = gmailService;
@@ -359,7 +359,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Boolean value to confirm if the email for a criteria was moved to trash or not.</returns>
+        /// <returns>Boolean value to confirm if the email message for the criteria was moved to trash or not.</returns>
         public static bool MoveMessageToTrash(this GmailService gmailService, string query, string userId = "me")
         {
             var service = gmailService;
@@ -399,7 +399,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Count of emails moved to trash.</returns>
+        /// <returns>Count of email messages moved to trash.</returns>
         public static int MoveMessagesToTrash(this GmailService gmailService, string query, string userId = "me")
         {
             int counter = 0;
@@ -430,7 +430,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Boolean value to confirm if the email for a criteria was moved to trash or not.</returns>
+        /// <returns>Boolean value to confirm if the email message for the criteria was untrashed and moved to inbox or not.</returns>
         public static bool UntrashMessage(this GmailService gmailService, string query, string userId = "me")
         {
             var service = gmailService;
@@ -472,7 +472,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        /// <returns>Count of emails moved from trash to inbox.</returns>
+        /// <returns>Count of email messages untrashed and moved to inbox.</returns>
         public static int UntrashMessages(this GmailService gmailService, string query, string userId = "me")
         {
             int counter = 0;
@@ -500,7 +500,327 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Modifies the labels on the latest message for specified query criteria.
+        /// Marks Gmail latest message for a specified query criteria as spam.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Boolean value to confirm if the email message for the criteria was marked as spam or not.</returns>
+        public static bool ReportSpamMessage(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                AddLabelIds = new List<string> { "SPAM" },
+                RemoveLabelIds = new List<string> { "INBOX" }
+            };
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                service.DisposeGmailService();
+                return true;
+            }
+            service.DisposeGmailService();
+            return false;
+        }
+
+        /// <summary>
+        /// Marks Gmail messages for a specified query criteria as spam.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Count of email messages marked as spam.</returns>
+        public static int ReportSpamMessages(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                AddLabelIds = new List<string> { "SPAM" },
+                RemoveLabelIds = new List<string> { "INBOX" }
+            };
+            int counter = 0;
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, message.Id);
+                modifyMessageRequest.Execute();
+                counter++;
+            }
+            service.DisposeGmailService();
+            return counter;
+        }
+
+        /// <summary>
+        /// Marks Gmail latest message for a specified query criteria as not spam and moves to inbox.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Boolean value to confirm if the email message for the criteria was marked as not spam or not.</returns>
+        public static bool UnspamMessage(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                AddLabelIds = new List<string> { "INBOX" },
+                RemoveLabelIds = new List<string> { "SPAM" }
+            };
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                service.DisposeGmailService();
+                return true;
+            }
+            service.DisposeGmailService();
+            return false;
+        }
+
+        /// <summary>
+        /// Marks Gmail messages for a specified query criteria as not spam and moves them to inbox.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Count of email messages marked as not spam.</returns>
+        public static int UnspamMessages(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                AddLabelIds = new List<string> { "INBOX" },
+                RemoveLabelIds = new List<string> { "SPAM" }
+            };
+            int counter = 0;
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, message.Id);
+                modifyMessageRequest.Execute();
+                counter++;
+            }
+            service.DisposeGmailService();
+            return counter;
+        }
+
+        /// <summary>
+        /// Marks Gmail latest message for a specified query criteria as read.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Boolean value to confirm if the email message for the criteria was marked as read or not.</returns>
+        public static bool MarkMessageAsRead(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                RemoveLabelIds = new List<string> { "UNREAD" }
+            };
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                service.DisposeGmailService();
+                return true;
+            }
+            service.DisposeGmailService();
+            return false;
+        }
+
+        /// <summary>
+        /// Marks Gmail messages for a specified query criteria as read.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Count of email messages marked as read.</returns>
+        public static int MarkMessagesAsRead(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                RemoveLabelIds = new List<string> { "UNREAD" }
+            };
+            int counter = 0;
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, message.Id);
+                modifyMessageRequest.Execute();
+                counter++;
+            }
+            service.DisposeGmailService();
+            return counter;
+        }
+
+        /// <summary>
+        /// Marks Gmail latest message for a specified query criteria as unread.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Boolean value to confirm if the email message for the criteria was marked as unread or not.</returns>
+        public static bool MarkMessageAsUnread(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                AddLabelIds = new List<string> { "UNREAD" }
+            };
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            List<Message> messages = new List<Message>();
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                service.DisposeGmailService();
+                return true;
+            }
+            service.DisposeGmailService();
+            return false;
+        }
+
+        /// <summary>
+        /// Marks Gmail messages for a specified query criteria as unread.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Count of email messages marked as unread.</returns>
+        public static int MarkMessagesAsUnread(this GmailService gmailService, string query, string userId = "me")
+        {
+            var mods = new ModifyMessageRequest
+            {
+                AddLabelIds = new List<string> { "UNREAD" }
+            };
+            int counter = 0;
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, message.Id);
+                modifyMessageRequest.Execute();
+                counter++;
+            }
+            service.DisposeGmailService();
+            return counter;
+        }
+
+        /// <summary>
+        /// Modifies the labels on the latest message for a specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
@@ -508,7 +828,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
-        /// <returns>Boolean value to confirm if the email labels were modified or not.</returns>
+        /// <returns>Boolean value to confirm if the email message labels for the criteria were modified or not.</returns>
         public static bool ModifyMessage(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
         {
             if (labelsToAdd == null && labelsToRemove == null)
@@ -550,7 +870,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Modifies the labels on the messages for specified query criteria.
+        /// Modifies the labels on the messages for a specified query criteria.
         /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
@@ -558,7 +878,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
-        /// <returns>Count of emails modified.</returns>
+        /// <returns>Count of email messages with labels modified.</returns>
         public static int ModifyMessages(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
         {
             if (labelsToAdd == null && labelsToRemove == null)
@@ -594,7 +914,7 @@ namespace GmailAPIHelper
         /// Checks email format.
         /// </summary>
         /// <param name="email">Email to validate.</param>
-        /// <returns>Boolean value for is valid email or not.</returns>
+        /// <returns>Boolean value to confirm if email Id format is valid or not.</returns>
         private static bool IsValidEmail(this string email)
         {
             string pattern = @"^[^0-9](?!\.)(""([^""\r\\]|\\[""\r\\])*""|"

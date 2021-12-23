@@ -14,8 +14,10 @@
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Addition - Untrash email message/messages and move them to inbox.</PackageReleaseNotes>
-    <Version>1.3.0</Version>
+    <PackageReleaseNotes>1. Addition - Spam/Unspam email message/messages based on query search.
+2. Addition - Mark email message/messages read/unread based on query search.
+3. Gmail Helper documentation updates.</PackageReleaseNotes>
+    <Version>1.4.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

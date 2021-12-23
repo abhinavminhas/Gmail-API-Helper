@@ -5,7 +5,7 @@
 ![maintainer](https://img.shields.io/badge/Creator/Maintainer-abhinavminhas-e65c00)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain useful extension methods in .NET.
+The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain useful extension methods in .NET using Gmail search query.
 
 ## Download
 The package is available and can be downloaded using [nuget.org](https://www.nuget.org/) package manager.  
@@ -13,14 +13,18 @@ The package is available and can be downloaded using [nuget.org](https://www.nug
 
 ## Features
 
-1. Retrieve email message/messages.
+1. Retrieve email message/messages based on query search.
 2. Retrieve latest email message body based on query search.
 3. Send email messages (text/plain, text/html).
-4. Move email message/messages to trash based on query search.
-5. Untrash email message/messages and move them to inbox based on query search.
-6. Modify email message/messages labels based on query search.
+4. Trash/Untrash email message/messages based on query search.
+5. Spam/Unspam email message/messages based on query search.
+6. Mark email message/messages read/unread based on query search.
+7. Modify email message/messages labels based on query search.
 
-    **NOTE:** *Gmail query search operators information can be found **[here](https://support.google.com/mail/answer/7190)**. For examples checkout solution tests.*
+    **NOTE:** 1. *Gmail query search operators information can be found **[here](https://support.google.com/mail/answer/7190)**. For examples checkout solution tests.*  
+    &emsp;&emsp;&emsp; 2. *You can also use Gmail 'Search mail' search criteria option to create search query string.*  
+    &emsp;&emsp;&emsp; <img src=https://user-images.githubusercontent.com/17473202/147176323-b4eb4963-1f5d-46e5-9fc1-bef4e8aaa2d2.png />  
+    &emsp;&emsp;&emsp; 3. *Delete scope requires fully verified app, use move to trash instead.*
 
 ## .NET Supported Versions
 
