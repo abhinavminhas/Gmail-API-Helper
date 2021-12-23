@@ -128,6 +128,15 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessage_NoMatchingEmail()
+        {
+            var message = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessage(query: EmailDoesNotExistsSearchQuery);
+            Assert.IsNull(message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetMessages()
         {
             var messages = GmailHelper.GetGmailService(ApplicationName)
@@ -137,11 +146,11 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_GetMessage_NoMatchingEmail()
+        public void Test_GetMessages_NoMatchingEmail()
         {
-            var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:read", markRead: true);
-            Assert.IsNull(message);
+            var messages = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessages(query: EmailDoesNotExistsSearchQuery);
+            Assert.AreEqual(0, messages.Count);
         }
 
         [TestMethod]

@@ -76,6 +76,15 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_GetMessage_NoMatchingEmail()
+        {
+            var message = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessage(query: EmailDoesNotExistsSearchQuery);
+            Assert.IsNull(message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_GetMessages()
         {
             var messages = GmailHelper.GetGmailService(ApplicationName)
@@ -85,11 +94,11 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
-        public void Test_GetMessage_NoMatchingEmail()
+        public void Test_GetMessages_NoMatchingEmail()
         {
-            var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:read", markRead: true);
-            Assert.IsNull(message);
+            var messages = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessages(query: EmailDoesNotExistsSearchQuery);
+            Assert.AreEqual(0, messages.Count);
         }
 
         [TestMethod]
@@ -686,6 +695,14 @@ namespace GmailAPIHelper.NET.Tests
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETCORE MESSAGES AS READ']in:inbox is:read");
             GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETFRAMEWORK MESSAGES AS READ']in:inbox is:read");
+        }
+
+        [TestMethod]
+        [TestCategory("TestCleanup")]
+        public void Test()
+        {
+            var labels = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessageLabels(query: "subject:READ EMAIL WITH ATTACHMENTS");
         }
     }
 }
