@@ -947,8 +947,8 @@ namespace GmailAPIHelper
                     foreach (var labelId in latestMessage.LabelIds)
                     {
                         var getLabelsRequest = service.Users.Labels.Get(userId, labelId);
-                        var label = getLabelsRequest.Execute();
-                        labels.Add(label);
+                        var getLabelsResponse = getLabelsRequest.Execute();
+                        labels.Add(getLabelsResponse);
                     }
                 }
                 service.DisposeGmailService();
@@ -959,6 +959,26 @@ namespace GmailAPIHelper
                 service.DisposeGmailService();
                 return labels;
             }
+        }
+
+        /// <summary>
+        /// Lists all labels in the Gmail user's mailbox.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Lists of Gmail user's mailbox labels.</returns>
+        public static List<Label> ListUserLabels(this GmailService gmailService, string userId = "me")
+        {
+            var service = gmailService;
+            List<Label> labels = new List<Label>();
+            var listLabelsRequest = service.Users.Labels.List(userId);
+            var listLabelsResponse = listLabelsRequest.Execute();
+            foreach (var label in listLabelsResponse.Labels)
+            {
+                labels.Add(label);
+            }
+            service.DisposeGmailService();
+            return labels;
         }
 
         /// <summary>

@@ -913,6 +913,23 @@ namespace GmailAPIHelper.CORE.Tests
         }
 
         [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_ListUserLabels()
+        {
+            var userLabels = GmailHelper.GetGmailService(ApplicationName).ListUserLabels();
+            Assert.IsFalse(userLabels.Count == 0);
+            var systemLabels = userLabels.Where(x => x.Type.Equals("system"));
+            Assert.IsTrue(systemLabels.Count() >= 14);
+            var inboxLabel = userLabels.FirstOrDefault(x => x.Name.Equals("INBOX"));
+            Assert.IsNotNull(inboxLabel);
+            Assert.AreEqual("INBOX", inboxLabel.Id);
+            Assert.AreEqual(null, inboxLabel.LabelListVisibility);
+            Assert.AreEqual(null, inboxLabel.MessageListVisibility);
+            Assert.AreEqual("INBOX", inboxLabel.Name);
+            Assert.AreEqual("system", inboxLabel.Type);
+        }
+
+        [TestMethod]
         [TestCategory("TestCleanup")]
         public void Inbox_CleanUp()
         {
