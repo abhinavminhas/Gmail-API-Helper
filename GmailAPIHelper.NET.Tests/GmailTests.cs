@@ -770,7 +770,7 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_CreateUserLabel()
         {
             //Argument set 1
-            var labelName = "LABEL-NET-1";
+            var labelName = "L-NET-1 " + Guid.NewGuid().ToString();
             var userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName);
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
@@ -781,7 +781,7 @@ namespace GmailAPIHelper.NET.Tests
             Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
             Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
             //Argument set 2
-            labelName = "LABEL-NET-2";
+            labelName = "L-NET-2 " + Guid.NewGuid().ToString();
             userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_HIDE, messageListVisibility: GmailHelper.MessageListVisibility.HIDE);
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
@@ -792,7 +792,7 @@ namespace GmailAPIHelper.NET.Tests
             Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
             Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
             //Argument set 3
-            labelName = "LABEL-NET-3";
+            labelName = "L-NET-3 " + Guid.NewGuid().ToString();
             userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_SHOW_IF_UNREAD);
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
@@ -803,7 +803,7 @@ namespace GmailAPIHelper.NET.Tests
             Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
             Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
             //Argument set 4
-            labelName = "LABEL-NET-4";
+            labelName = "L-NET-4 " + Guid.NewGuid().ToString();
             userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName, labelBackgroundColor: "#ff7537", labelTextColor: "#1c4587");
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));

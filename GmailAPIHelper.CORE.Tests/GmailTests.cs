@@ -939,7 +939,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_CreateUserLabel()
         {
             //Argument set 1
-            var labelName = "LABEL-CORE-1";
+            var labelName = "L-CORE-1 " + Guid.NewGuid().ToString();
             var userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName);
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
@@ -950,7 +950,7 @@ namespace GmailAPIHelper.CORE.Tests
             Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
             Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
             //Argument set 2
-            labelName = "LABEL-CORE-2";
+            labelName = "L-CORE-2 " + Guid.NewGuid().ToString();
             userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_HIDE, messageListVisibility: GmailHelper.MessageListVisibility.HIDE);
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
@@ -961,7 +961,7 @@ namespace GmailAPIHelper.CORE.Tests
             Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
             Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
             //Argument set 3
-            labelName = "LABEL-CORE-3";
+            labelName = "L-CORE-3 " + Guid.NewGuid().ToString();
             userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_SHOW_IF_UNREAD);
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
@@ -972,7 +972,7 @@ namespace GmailAPIHelper.CORE.Tests
             Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
             Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
             //Argument set 4
-            labelName = "LABEL-CORE-4";
+            labelName = "L-CORE-4 " + Guid.NewGuid().ToString();
             userLabel = GmailHelper.GetGmailService(ApplicationName)
                 .CreateUserLabel(labelName, labelBackgroundColor: "#ff7537", labelTextColor: "#1c4587");
             Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
