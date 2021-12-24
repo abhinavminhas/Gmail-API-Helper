@@ -1036,6 +1036,33 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Immediately and permanently deletes the specified label and removes it from any messages and threads that it is applied to.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="labelName">Label name value.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Boolean value to confirm if the label was deleted or not.</returns>
+        public static bool DeleteUserLabel(this GmailService gmailService, string labelName, string userId = "me")
+        {
+            var service = gmailService;
+            var listLabelRequest = service.Users.Labels.List(userId);
+            var listLabelResponse = listLabelRequest.Execute();
+            var label = listLabelResponse.Labels.FirstOrDefault(x => x.Name.Equals(labelName));
+            if (label != null)
+            {
+                var deleteLabelRequest = service.Users.Labels.Delete(userId, label.Id);
+                deleteLabelRequest.Execute();
+                service.DisposeGmailService();
+                return true;
+            }
+            else
+            {
+                service.DisposeGmailService();
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Lists all labels in the Gmail user's mailbox.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
