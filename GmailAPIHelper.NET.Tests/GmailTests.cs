@@ -163,7 +163,7 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_GetLatestMessage_NoMatchingEmail()
         {
             var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:read", markRead: true);
+                .GetLatestMessage(query: EmailDoesNotExistsSearchQuery, markRead: true);
             Assert.IsNull(message);
         }
 
@@ -676,7 +676,7 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_ModifyMessages_NoMatchingEmail()
         {
             var countOfMessagesModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox", labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", });
+                .ModifyMessages(query: EmailDoesNotExistsSearchQuery, labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", });
             Assert.AreEqual(0, countOfMessagesModified);
         }
 
