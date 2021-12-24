@@ -5,7 +5,7 @@
 ![maintainer](https://img.shields.io/badge/Creator/Maintainer-abhinavminhas-e65c00)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain useful extension methods in .NET using Gmail search query.
+The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain useful extension methods in .NET to retrieve/send/manipulate email messages and labels. The solution uses 'Gmail Search Query' to retrieve/manipulate required email messages.
 
 ## Download
 The package is available and can be downloaded using [nuget.org](https://www.nuget.org/) package manager.  
@@ -20,6 +20,7 @@ The package is available and can be downloaded using [nuget.org](https://www.nug
 5. Spam/Unspam email message/messages based on query search.
 6. Mark email message/messages read/unread based on query search.
 7. Modify email message/messages labels based on query search.
+8. Retrieve latest email message labels based on query search.
 
     **NOTE:** 1. *Gmail query search operators information can be found **[here](https://support.google.com/mail/answer/7190)**. For examples checkout solution tests.*  
     &emsp;&emsp;&emsp; 2. *You can also use Gmail 'Search mail' search criteria option to create search query string.*  
