@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace GmailAPIHelper.NET.Tests
 {
@@ -677,6 +678,69 @@ namespace GmailAPIHelper.NET.Tests
             var countOfMessagesModified = GmailHelper.GetGmailService(ApplicationName)
                 .ModifyMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox", labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", });
             Assert.AreEqual(0, countOfMessagesModified);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_GetMessageLabels()
+        {
+            //Test Data
+            var subject = "GET DOTNETFRAMEWORK MESSAGE LABELS " + Guid.NewGuid().ToString();
+            var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+            GmailHelper.GetGmailService(ApplicationName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            var isModified = GmailHelper.GetGmailService(ApplicationName)
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'GET DOTNETFRAMEWORK MESSAGE LABELS " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "STARRED", });
+            Assert.IsTrue(isModified);
+
+            //Test Run
+            var labels = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessageLabels(query: "GET DOTNETFRAMEWORK MESSAGE LABELS " + subject + "']in:inbox");
+            Assert.AreEqual(5, labels.Count);
+            var importantLabel = labels.FirstOrDefault(x => x.Name.Equals("IMPORTANT"));
+            Assert.IsNotNull(importantLabel);
+            Assert.AreEqual("IMPORTANT", importantLabel.Id);
+            Assert.AreEqual("labelHide", importantLabel.LabelListVisibility);
+            Assert.AreEqual("hide", importantLabel.MessageListVisibility);
+            Assert.AreEqual("IMPORTANT", importantLabel.Name);
+            Assert.AreEqual("system", importantLabel.Type);
+            var starredLabel = labels.FirstOrDefault(x => x.Name.Equals("STARRED"));
+            Assert.IsNotNull(starredLabel);
+            Assert.AreEqual("STARRED", starredLabel.Id);
+            Assert.AreEqual(null, starredLabel.LabelListVisibility);
+            Assert.AreEqual(null, starredLabel.MessageListVisibility);
+            Assert.AreEqual("STARRED", starredLabel.Name);
+            Assert.AreEqual("system", starredLabel.Type);
+            var unreadLabel = labels.FirstOrDefault(x => x.Name.Equals("UNREAD"));
+            Assert.IsNotNull(unreadLabel);
+            Assert.AreEqual("UNREAD", unreadLabel.Id);
+            Assert.AreEqual(null, unreadLabel.LabelListVisibility);
+            Assert.AreEqual(null, unreadLabel.MessageListVisibility);
+            Assert.AreEqual("UNREAD", unreadLabel.Name);
+            Assert.AreEqual("system", unreadLabel.Type);
+            var inboxLabel = labels.FirstOrDefault(x => x.Name.Equals("INBOX"));
+            Assert.IsNotNull(inboxLabel);
+            Assert.AreEqual("INBOX", inboxLabel.Id);
+            Assert.AreEqual(null, inboxLabel.LabelListVisibility);
+            Assert.AreEqual(null, inboxLabel.MessageListVisibility);
+            Assert.AreEqual("INBOX", inboxLabel.Name);
+            Assert.AreEqual("system", inboxLabel.Type);
+            var sentLabel = labels.FirstOrDefault(x => x.Name.Equals("SENT"));
+            Assert.IsNotNull(sentLabel);
+            Assert.AreEqual("SENT", sentLabel.Id);
+            Assert.AreEqual(null, sentLabel.LabelListVisibility);
+            Assert.AreEqual(null, sentLabel.MessageListVisibility);
+            Assert.AreEqual("SENT", sentLabel.Name);
+            Assert.AreEqual("system", sentLabel.Type);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_GetMessageLabels_NoMatchingEmail()
+        {
+            var labels = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessageLabels(query: EmailDoesNotExistsSearchQuery);
+            Assert.AreEqual(0, labels.Count);
         }
 
         [TestMethod]

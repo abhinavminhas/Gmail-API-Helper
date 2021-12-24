@@ -911,6 +911,57 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// Gets the labels on the latest message for a specified query criteria.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>List of email message labels.</returns>
+        public static List<Label> GetMessageLabels(this GmailService gmailService, string query, string userId = "me")
+        {
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
+            List<Label> labels = new List<Label>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                if (latestMessage.LabelIds.Count > 0)
+                {
+                    foreach (var labelId in latestMessage.LabelIds)
+                    {
+                        var getLabelsRequest = service.Users.Labels.Get(userId, labelId);
+                        var label = getLabelsRequest.Execute();
+                        labels.Add(label);
+                    }
+                }
+                service.DisposeGmailService();
+                return labels;
+            }
+            else
+            {
+                service.DisposeGmailService();
+                return labels;
+            }
+        }
+
+        /// <summary>
         /// Checks email format.
         /// </summary>
         /// <param name="email">Email to validate.</param>
