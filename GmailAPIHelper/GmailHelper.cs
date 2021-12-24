@@ -48,6 +48,30 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// 'Label List Visibility' enum.
+        /// 'LABEL_SHOW' - 'Show the label in the label list'.
+        /// 'LABEL_SHOW_IF_UNREAD' - 'Show the label if there are any unread messages with that label'.
+        /// 'LABEL_HIDE' - 'Do not show the label in the label list'.
+        /// </summary>
+        public enum LabelListVisibility
+        {
+            LABEL_SHOW = 1,
+            LABEL_SHOW_IF_UNREAD = 2,
+            LABEL_HIDE = 3
+        }
+
+        /// <summary>
+        /// 'Message List Visibility' enum.
+        /// 'SHOW' - 'Show the label in the message list'.
+        /// 'HIDE' - 'Do not show the label in the message list'.
+        /// </summary>
+        public enum MessageListVisibility
+        {
+            SHOW = 1,
+            HIDE = 2
+        }
+
+        /// <summary>
         /// Sets the credentials path to be used.
         /// </summary>
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
@@ -959,6 +983,56 @@ namespace GmailAPIHelper
                 service.DisposeGmailService();
                 return labels;
             }
+        }
+
+        /// <summary>
+        /// Creates a new user label.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="labelName">Label name value, should be unique.</param>
+        /// <param name="labelBackgroundColor">Label background hex color value. Default - '#666666'.</param>
+        /// <param name="labelTextColor">Label text hex color value. Default - '#ffffff'.</param>
+        /// <param name="labelListVisibility">'LabelListVisibility' enum value. Default - 'LABEL_SHOW'.</param>
+        /// 'LABEL_SHOW' - 'Show the label in the label list'.
+        /// 'LABEL_SHOW_IF_UNREAD' - 'Show the label if there are any unread messages with that label'.
+        /// 'LABEL_HIDE' - 'Do not show the label in the label list'.
+        /// <param name="messageListVisibility">'MessageListVisibility' enum value. Default - 'SHOW'.</param>
+        /// 'SHOW' - 'Show the label in the message list'.
+        /// 'HIDE' - 'Do not show the label in the message list'.
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Created user label.</returns>
+        public static Label CreateUserLabel(this GmailService gmailService, string labelName, string labelBackgroundColor = "#666666", string labelTextColor = "#ffffff", LabelListVisibility labelListVisibility = LabelListVisibility.LABEL_SHOW, MessageListVisibility messageListVisibility = MessageListVisibility.SHOW, string userId = "me")
+        {
+            var service = gmailService;
+            var requiredLabelListVisibility = "";
+            var requiredMessageListVisibility = "";
+            if (labelListVisibility.Equals(LabelListVisibility.LABEL_SHOW))
+                requiredLabelListVisibility = "labelShow";
+            else if (labelListVisibility.Equals(LabelListVisibility.LABEL_SHOW_IF_UNREAD))
+                requiredLabelListVisibility = "labelShowIfUnread";
+            else if (labelListVisibility.Equals(LabelListVisibility.LABEL_HIDE))
+                requiredLabelListVisibility = "labelHide";
+            if (messageListVisibility.Equals(MessageListVisibility.SHOW))
+                requiredMessageListVisibility = "show";
+            else if (messageListVisibility.Equals(MessageListVisibility.HIDE))
+                requiredMessageListVisibility = "hide";
+            var labelColor = new LabelColor()
+            {
+                BackgroundColor = labelBackgroundColor,
+                TextColor = labelTextColor
+            };
+            var labelBody = new Label()
+            {
+                Name = labelName,
+                Color = labelColor,
+                LabelListVisibility = requiredLabelListVisibility,
+                MessageListVisibility = requiredMessageListVisibility,
+                Type = "user"
+            };
+            var createUserLabelRequest = service.Users.Labels.Create(labelBody, userId);
+            var label = createUserLabelRequest.Execute();
+            service.DisposeGmailService();
+            return label;
         }
 
         /// <summary>
