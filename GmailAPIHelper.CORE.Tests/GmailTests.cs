@@ -1069,6 +1069,17 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_UpdateUserLabel_NoMatchingLabel()
+        {
+            var originalLabelName = "LABEL-DOES-NOT-EXISTS";
+            var newLabelName = "RENAME-LABEL";
+            var updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_DeleteUserLabel()
         {
             //Test Data
