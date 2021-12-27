@@ -5,7 +5,10 @@
     <Authors>Abhinav Minhas</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Product>Gmail API Helper</Product>
-    <Description>This solution is the implementation of GMAIL API providing certain useful extension methods.</Description>
+    <Description>This solution is the implementation of GMAIL API providing certain useful extension methods to retrieve/send/manipulate email messages and manage labels. The solution uses 'Gmail Search Query' to retrieve/manipulate required email messages.
+
+Solution Version:
+.NETStandard 2.0</Description>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/abhinavminhas/Gmail-API-Helper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/abhinavminhas/Gmail-API-Helper</RepositoryUrl>
@@ -14,10 +17,11 @@
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Addition - Spam/Unspam email message/messages based on query search.
-2. Addition - Mark email message/messages read/unread based on query search.
-3. Gmail Helper documentation updates.</PackageReleaseNotes>
-    <Version>1.4.0</Version>
+    <PackageReleaseNotes>1. Addition - Create Gmail user labels.
+2. Addition - Update Gmail user labels.
+3. Addition - Delete Gmail user labels.
+4. Addition - List Gmail user labels.</PackageReleaseNotes>
+    <Version>1.5.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

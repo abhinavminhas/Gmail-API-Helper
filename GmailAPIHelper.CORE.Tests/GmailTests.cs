@@ -1,7 +1,9 @@
+using Google;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace GmailAPIHelper.CORE.Tests
@@ -29,6 +31,28 @@ namespace GmailAPIHelper.CORE.Tests
             Assert.AreEqual(2, (int)GmailHelper.TokenPathType.WORKING_DIRECTORY);
             Assert.AreEqual("CUSTOM", GmailHelper.TokenPathType.CUSTOM.ToString());
             Assert.AreEqual(3, (int)GmailHelper.TokenPathType.CUSTOM);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_LabelListVisibility()
+        {
+            Assert.AreEqual("LABEL_SHOW", GmailHelper.LabelListVisibility.LABEL_SHOW.ToString());
+            Assert.AreEqual(1, (int)GmailHelper.LabelListVisibility.LABEL_SHOW);
+            Assert.AreEqual("LABEL_SHOW_IF_UNREAD", GmailHelper.LabelListVisibility.LABEL_SHOW_IF_UNREAD.ToString());
+            Assert.AreEqual(2, (int)GmailHelper.LabelListVisibility.LABEL_SHOW_IF_UNREAD);
+            Assert.AreEqual("LABEL_HIDE", GmailHelper.LabelListVisibility.LABEL_HIDE.ToString());
+            Assert.AreEqual(3, (int)GmailHelper.LabelListVisibility.LABEL_HIDE);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_MessageListVisibility()
+        {
+            Assert.AreEqual("SHOW", GmailHelper.MessageListVisibility.SHOW.ToString());
+            Assert.AreEqual(1, (int)GmailHelper.MessageListVisibility.SHOW);
+            Assert.AreEqual("HIDE", GmailHelper.MessageListVisibility.HIDE.ToString());
+            Assert.AreEqual(2, (int)GmailHelper.MessageListVisibility.HIDE);
         }
 
         [TestMethod]
@@ -128,6 +152,15 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessage_NoMatchingEmail()
+        {
+            var message = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessage(query: EmailDoesNotExistsSearchQuery);
+            Assert.IsNull(message);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetMessages()
         {
             var messages = GmailHelper.GetGmailService(ApplicationName)
@@ -137,11 +170,11 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_GetMessage_NoMatchingEmail()
+        public void Test_GetMessages_NoMatchingEmail()
         {
-            var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:read", markRead: true);
-            Assert.IsNull(message);
+            var messages = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessages(query: EmailDoesNotExistsSearchQuery);
+            Assert.AreEqual(0, messages.Count);
         }
 
         [TestMethod]
@@ -203,7 +236,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_GetLatestMessage_NoMatchingEmail()
         {
             var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox is:read", markRead: true);
+                .GetLatestMessage(query: EmailDoesNotExistsSearchQuery, markRead: true);
             Assert.IsNull(message);
         }
 
@@ -828,8 +861,335 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_ModifyMessages_NoMatchingEmail()
         {
             var countOfMessagesModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessages(query: "[from:test.auto.helper@gmail.com][subject:'Email does not exists']in:inbox", labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", });
+                .ModifyMessages(query: EmailDoesNotExistsSearchQuery, labelsToAdd: new List<string>() { "STARRED", "IMPORTANT", });
             Assert.AreEqual(0, countOfMessagesModified);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessageLabels()
+        {
+            //Test Data
+            var subject = "GET DOTNETCORE MESSAGE LABELS " + Guid.NewGuid().ToString();
+            var path = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
+            var body = File.ReadAllText(path);
+            GmailHelper.GetGmailService(ApplicationName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+            var isModified = GmailHelper.GetGmailService(ApplicationName)
+                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'GET DOTNETCORE MESSAGE LABELS " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "STARRED", });
+            Assert.IsTrue(isModified);
+
+            //Test Run
+            var labels = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessageLabels(query: "GET DOTNETCORE MESSAGE LABELS " + subject + "']in:inbox");
+            Assert.AreEqual(5, labels.Count);
+            var importantLabel = labels.FirstOrDefault(x => x.Name.Equals("IMPORTANT"));
+            Assert.IsNotNull(importantLabel);
+            Assert.AreEqual("IMPORTANT", importantLabel.Id);
+            Assert.AreEqual("labelHide", importantLabel.LabelListVisibility);
+            Assert.AreEqual("hide", importantLabel.MessageListVisibility);
+            Assert.AreEqual("IMPORTANT", importantLabel.Name);
+            Assert.AreEqual("system", importantLabel.Type);
+            var starredLabel = labels.FirstOrDefault(x => x.Name.Equals("STARRED"));
+            Assert.IsNotNull(starredLabel);
+            Assert.AreEqual("STARRED", starredLabel.Id);
+            Assert.AreEqual(null, starredLabel.LabelListVisibility);
+            Assert.AreEqual(null, starredLabel.MessageListVisibility);
+            Assert.AreEqual("STARRED", starredLabel.Name);
+            Assert.AreEqual("system", starredLabel.Type);
+            var unreadLabel = labels.FirstOrDefault(x => x.Name.Equals("UNREAD"));
+            Assert.IsNotNull(unreadLabel);
+            Assert.AreEqual("UNREAD", unreadLabel.Id);
+            Assert.AreEqual(null, unreadLabel.LabelListVisibility);
+            Assert.AreEqual(null, unreadLabel.MessageListVisibility);
+            Assert.AreEqual("UNREAD", unreadLabel.Name);
+            Assert.AreEqual("system", unreadLabel.Type);
+            var inboxLabel = labels.FirstOrDefault(x => x.Name.Equals("INBOX"));
+            Assert.IsNotNull(inboxLabel);
+            Assert.AreEqual("INBOX", inboxLabel.Id);
+            Assert.AreEqual(null, inboxLabel.LabelListVisibility);
+            Assert.AreEqual(null, inboxLabel.MessageListVisibility);
+            Assert.AreEqual("INBOX", inboxLabel.Name);
+            Assert.AreEqual("system", inboxLabel.Type);
+            var sentLabel = labels.FirstOrDefault(x => x.Name.Equals("SENT"));
+            Assert.IsNotNull(sentLabel);
+            Assert.AreEqual("SENT", sentLabel.Id);
+            Assert.AreEqual(null, sentLabel.LabelListVisibility);
+            Assert.AreEqual(null, sentLabel.MessageListVisibility);
+            Assert.AreEqual("SENT", sentLabel.Name);
+            Assert.AreEqual("system", sentLabel.Type);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessageLabels_NoMatchingEmail()
+        {
+            var labels = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessageLabels(query: EmailDoesNotExistsSearchQuery);
+            Assert.AreEqual(0, labels.Count);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_CreateUserLabel()
+        {
+            //Test Run
+            //Argument set 1
+            var labelName1 = "L-CORE-1 " + Guid.NewGuid().ToString();
+            var userLabel = GmailHelper.GetGmailService(ApplicationName)
+                .CreateUserLabel(labelName1);
+            Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
+            Assert.AreEqual("labelShow", userLabel.LabelListVisibility);
+            Assert.AreEqual("show", userLabel.MessageListVisibility);
+            Assert.AreEqual(labelName1, userLabel.Name);
+            Assert.AreEqual(null, userLabel.Type);
+            Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
+            //Argument set 2
+            var labelName2 = "L-CORE-2 " + Guid.NewGuid().ToString();
+            userLabel = GmailHelper.GetGmailService(ApplicationName)
+                .CreateUserLabel(labelName2, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_HIDE, messageListVisibility: GmailHelper.MessageListVisibility.HIDE);
+            Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
+            Assert.AreEqual("labelHide", userLabel.LabelListVisibility);
+            Assert.AreEqual("hide", userLabel.MessageListVisibility);
+            Assert.AreEqual(labelName2, userLabel.Name);
+            Assert.AreEqual(null, userLabel.Type);
+            Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
+            //Argument set 3
+            var labelName3 = "L-CORE-3 " + Guid.NewGuid().ToString();
+            userLabel = GmailHelper.GetGmailService(ApplicationName)
+                .CreateUserLabel(labelName3, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_SHOW_IF_UNREAD);
+            Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
+            Assert.AreEqual("labelShowIfUnread", userLabel.LabelListVisibility);
+            Assert.AreEqual("show", userLabel.MessageListVisibility);
+            Assert.AreEqual(labelName3, userLabel.Name);
+            Assert.AreEqual(null, userLabel.Type);
+            Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
+            //Argument set 4
+            var labelName4  = "L-CORE-4 " + Guid.NewGuid().ToString();
+            userLabel = GmailHelper.GetGmailService(ApplicationName)
+                .CreateUserLabel(labelName4, labelBackgroundColor: "#ff7537", labelTextColor: "#1c4587");
+            Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
+            Assert.AreEqual("labelShow", userLabel.LabelListVisibility);
+            Assert.AreEqual("show", userLabel.MessageListVisibility);
+            Assert.AreEqual(labelName4, userLabel.Name);
+            Assert.AreEqual(null, userLabel.Type);
+            Assert.AreEqual("#ff7537", userLabel.Color.BackgroundColor);
+            Assert.AreEqual("#1c4587", userLabel.Color.TextColor);
+
+            //Test Cleanup
+            var isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName1);
+            Assert.IsTrue(isDeleted);
+            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName2);
+            Assert.IsTrue(isDeleted);
+            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName3);
+            Assert.IsTrue(isDeleted);
+            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName4);
+            Assert.IsTrue(isDeleted);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_UpdateUserLabel()
+        {
+            //Test Data
+            var originalLabelName = "L-CORE-" + Guid.NewGuid().ToString();
+            var userLabel = GmailHelper.GetGmailService(ApplicationName)
+                .CreateUserLabel(originalLabelName);
+            Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
+            Assert.AreEqual("labelShow", userLabel.LabelListVisibility);
+            Assert.AreEqual("show", userLabel.MessageListVisibility);
+            Assert.AreEqual(originalLabelName, userLabel.Name);
+            Assert.AreEqual(null, userLabel.Type);
+            Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
+
+            //Test Run
+            //Argument set 1
+            var newLabelName1 = originalLabelName;
+            var updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName1);
+            Assert.IsNotNull(updatedLabel);
+            Assert.IsFalse(string.IsNullOrEmpty(updatedLabel.Id));
+            Assert.AreEqual("labelShow", updatedLabel.LabelListVisibility);
+            Assert.AreEqual("show", updatedLabel.MessageListVisibility);
+            Assert.AreEqual(newLabelName1, updatedLabel.Name);
+            Assert.AreEqual("user", updatedLabel.Type);
+            Assert.AreEqual("#666666", updatedLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", updatedLabel.Color.TextColor);
+            //Argument set 2
+            var newLabelName2 = "L-CORE-2 " + Guid.NewGuid().ToString();
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(newLabelName1, newLabelName2, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_HIDE, messageListVisibility: GmailHelper.MessageListVisibility.HIDE);
+            Assert.IsNotNull(updatedLabel);
+            Assert.IsFalse(string.IsNullOrEmpty(updatedLabel.Id));
+            Assert.AreEqual("labelHide", updatedLabel.LabelListVisibility);
+            Assert.AreEqual("hide", updatedLabel.MessageListVisibility);
+            Assert.AreEqual(newLabelName2, updatedLabel.Name);
+            Assert.AreEqual("user", updatedLabel.Type);
+            Assert.AreEqual("#666666", updatedLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", updatedLabel.Color.TextColor);
+            //Argument set 3
+            var newLabelName3 = "L-CORE-3 " + Guid.NewGuid().ToString();
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(newLabelName2, newLabelName3, labelListVisibility: GmailHelper.LabelListVisibility.LABEL_SHOW_IF_UNREAD);
+            Assert.IsNotNull(updatedLabel);
+            Assert.IsFalse(string.IsNullOrEmpty(updatedLabel.Id));
+            Assert.AreEqual("labelShowIfUnread", updatedLabel.LabelListVisibility);
+            Assert.AreEqual("show", updatedLabel.MessageListVisibility);
+            Assert.AreEqual(newLabelName3, updatedLabel.Name);
+            Assert.AreEqual("user", updatedLabel.Type);
+            Assert.AreEqual("#666666", updatedLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", updatedLabel.Color.TextColor);
+            //Argument set 4
+            var newLabelName4 = "L-CORE-4 " + Guid.NewGuid().ToString();
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(newLabelName3, newLabelName4, labelBackgroundColor: "#ff7537", labelTextColor: "#1c4587");
+            Assert.IsNotNull(updatedLabel);
+            Assert.IsFalse(string.IsNullOrEmpty(updatedLabel.Id));
+            Assert.AreEqual("labelShow", updatedLabel.LabelListVisibility);
+            Assert.AreEqual("show", updatedLabel.MessageListVisibility);
+            Assert.AreEqual(newLabelName4, updatedLabel.Name);
+            Assert.AreEqual("user", updatedLabel.Type);
+            Assert.AreEqual("#ff7537", updatedLabel.Color.BackgroundColor);
+            Assert.AreEqual("#1c4587", updatedLabel.Color.TextColor);
+
+            //Test Cleanup
+            var isDeleted = GmailHelper.GetGmailService(ApplicationName)
+                .DeleteLabel(newLabelName4);
+            Assert.IsTrue(isDeleted);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_UpdateUserLabel_UpdateSystemLabel()
+        {
+            var originalLabelName = "INBOX";
+            var newLabelName = originalLabelName;
+            var updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+            originalLabelName = "DRAFT";
+            newLabelName = originalLabelName;
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+            originalLabelName = "SENT";
+            newLabelName = originalLabelName;
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+            originalLabelName = "SPAM";
+            newLabelName = originalLabelName;
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_UpdateUserLabel_NoMatchingLabel()
+        {
+            var originalLabelName = "LABEL-DOES-NOT-EXISTS";
+            var newLabelName = "RENAME-LABEL";
+            var updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_DeleteLabel()
+        {
+            //Test Data
+            var labelName = "L-CORE-" + Guid.NewGuid().ToString();
+            var userLabel = GmailHelper.GetGmailService(ApplicationName)
+                .CreateUserLabel(labelName);
+            Assert.IsFalse(string.IsNullOrEmpty(userLabel.Id));
+            Assert.AreEqual("labelShow", userLabel.LabelListVisibility);
+            Assert.AreEqual("show", userLabel.MessageListVisibility);
+            Assert.AreEqual(labelName, userLabel.Name);
+            Assert.AreEqual(null, userLabel.Type);
+            Assert.AreEqual("#666666", userLabel.Color.BackgroundColor);
+            Assert.AreEqual("#ffffff", userLabel.Color.TextColor);
+
+            //Test Run
+            var isDeleted = GmailHelper.GetGmailService(ApplicationName)
+                .DeleteLabel(labelName);
+            Assert.IsTrue(isDeleted);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_DeleteLabel_DeleteSystemLabel()
+        {
+            var labelName = "INBOX";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            labelName = "DRAFT";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            labelName = "SENT";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            labelName = "SPAM";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_DeleteLabel_NoMatchingLabel()
+        {
+            var labelName = "LABEL-DOES-NOT-EXISTS";
+            var isDeleted = GmailHelper.GetGmailService(ApplicationName)
+                .DeleteLabel(labelName);
+            Assert.IsFalse(isDeleted);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_ListUserLabels()
+        {
+            var userLabels = GmailHelper.GetGmailService(ApplicationName).ListUserLabels();
+            Assert.IsFalse(userLabels.Count == 0);
+            var systemLabels = userLabels.Where(x => x.Type.Equals("system"));
+            Assert.IsTrue(systemLabels.Count() >= 14);
+            var inboxLabel = userLabels.FirstOrDefault(x => x.Name.Equals("INBOX"));
+            Assert.IsNotNull(inboxLabel);
+            Assert.AreEqual("INBOX", inboxLabel.Id);
+            Assert.AreEqual(null, inboxLabel.LabelListVisibility);
+            Assert.AreEqual(null, inboxLabel.MessageListVisibility);
+            Assert.AreEqual("INBOX", inboxLabel.Name);
+            Assert.AreEqual("system", inboxLabel.Type);
         }
 
         [TestMethod]

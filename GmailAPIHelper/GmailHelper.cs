@@ -48,6 +48,30 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
+        /// 'Label List Visibility' enum.
+        /// 'LABEL_SHOW' - 'Show the label in the label list'.
+        /// 'LABEL_SHOW_IF_UNREAD' - 'Show the label if there are any unread messages with that label'.
+        /// 'LABEL_HIDE' - 'Do not show the label in the label list'.
+        /// </summary>
+        public enum LabelListVisibility
+        {
+            LABEL_SHOW = 1,
+            LABEL_SHOW_IF_UNREAD = 2,
+            LABEL_HIDE = 3
+        }
+
+        /// <summary>
+        /// 'Message List Visibility' enum.
+        /// 'SHOW' - 'Show the label in the message list'.
+        /// 'HIDE' - 'Do not show the label in the message list'.
+        /// </summary>
+        public enum MessageListVisibility
+        {
+            SHOW = 1,
+            HIDE = 2
+        }
+
+        /// <summary>
         /// Sets the credentials path to be used.
         /// </summary>
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
@@ -143,6 +167,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -152,7 +177,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -193,6 +217,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -202,7 +227,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -231,6 +255,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -240,7 +265,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -364,6 +388,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -373,7 +398,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -435,6 +459,7 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -444,7 +469,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -515,6 +539,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -524,7 +549,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -596,6 +620,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -605,7 +630,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -676,6 +700,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -685,7 +710,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -755,6 +779,7 @@ namespace GmailAPIHelper
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -764,7 +789,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -840,6 +864,7 @@ namespace GmailAPIHelper
                 mods.RemoveLabelIds = labelsToRemove;
             var service = gmailService;
             List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -849,7 +874,6 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            List<Message> messages = new List<Message>();
             foreach (var message in result)
             {
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
@@ -908,6 +932,216 @@ namespace GmailAPIHelper
             }
             service.DisposeGmailService();
             return counter;
+        }
+
+        /// <summary>
+        /// Gets the labels on the latest message for a specified query criteria.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>List of email message labels.</returns>
+        public static List<Label> GetMessageLabels(this GmailService gmailService, string query, string userId = "me")
+        {
+            var service = gmailService;
+            List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
+            List<Label> labels = new List<Label>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                if (latestMessage.LabelIds.Count > 0)
+                {
+                    foreach (var labelId in latestMessage.LabelIds)
+                    {
+                        var getLabelsRequest = service.Users.Labels.Get(userId, labelId);
+                        var getLabelsResponse = getLabelsRequest.Execute();
+                        labels.Add(getLabelsResponse);
+                    }
+                }
+                service.DisposeGmailService();
+                return labels;
+            }
+            else
+            {
+                service.DisposeGmailService();
+                return labels;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new Gmail label of type - 'user'.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="labelName">Label name value, should be unique.</param>
+        /// <param name="labelBackgroundColor">Label background hex color value. Default - '#666666'.</param>
+        /// <param name="labelTextColor">Label text hex color value. Default - '#ffffff'.</param>
+        /// <param name="labelListVisibility">'LabelListVisibility' enum value. Default - 'LABEL_SHOW'.</param>
+        /// 'LABEL_SHOW' - 'Show the label in the label list'.
+        /// 'LABEL_SHOW_IF_UNREAD' - 'Show the label if there are any unread messages with that label'.
+        /// 'LABEL_HIDE' - 'Do not show the label in the label list'.
+        /// <param name="messageListVisibility">'MessageListVisibility' enum value. Default - 'SHOW'.</param>
+        /// 'SHOW' - 'Show the label in the message list'.
+        /// 'HIDE' - 'Do not show the label in the message list'.
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Created user label.</returns>
+        public static Label CreateUserLabel(this GmailService gmailService, string labelName, string labelBackgroundColor = "#666666", string labelTextColor = "#ffffff", LabelListVisibility labelListVisibility = LabelListVisibility.LABEL_SHOW, MessageListVisibility messageListVisibility = MessageListVisibility.SHOW, string userId = "me")
+        {
+            var service = gmailService;
+            var requiredLabelListVisibility = "";
+            var requiredMessageListVisibility = "";
+            if (labelListVisibility.Equals(LabelListVisibility.LABEL_SHOW))
+                requiredLabelListVisibility = "labelShow";
+            else if (labelListVisibility.Equals(LabelListVisibility.LABEL_SHOW_IF_UNREAD))
+                requiredLabelListVisibility = "labelShowIfUnread";
+            else if (labelListVisibility.Equals(LabelListVisibility.LABEL_HIDE))
+                requiredLabelListVisibility = "labelHide";
+            if (messageListVisibility.Equals(MessageListVisibility.SHOW))
+                requiredMessageListVisibility = "show";
+            else if (messageListVisibility.Equals(MessageListVisibility.HIDE))
+                requiredMessageListVisibility = "hide";
+            var labelColor = new LabelColor()
+            {
+                BackgroundColor = labelBackgroundColor,
+                TextColor = labelTextColor
+            };
+            var labelBody = new Label()
+            {
+                Name = labelName,
+                Color = labelColor,
+                LabelListVisibility = requiredLabelListVisibility,
+                MessageListVisibility = requiredMessageListVisibility,
+                Type = "user"
+            };
+            var createUserLabelRequest = service.Users.Labels.Create(labelBody, userId);
+            var label = createUserLabelRequest.Execute();
+            service.DisposeGmailService();
+            return label;
+        }
+
+        /// <summary>
+        /// Updates the specified Gmail user label.
+        /// Updates label type of - 'user/not defined' with label type - 'user', ignores label updates of type - 'system'.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="oldLabelName">Old existing label name (case sensitive) value, also used to search existing label to be modified.</param>
+        /// Use 'ListUserLabels()' to get the correct information for existing labels.
+        /// <param name="newLabelName">New label name value, should be unique.</param>
+        /// <param name="labelBackgroundColor">Label background hex color value. Default - '#666666'.</param>
+        /// <param name="labelTextColor">Label text hex color value. Default - '#ffffff'.</param>
+        /// <param name="labelListVisibility">'LabelListVisibility' enum value. Default - 'LABEL_SHOW'.</param>
+        /// 'LABEL_SHOW' - 'Show the label in the label list'.
+        /// 'LABEL_SHOW_IF_UNREAD' - 'Show the label if there are any unread messages with that label'.
+        /// 'LABEL_HIDE' - 'Do not show the label in the label list'.
+        /// <param name="messageListVisibility">'MessageListVisibility' enum value. Default - 'SHOW'.</param>
+        /// 'SHOW' - 'Show the label in the message list'.
+        /// 'HIDE' - 'Do not show the label in the message list'.
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Updated user label.</returns>
+        public static Label UpdateUserLabel(this GmailService gmailService, string oldLabelName, string newLabelName, string labelBackgroundColor = "#666666", string labelTextColor = "#ffffff", LabelListVisibility labelListVisibility = LabelListVisibility.LABEL_SHOW, MessageListVisibility messageListVisibility = MessageListVisibility.SHOW, string userId = "me")
+        {
+            var service = gmailService;
+            var requiredLabelListVisibility = "";
+            var requiredMessageListVisibility = "";
+            if (labelListVisibility.Equals(LabelListVisibility.LABEL_SHOW))
+                requiredLabelListVisibility = "labelShow";
+            else if (labelListVisibility.Equals(LabelListVisibility.LABEL_SHOW_IF_UNREAD))
+                requiredLabelListVisibility = "labelShowIfUnread";
+            else if (labelListVisibility.Equals(LabelListVisibility.LABEL_HIDE))
+                requiredLabelListVisibility = "labelHide";
+            if (messageListVisibility.Equals(MessageListVisibility.SHOW))
+                requiredMessageListVisibility = "show";
+            else if (messageListVisibility.Equals(MessageListVisibility.HIDE))
+                requiredMessageListVisibility = "hide";
+            var labelColor = new LabelColor()
+            {
+                BackgroundColor = labelBackgroundColor,
+                TextColor = labelTextColor
+            };
+            var labelBody = new Label()
+            {
+                Name = newLabelName,
+                Color = labelColor,
+                LabelListVisibility = requiredLabelListVisibility,
+                MessageListVisibility = requiredMessageListVisibility,
+                Type = "user"
+            };
+            var listLabelRequest = service.Users.Labels.List(userId);
+            var listLabelResponse = listLabelRequest.Execute();
+            var label = listLabelResponse.Labels.FirstOrDefault(x => x.Name.Equals(oldLabelName) && !x.Type.Equals("system"));
+            if (label != null)
+            {
+                var updateUserLabelRequest = service.Users.Labels.Update(labelBody, userId, label.Id);
+                var updatedLabel = updateUserLabelRequest.Execute();
+                service.DisposeGmailService();
+                return updatedLabel;
+            }
+            service.DisposeGmailService();
+            return label;
+        }
+
+        /// <summary>
+        /// Immediately and permanently deletes the specified label and removes it from any messages and threads that it is applied to.
+        /// In-built 'system' type labels cannot be deleted e.g INBOX, DRAFTS, SENT, SPAM etc.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="labelName">Label name value.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Boolean value to confirm if the label was deleted or not.</returns>
+        public static bool DeleteLabel(this GmailService gmailService, string labelName, string userId = "me")
+        {
+            var service = gmailService;
+            var listLabelRequest = service.Users.Labels.List(userId);
+            var listLabelResponse = listLabelRequest.Execute();
+            var label = listLabelResponse.Labels.FirstOrDefault(x => x.Name.Equals(labelName));
+            if (label != null)
+            {
+                var deleteLabelRequest = service.Users.Labels.Delete(userId, label.Id);
+                deleteLabelRequest.Execute();
+                service.DisposeGmailService();
+                return true;
+            }
+            else
+            {
+                service.DisposeGmailService();
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Lists all labels in the Gmail user's mailbox.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Lists of Gmail user's mailbox labels.</returns>
+        public static List<Label> ListUserLabels(this GmailService gmailService, string userId = "me")
+        {
+            var service = gmailService;
+            List<Label> labels = new List<Label>();
+            var listLabelsRequest = service.Users.Labels.List(userId);
+            var listLabelsResponse = listLabelsRequest.Execute();
+            foreach (var label in listLabelsResponse.Labels)
+            {
+                labels.Add(label);
+            }
+            service.DisposeGmailService();
+            return labels;
         }
 
         /// <summary>
