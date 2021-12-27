@@ -985,13 +985,13 @@ namespace GmailAPIHelper.CORE.Tests
             Assert.AreEqual("#1c4587", userLabel.Color.TextColor);
 
             //Test Cleanup
-            var isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteUserLabel(labelName1);
+            var isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName1);
             Assert.IsTrue(isDeleted);
-            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteUserLabel(labelName2);
+            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName2);
             Assert.IsTrue(isDeleted);
-            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteUserLabel(labelName3);
+            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName3);
             Assert.IsTrue(isDeleted);
-            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteUserLabel(labelName4);
+            isDeleted = GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName4);
             Assert.IsTrue(isDeleted);
         }
 
@@ -1063,7 +1063,7 @@ namespace GmailAPIHelper.CORE.Tests
 
             //Test Cleanup
             var isDeleted = GmailHelper.GetGmailService(ApplicationName)
-                .DeleteUserLabel(newLabelName4);
+                .DeleteLabel(newLabelName4);
             Assert.IsTrue(isDeleted);
         }
 
@@ -1080,7 +1080,7 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_DeleteUserLabel()
+        public void Test_DeleteLabel()
         {
             //Test Data
             var labelName = "L-CORE-" + Guid.NewGuid().ToString();
@@ -1096,17 +1096,17 @@ namespace GmailAPIHelper.CORE.Tests
 
             //Test Run
             var isDeleted = GmailHelper.GetGmailService(ApplicationName)
-                .DeleteUserLabel(labelName);
+                .DeleteLabel(labelName);
             Assert.IsTrue(isDeleted);
         }
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_DeleteUserLabel_NoMatchingLabel()
+        public void Test_DeleteLabel_NoMatchingLabel()
         {
             var labelName = "LABEL-DOES-NOT-EXISTS";
             var isDeleted = GmailHelper.GetGmailService(ApplicationName)
-                .DeleteUserLabel(labelName);
+                .DeleteLabel(labelName);
             Assert.IsFalse(isDeleted);
         }
 
