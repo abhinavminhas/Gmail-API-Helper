@@ -1,3 +1,4 @@
+using Google;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -1124,6 +1125,44 @@ namespace GmailAPIHelper.CORE.Tests
             var isDeleted = GmailHelper.GetGmailService(ApplicationName)
                 .DeleteLabel(labelName);
             Assert.IsTrue(isDeleted);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_DeleteLabel_DeleteSystemLabel()
+        {
+            var labelName = "INBOX";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            labelName = "DRAFT";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            labelName = "SENT";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            labelName = "SPAM";
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName).DeleteLabel(labelName);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
         }
 
         [TestMethod]
