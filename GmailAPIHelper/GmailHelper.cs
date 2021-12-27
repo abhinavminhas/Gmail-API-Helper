@@ -986,7 +986,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Creates a new Gmail user label.
+        /// Creates a new Gmail label of type - 'user'.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="labelName">Label name value, should be unique.</param>
@@ -1037,9 +1037,11 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Updates the specified Gmail user label.
+        /// Updates label type of - 'user/not defined' with label type - 'user', ignores label updates of type - 'system'.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
-        /// <param name="oldLabelName">Old existing label name value.</param>
+        /// <param name="oldLabelName">Old existing label name (case sensitive) value, also used to search existing label to be modified.</param>
+        /// Use 'ListUserLabels()' to get the correct information for existing labels.
         /// <param name="newLabelName">New label name value, should be unique.</param>
         /// <param name="labelBackgroundColor">Label background hex color value. Default - '#666666'.</param>
         /// <param name="labelTextColor">Label text hex color value. Default - '#ffffff'.</param>
@@ -1082,7 +1084,7 @@ namespace GmailAPIHelper
             };
             var listLabelRequest = service.Users.Labels.List(userId);
             var listLabelResponse = listLabelRequest.Execute();
-            var label = listLabelResponse.Labels.FirstOrDefault(x => x.Name.Equals(oldLabelName));
+            var label = listLabelResponse.Labels.FirstOrDefault(x => x.Name.Equals(oldLabelName) && !x.Type.Equals("system"));
             if (label != null)
             {
                 var updateUserLabelRequest = service.Users.Labels.Update(labelBody, userId, label.Id);
@@ -1096,7 +1098,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Immediately and permanently deletes the specified label and removes it from any messages and threads that it is applied to.
-        /// In-built 'system' type lables cannot be deleted e.g INBOX, DRAFTS, SENT, SPAM etc.
+        /// In-built 'system' type labels cannot be deleted e.g INBOX, DRAFTS, SENT, SPAM etc.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="labelName">Label name value.</param>

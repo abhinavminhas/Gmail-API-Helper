@@ -900,6 +900,32 @@ namespace GmailAPIHelper.NET.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_UpdateUserLabel_UpdateSystemLabel()
+        {
+            var originalLabelName = "INBOX";
+            var newLabelName = originalLabelName;
+            var updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+            originalLabelName = "DRAFT";
+            newLabelName = originalLabelName;
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+            originalLabelName = "SENT";
+            newLabelName = originalLabelName;
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+            originalLabelName = "SPAM";
+            newLabelName = originalLabelName;
+            updatedLabel = GmailHelper.GetGmailService(ApplicationName)
+                .UpdateUserLabel(originalLabelName, newLabelName);
+            Assert.IsNull(updatedLabel);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_UpdateUserLabel_NoMatchingLabel()
         {
             var originalLabelName = "LABEL-DOES-NOT-EXISTS";
