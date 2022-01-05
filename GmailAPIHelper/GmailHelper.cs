@@ -123,6 +123,7 @@ namespace GmailAPIHelper
             _scopes.Add(GmailService.Scope.GmailMetadata);
             _scopes.Add(GmailService.Scope.GmailReadonly);
             _scopes.Add(GmailService.Scope.GmailModify);
+            _scopes.Add(GmailService.Scope.GmailLabels);
             _scopes.Add(GmailService.Scope.GmailSend);
             UserCredential credential;
             using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
