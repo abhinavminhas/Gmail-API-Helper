@@ -7,21 +7,30 @@
     <Product>Gmail API Helper</Product>
     <Description>This solution is the implementation of GMAIL API providing certain useful extension methods to retrieve/send/manipulate email messages and manage labels. The solution uses 'Gmail Search Query' to retrieve/manipulate required email messages.
 
+Features:
+1. Retrieve email message/messages based on query search.
+2. Retrieve latest email message body based on query search.
+3. Download message/messages attachments based on query search.
+4. Send email messages (text/plain, text/html).
+5. Trash/Untrash email message/messages based on query search.
+6. Spam/Unspam email message/messages based on query search.
+7. Mark email message/messages read/unread based on query search.
+8. Modify email message/messages labels based on query search.
+9. Retrieve latest email message labels based on query search.
+10. Create/update/delete/list Gmail user labels.
+
 Solution Version:
 .NETStandard 2.0</Description>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/abhinavminhas/Gmail-API-Helper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/abhinavminhas/Gmail-API-Helper</RepositoryUrl>
-    <PackageTags>gmail, gmail api, gmail helper, gmail api helper, email, api</PackageTags>
+    <PackageTags>gmail, api, helper, email, google</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Addition - Create Gmail user labels.
-2. Addition - Update Gmail user labels.
-3. Addition - Delete Gmail user labels.
-4. Addition - List Gmail user labels.</PackageReleaseNotes>
-    <Version>1.5.0</Version>
+    <PackageReleaseNotes>1. Addition - Download message/messages attachments.</PackageReleaseNotes>
+    <Version>1.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
