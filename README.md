@@ -15,13 +15,14 @@ The package is available and can be downloaded using [nuget.org](https://www.nug
 
 1. Retrieve email message/messages based on query search.
 2. Retrieve latest email message body based on query search.
-3. Send email messages (text/plain, text/html).
-4. Trash/Untrash email message/messages based on query search.
-5. Spam/Unspam email message/messages based on query search.
-6. Mark email message/messages read/unread based on query search.
-7. Modify email message/messages labels based on query search.
-8. Retrieve latest email message labels based on query search.
-9. Create/update/delete/list Gmail user labels.
+3. Download message/messages attachments based on query search.
+4. Send email messages (text/plain, text/html).
+5. Trash/Untrash email message/messages based on query search.
+6. Spam/Unspam email message/messages based on query search.
+7. Mark email message/messages read/unread based on query search.
+8. Modify email message/messages labels based on query search.
+9. Retrieve latest email message labels based on query search.
+10. Create/update/delete/list Gmail user labels.
 
     **NOTE:** 1. *Gmail query search operators information can be found **[here](https://support.google.com/mail/answer/7190)**. For examples checkout solution tests.*  
     &emsp;&emsp;&emsp; 2. *You can also use Gmail 'Search mail' search criteria option to create search query string.*  
