@@ -123,6 +123,7 @@ namespace GmailAPIHelper
             _scopes.Add(GmailService.Scope.GmailMetadata);
             _scopes.Add(GmailService.Scope.GmailReadonly);
             _scopes.Add(GmailService.Scope.GmailModify);
+            _scopes.Add(GmailService.Scope.GmailLabels);
             _scopes.Add(GmailService.Scope.GmailSend);
             UserCredential credential;
             using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
@@ -156,7 +157,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail latest complete message with metadata for a specified query criteria.
+        /// Gets Gmail latest complete message with metadata for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -206,7 +207,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail messages with metadata for a specified query criteria.
+        /// Gets Gmail messages with metadata for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -244,7 +245,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail latest message body text for a specified query criteria.
+        /// Gets Gmail latest message body text for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -313,6 +314,130 @@ namespace GmailAPIHelper
                 service.DisposeGmailService();
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Gets Gmail latest message attachments for a specified query criteria.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="directoryPath">Directory path to download files into. Throws 'DirectoryNotFoundException' if path not found. Similar downloaded files in same path are overwritten.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Count of email message attachments downloaded.</returns>
+        public static int GetMessageAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me")
+        {
+            var service = gmailService;
+            if (!Directory.Exists(directoryPath))
+                throw new DirectoryNotFoundException(string.Format("Path - '{0}' Not Found.", directoryPath));
+            List<Message> result = new List<Message>();
+            List<Message> messages = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Minimal;
+                var currentMessage = messageRequest.Execute();
+                messages.Add(currentMessage);
+            }
+            int count = 0;
+            if (messages.Count > 0)
+            {
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                var latestMessageDetails = messageRequest.Execute();
+                if (latestMessageDetails.Payload != null)
+                {
+                    if (latestMessageDetails.Payload.Parts.Count > 0)
+                    {
+                        foreach (var part in latestMessageDetails.Payload.Parts)
+                        {
+                            if (part.Filename != "")
+                            {
+                                var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
+                                var messageAttachmentResponse = messageAttachmentRequest.Execute();
+                                var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                                File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
+                                count++;
+                            }
+                        }
+                    }
+                }
+                service.DisposeGmailService();
+                return count;
+            }
+            else
+            {
+                service.DisposeGmailService();
+                return count;
+            }
+        }
+
+        /// <summary>
+        /// Gets Gmail messages attachments for a specified query criteria.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="query">'Query' criteria for the email to search.</param>
+        /// <param name="directoryPath">Directory path to download files into. Throws 'DirectoryNotFoundException' if path not found. Similar downloaded files in same path are overwritten.
+        /// Directories are created inside this path using message id to download all attachments linked to a particular message if present.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <returns>Dictionary with message id and count of attachments downloaded for a particular message id.</returns>
+        public static Dictionary<string, int> GetMessagesAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me")
+        {
+            var service = gmailService;
+            var originalDirectoryPath = directoryPath;
+            var attachmentInfo = new Dictionary<string, int>();
+            if (!Directory.Exists(directoryPath))
+                throw new DirectoryNotFoundException(string.Format("Path - '{0}' Not Found.", directoryPath));
+            List<Message> result = new List<Message>();
+            UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
+            request.Q = query;
+            do
+            {
+                ListMessagesResponse response = request.Execute();
+                if (response.Messages != null)
+                    result.AddRange(response.Messages);
+                request.PageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(request.PageToken));
+            foreach (var message in result)
+            {
+                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                var latestMessageDetails = messageRequest.Execute();
+                if (latestMessageDetails.Payload != null)
+                {
+                    if (latestMessageDetails.Payload.Parts.Count > 0)
+                    {
+                        int count = 0;
+                        foreach (var part in latestMessageDetails.Payload.Parts)
+                        {
+                            if (part.Filename != "")
+                            {
+                                directoryPath = Path.Combine(originalDirectoryPath, message.Id);
+                                if (!Directory.Exists(directoryPath))
+                                    Directory.CreateDirectory(directoryPath);
+                                var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
+                                var messageAttachmentResponse = messageAttachmentRequest.Execute();
+                                var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                                File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
+                                count++;
+                            }
+                        }
+                        if (count > 0)
+                            attachmentInfo.Add(message.Id, count);
+                    }
+                }
+            }
+            service.DisposeGmailService();
+            return attachmentInfo;
         }
 
         /// <summary>
