@@ -157,7 +157,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail latest complete message with metadata for a specified query criteria.
+        /// Gets Gmail latest complete message with metadata for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -207,7 +207,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail messages with metadata for a specified query criteria.
+        /// Gets Gmail messages with metadata for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -245,7 +245,7 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Returns Gmail latest message body text for a specified query criteria.
+        /// Gets Gmail latest message body text for a specified query criteria.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
