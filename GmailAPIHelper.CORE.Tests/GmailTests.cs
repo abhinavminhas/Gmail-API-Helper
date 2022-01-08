@@ -165,7 +165,7 @@ namespace GmailAPIHelper.CORE.Tests
         {
             var messages = GmailHelper.GetGmailService(ApplicationName)
                 .GetMessages(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL']in:inbox is:read", markRead: true);
-            Assert.AreEqual(8, messages.Count);
+            Assert.AreEqual(9, messages.Count);
         }
 
         [TestMethod]
@@ -297,6 +297,59 @@ namespace GmailAPIHelper.CORE.Tests
             var countOfMessageAttachmentsDownloaded = GmailHelper.GetGmailService(ApplicationName)
                 .GetMessageAttachments(query: EmailDoesNotExistsSearchQuery, directoryPath: destPath);
             Assert.AreEqual(0, countOfMessageAttachmentsDownloaded);
+            Directory.Delete(destPath, recursive: true);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessagesAttachments()
+        {
+            var destPath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                destPath = Environment.CurrentDirectory + "/" + "DotNet-Multi-Attach-Files";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                destPath = Environment.CurrentDirectory + "/" + "DotNet-Multi-Attach-Files";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                destPath = Environment.CurrentDirectory + "/" + "DotNet-Multi-Attach-Files";
+            Directory.CreateDirectory(destPath);
+            var messagesAttachmentsDownloaded = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessagesAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS']in:inbox is:read", directoryPath: destPath);
+            Assert.AreEqual(3, messagesAttachmentsDownloaded.Count);
+            foreach (var messagesAttachments in messagesAttachmentsDownloaded)
+                Assert.AreEqual(10, messagesAttachments.Value);
+            Directory.Delete(destPath, recursive: true);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessagesAttachments_PathNotFound()
+        {
+            try
+            {
+                var destPath = "/home/user/attachments";
+                GmailHelper.GetGmailService(ApplicationName)
+                    .GetMessagesAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS AND NO BODY']in:inbox is:read", directoryPath: destPath);
+                Assert.Fail("No Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (DirectoryNotFoundException ex) { Assert.AreEqual("Path - '/home/user/attachments' Not Found.", ex.Message); }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetMessagesAttachments_NoMatchingEmail()
+        {
+            var destPath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                destPath = Environment.CurrentDirectory + "/" + "DotNet-Multi-Attachments";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                destPath = Environment.CurrentDirectory + "/" + "DotNet-Multi-Attachments";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                destPath = Environment.CurrentDirectory + "/" + "DotNet-Multi-Attachments";
+            Directory.CreateDirectory(destPath);
+            var messagesAttachmentsDownloaded = GmailHelper.GetGmailService(ApplicationName)
+                .GetMessagesAttachments(query: EmailDoesNotExistsSearchQuery, directoryPath: destPath);
+            Assert.AreEqual(0, messagesAttachmentsDownloaded.Count);
             Directory.Delete(destPath, recursive: true);
         }
 
