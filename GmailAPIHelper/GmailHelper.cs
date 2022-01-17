@@ -512,7 +512,7 @@ namespace GmailAPIHelper
         /// <param name="emailContentType">'EmailContentType' enum value. Email body 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
         /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids. Throws 'FormatException' for invalid email id value.</param>
         /// <param name="attachments">List of attachment file paths. Throws 'FileNotFoundException' if file path not found.</param>
-        /// Gmail attachment size and file exclusion rules apply.
+        /// Gmail standard attachment size limits and file prohibition rules apply.
         /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids. Throws 'FormatException' for invalid email id value.</param>
         /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids. Throws 'FormatException' for invalid email id value.</param>
         /// <param name="subject">'Subject' for email value.</param>
