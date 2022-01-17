@@ -399,7 +399,7 @@ namespace GmailAPIHelper.CORE.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'To' email address. Email: '{0}'", invalidEmail), ex.Message);
@@ -421,7 +421,7 @@ namespace GmailAPIHelper.CORE.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'Cc' email address. Email: '{0}'", invalidEmail), ex.Message);
@@ -443,7 +443,7 @@ namespace GmailAPIHelper.CORE.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", invalidEmail), ex.Message);
@@ -525,7 +525,7 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
-        public void Test_SendMessagee_Attachments_InvalidToEmail()
+        public void Test_SendMessage_Attachments_InvalidToEmail()
         {
             var invalidEmailTypes = new string[] { "testgmail.com", "test@gmailcom" , "1test@gmail.com",
                 "test@gmail.com,testgmail.com", "test@gmail.com,test@gmailcom", "test@gmail.com,1test@gmail.com" };
@@ -537,7 +537,7 @@ namespace GmailAPIHelper.CORE.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'To' email address. Email: '{0}'", invalidEmail), ex.Message);
@@ -559,7 +559,7 @@ namespace GmailAPIHelper.CORE.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'Cc' email address. Email: '{0}'", invalidEmail), ex.Message);
@@ -581,7 +581,7 @@ namespace GmailAPIHelper.CORE.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", invalidEmail), ex.Message);

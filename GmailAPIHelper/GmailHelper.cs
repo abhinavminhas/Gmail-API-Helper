@@ -448,9 +448,9 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="emailContentType">'EmailContentType' enum value. Email body 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
-        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids.</param>
-        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids.</param>
-        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids.</param>
+        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids. Throws 'FormatException' for invalid email id value.</param>
         /// <param name="subject">'Subject' for email value.</param>
         /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
@@ -461,20 +461,20 @@ namespace GmailAPIHelper
             var toList = to.Split(',');
             foreach (var email in toList)
                 if (!email.IsValidEmail())
-                    throw new Exception(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
+                    throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
             if (cc != "")
             {
                 var ccList = cc.Split(',');
                 foreach (var email in ccList)
                     if (!email.IsValidEmail())
-                        throw new Exception(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
+                        throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
             }
             if (bcc != "")
             {
                 var bccList = bcc.Split(',');
                 foreach (var email in bccList)
                     if (!email.IsValidEmail())
-                        throw new Exception(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
+                        throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
             }
             if (emailContentType.Equals(EmailContentType.PLAIN))
             {
@@ -510,11 +510,11 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="emailContentType">'EmailContentType' enum value. Email body 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
-        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids.</param>
+        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids. Throws 'FormatException' for invalid email id value.</param>
         /// <param name="attachments">List of attachment file paths. Throws 'FileNotFoundException' if file path not found.</param>
         /// Gmail attachment size and file exclusion rules apply.
-        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids.</param>
-        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids.</param>
+        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids. Throws 'FormatException' for invalid email id value.</param>
         /// <param name="subject">'Subject' for email value.</param>
         /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
@@ -526,7 +526,7 @@ namespace GmailAPIHelper
             foreach (var email in toList)
             {
                 if (!email.IsValidEmail())
-                    throw new Exception(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
+                    throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
                 else
                     mailMessage.To.Add(new MailAddress(email));
             }
@@ -536,7 +536,7 @@ namespace GmailAPIHelper
                 foreach (var email in ccList)
                 {
                     if (!email.IsValidEmail())
-                        throw new Exception(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
+                        throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
                     else
                         mailMessage.CC.Add(new MailAddress(email));
                 }
@@ -547,7 +547,7 @@ namespace GmailAPIHelper
                 foreach (var email in bccList)
                 {
                     if (!email.IsValidEmail())
-                        throw new Exception(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
+                        throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
                     else
                         mailMessage.Bcc.Add(new MailAddress(email));
                 }
