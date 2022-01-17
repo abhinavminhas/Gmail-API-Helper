@@ -12,12 +12,13 @@ Features:
 2. Retrieve latest email message body based on query search.
 3. Download message/messages attachments based on query search.
 4. Send email messages (text/plain, text/html).
-5. Trash/Untrash email message/messages based on query search.
-6. Spam/Unspam email message/messages based on query search.
-7. Mark email message/messages read/unread based on query search.
-8. Modify email message/messages labels based on query search.
-9. Retrieve latest email message labels based on query search.
-10. Create/update/delete/list Gmail user labels.
+5. Send email messages with attachments (text/plain, text/html).
+6. Trash/Untrash email message/messages based on query search.
+7. Spam/Unspam email message/messages based on query search.
+8. Mark email message/messages read/unread based on query search.
+9. Modify email message/messages labels based on query search.
+10. Retrieve latest email message labels based on query search.
+11. Create/update/delete/list Gmail user labels.
 
 Solution Version:
 .NETStandard 2.0</Description>
@@ -29,8 +30,9 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Addition - Download message/messages attachments.</PackageReleaseNotes>
-    <Version>1.6.0</Version>
+    <PackageReleaseNotes>1. Addition - Send email messages with attachments.
+2. SendMessage() - Changed thrown exception from 'Exception' to 'FormatException' for invalid email ids.</PackageReleaseNotes>
+    <Version>1.7.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
