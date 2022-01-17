@@ -3,15 +3,18 @@ using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using MessagePart = Google.Apis.Gmail.v1.Data.MessagePart;
 
 namespace GmailAPIHelper
 {
@@ -444,10 +447,10 @@ namespace GmailAPIHelper
         /// Sends Gmail message.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
-        /// <param name="emailContentType">'EmailContentType' enum value. 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
-        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids.</param>
-        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids.</param>
-        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids.</param>
+        /// <param name="emailContentType">'EmailContentType' enum value. Email body 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
+        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids. Throws 'FormatException' for invalid email id value.</param>
         /// <param name="subject">'Subject' for email value.</param>
         /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
@@ -458,20 +461,20 @@ namespace GmailAPIHelper
             var toList = to.Split(',');
             foreach (var email in toList)
                 if (!email.IsValidEmail())
-                    throw new Exception(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
+                    throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
             if (cc != "")
             {
                 var ccList = cc.Split(',');
                 foreach (var email in ccList)
                     if (!email.IsValidEmail())
-                        throw new Exception(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
+                        throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
             }
             if (bcc != "")
             {
                 var bccList = bcc.Split(',');
                 foreach (var email in bccList)
                     if (!email.IsValidEmail())
-                        throw new Exception(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
+                        throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
             }
             if (emailContentType.Equals(EmailContentType.PLAIN))
             {
@@ -492,6 +495,88 @@ namespace GmailAPIHelper
                                $"{body}";
             }
             byte[] data = Encoding.UTF8.GetBytes(payload);
+            var rawMessage = Convert.ToBase64String(data).Replace("+", "-").Replace("/", "_").Replace("=", "");
+            var message = new Message
+            {
+                Raw = rawMessage
+            };
+            var sendRequest = service.Users.Messages.Send(message, userId);
+            sendRequest.Execute();
+            service.DisposeGmailService();
+        }
+
+        /// <summary>
+        /// Sends Gmail message with attachments.
+        /// </summary>
+        /// <param name="gmailService">'Gmail' service initializer value.</param>
+        /// <param name="emailContentType">'EmailContentType' enum value. Email body 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
+        /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="attachments">List of attachment file paths. Throws 'FileNotFoundException' if file path not found.</param>
+        /// Gmail standard attachment size limits and file prohibition rules apply.
+        /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids. Throws 'FormatException' for invalid email id value.</param>
+        /// <param name="subject">'Subject' for email value.</param>
+        /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, List<string> attachments, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me")
+        {
+            var service = gmailService;
+            var mailMessage = new MailMessage();
+            var toList = to.Split(',');
+            foreach (var email in toList)
+            {
+                if (!email.IsValidEmail())
+                    throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
+                else
+                    mailMessage.To.Add(new MailAddress(email));
+            }
+            if (cc != "")
+            {
+                var ccList = cc.Split(',');
+                foreach (var email in ccList)
+                {
+                    if (!email.IsValidEmail())
+                        throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
+                    else
+                        mailMessage.CC.Add(new MailAddress(email));
+                }
+            }
+            if (bcc != "")
+            {
+                var bccList = bcc.Split(',');
+                foreach (var email in bccList)
+                {
+                    if (!email.IsValidEmail())
+                        throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
+                    else
+                        mailMessage.Bcc.Add(new MailAddress(email));
+                }
+            }
+            mailMessage.Subject = subject;
+            if (emailContentType.Equals(EmailContentType.PLAIN))
+            {
+                mailMessage.IsBodyHtml = false;
+                mailMessage.Body = body;
+            }
+            else if (emailContentType.Equals(EmailContentType.HTML))
+            {
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = body;
+            }
+            foreach (var attachment in attachments)
+            {
+                if (File.Exists(attachment))
+                    mailMessage.Attachments.Add(new Attachment(attachment));
+                else
+                    throw new FileNotFoundException(string.Format("Attachment file '{0}' not found.", attachment));
+            }
+            var mimeMessage = (MimeMessage)mailMessage;
+            byte[] data;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                mimeMessage.WriteTo(stream);
+                data = stream.ToArray();
+            }
             var rawMessage = Convert.ToBase64String(data).Replace("+", "-").Replace("/", "_").Replace("=", "");
             var message = new Message
             {
@@ -970,7 +1055,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Modifies the labels on the latest message for a specified query criteria.
-        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'NullReferenceException' if none supplied.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -1020,7 +1105,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Modifies the labels on the messages for a specified query criteria.
-        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'NullReferenceException' if none supplied.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>

@@ -311,7 +311,7 @@ namespace GmailAPIHelper.NET.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'To' email address. Email: '{0}'", invalidEmail), ex.Message);
@@ -333,7 +333,7 @@ namespace GmailAPIHelper.NET.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'Cc' email address. Email: '{0}'", invalidEmail), ex.Message);
@@ -355,11 +355,156 @@ namespace GmailAPIHelper.NET.Tests
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
-                catch (Exception ex)
+                catch (FormatException ex)
                 {
                     var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
                     Assert.AreEqual(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", invalidEmail), ex.Message);
                 }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_SendMessage_Attachments_PlainText()
+        {
+            var path = Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt";
+            var body = File.ReadAllText(path);
+            var attachmentPath = Environment.CurrentDirectory + "\\TestFiles\\Attachments\\";
+            var attachments = new List<string>
+            {
+               attachmentPath + "Attachment.bmp",
+               attachmentPath + "Attachment.docx",
+               attachmentPath + "Attachment.gif",
+               attachmentPath + "Attachment.jpg",
+               attachmentPath + "Attachment.pdf",
+               attachmentPath + "Attachment.png",
+               attachmentPath + "Attachment.pptx",
+               attachmentPath + "Attachment.tif",
+               attachmentPath + "Attachment.txt",
+               attachmentPath + "Attachment.wmv"
+            };
+            GmailHelper.GetGmailService(ApplicationName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: attachments, cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "SEND DOTNETFRAMEWORK EMAIL WITH PLAIN TEXT BODY AND ATTACHMENTS", body: body);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_SendMessage_Attachments_HtmlText()
+        {
+            var path = Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt";
+            var body = File.ReadAllText(path);
+            var attachmentPath = Environment.CurrentDirectory + "\\TestFiles\\Attachments\\";
+            var attachments = new List<string>
+            {
+               attachmentPath + "Attachment.bmp",
+               attachmentPath + "Attachment.docx",
+               attachmentPath + "Attachment.gif",
+               attachmentPath + "Attachment.jpg",
+               attachmentPath + "Attachment.pdf",
+               attachmentPath + "Attachment.png",
+               attachmentPath + "Attachment.pptx",
+               attachmentPath + "Attachment.tif",
+               attachmentPath + "Attachment.txt",
+               attachmentPath + "Attachment.wmv"
+            };
+            GmailHelper.GetGmailService(ApplicationName)
+                .SendMessage(GmailHelper.EmailContentType.HTML, "test.auto.helper@gmail.com", attachments: attachments, cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "SEND DOTNETFRAMEWORK EMAIL WITH HTML TEXT BODY AND ATTACHMENTS", body: body);
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_SendMessage_Attachments_InvalidToEmail()
+        {
+            var invalidEmailTypes = new string[] { "testgmail.com", "test@gmailcom" , "1test@gmail.com",
+                "test@gmail.com,testgmail.com", "test@gmail.com,test@gmailcom", "test@gmail.com,1test@gmail.com" };
+            foreach (var invalidEmailType in invalidEmailTypes)
+            {
+                try
+                {
+                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, invalidEmailType, attachments: null);
+                    Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
+                }
+                catch (AssertFailedException ex) { throw ex; }
+                catch (FormatException ex)
+                {
+                    var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
+                    Assert.AreEqual(string.Format("Not a valid 'To' email address. Email: '{0}'", invalidEmail), ex.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_SendMessage_Attachments_InvalidCcEmail()
+        {
+            var invalidEmailTypes = new string[] { "testgmail.com", "test@gmailcom" , "1test@gmail.com",
+                "test@gmail.com,testgmail.com", "test@gmail.com,test@gmailcom", "test@gmail.com,1test@gmail.com" };
+            foreach (var invalidEmailType in invalidEmailTypes)
+            {
+                try
+                {
+                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: null, cc: invalidEmailType);
+                    Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
+                }
+                catch (AssertFailedException ex) { throw ex; }
+                catch (FormatException ex)
+                {
+                    var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
+                    Assert.AreEqual(string.Format("Not a valid 'Cc' email address. Email: '{0}'", invalidEmail), ex.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_SendMessage_Attachments_InvalidBccEmail()
+        {
+            var invalidEmailTypes = new string[] { "testgmail.com", "test@gmailcom" , "1test@gmail.com",
+                "test@gmail.com,testgmail.com", "test@gmail.com,test@gmailcom", "test@gmail.com,1test@gmail.com" };
+            foreach (var invalidEmailType in invalidEmailTypes)
+            {
+                try
+                {
+                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: null, bcc: invalidEmailType);
+                    Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
+                }
+                catch (AssertFailedException ex) { throw ex; }
+                catch (FormatException ex)
+                {
+                    var invalidEmail = invalidEmailType.Contains(",") ? invalidEmailType.Split(',')[1] : invalidEmailType;
+                    Assert.AreEqual(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", invalidEmail), ex.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
+        public void Test_SendMessage_Attachments_AttachmentFileNotFound()
+        {
+            var attachmentPath = Environment.CurrentDirectory + "\\TestFiles\\Attachments\\";
+            var attachments = new List<string>
+            {
+               attachmentPath + "Attachment.bmp",
+               attachmentPath + "Attachment.docx",
+               attachmentPath + "Attachment.gif",
+               attachmentPath + "Attachment.jpg",
+               attachmentPath + "Attachment.pdf",
+               attachmentPath + "Attachment.png",
+               attachmentPath + "Attachment.pptx",
+               attachmentPath + "Attachment.tif",
+               attachmentPath + "Attachment.txt",
+               attachmentPath
+            };
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: attachments, cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "ATTACHMENT FILE NOT FOUND", body: "Hello");
+                Assert.Fail("No 'FileNotFoundException' Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (FileNotFoundException ex)
+            {
+                Assert.AreEqual(string.Format("Attachment file '{0}' not found.", attachmentPath), ex.Message);
             }
         }
 

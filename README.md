@@ -17,17 +17,19 @@ The package is available and can be downloaded using [nuget.org](https://www.nug
 2. Retrieve latest email message body based on query search.
 3. Download message/messages attachments based on query search.
 4. Send email messages (text/plain, text/html).
-5. Trash/Untrash email message/messages based on query search.
-6. Spam/Unspam email message/messages based on query search.
-7. Mark email message/messages read/unread based on query search.
-8. Modify email message/messages labels based on query search.
-9. Retrieve latest email message labels based on query search.
-10. Create/update/delete/list Gmail user labels.
+5. Send email messages with attachments (text/plain, text/html).
+6. Trash/Untrash email message/messages based on query search.
+7. Spam/Unspam email message/messages based on query search.
+8. Mark email message/messages read/unread based on query search.
+9. Modify email message/messages labels based on query search.
+10. Retrieve latest email message labels based on query search.
+11. Create/update/delete/list Gmail user labels.
 
     **NOTE:** 1. *Gmail query search operators information can be found **[here](https://support.google.com/mail/answer/7190)**. For examples checkout solution tests.*  
     &emsp;&emsp;&emsp; 2. *You can also use Gmail 'Search mail' search criteria option to create search query string.*  
     &emsp;&emsp;&emsp; <img src=https://user-images.githubusercontent.com/17473202/147176323-b4eb4963-1f5d-46e5-9fc1-bef4e8aaa2d2.png />  
-    &emsp;&emsp;&emsp; 3. *Delete scope requires fully verified app, use move to trash instead.*
+    &emsp;&emsp;&emsp; 3. *Delete scope requires fully verified app, use move to trash instead.*  
+    &emsp;&emsp;&emsp; 4. *For sending email with attachments, Gmail standard attachment size limits and file prohibition rules apply.*
 
 ## .NET Supported Versions
 
