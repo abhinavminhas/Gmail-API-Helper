@@ -1055,7 +1055,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Modifies the labels on the latest message for a specified query criteria.
-        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'NullReferenceException' if none supplied.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -1105,7 +1105,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Modifies the labels on the messages for a specified query criteria.
-        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'NullReferenceException' if none supplied.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
