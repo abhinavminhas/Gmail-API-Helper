@@ -511,7 +511,7 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="emailContentType">'EmailContentType' enum value. Email body 'PLAIN' for 'text/plain' format', 'HTML' for 'text/html' format'.</param>
         /// <param name="to">'To' email id value. Comma separated value for multiple 'to' email ids.</param>
-        /// <param name="attachments">List of attachment file paths.</param>
+        /// <param name="attachments">List of attachment file paths. Throws 'FileNotFoundException' if file path not found.</param>
         /// Gmail attachment size and file exclusion rules apply.
         /// <param name="cc">'Cc' email id value. Comma separated value for multiple 'cc' email ids.</param>
         /// <param name="bcc">'Bcc' email id value. Comma separated value for multiple 'bcc' email ids.</param>
@@ -564,7 +564,12 @@ namespace GmailAPIHelper
                 mailMessage.Body = body;
             }
             foreach (var attachment in attachments)
-                mailMessage.Attachments.Add(new Attachment(attachment));
+            {
+                if (File.Exists(attachment))
+                    mailMessage.Attachments.Add(new Attachment(attachment));
+                else
+                    throw new FileNotFoundException(string.Format("Attachment file '{0}' not found.", attachment));
+            }
             var mimeMessage = (MimeMessage)mailMessage;
             byte[] data;
             using (MemoryStream stream = new MemoryStream())

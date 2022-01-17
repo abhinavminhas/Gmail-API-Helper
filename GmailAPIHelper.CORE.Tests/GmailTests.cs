@@ -591,6 +591,43 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_SendMessage_Attachments_AttachmentFileNotFound()
+        {
+            var attachmentPath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                attachmentPath = Environment.CurrentDirectory + "\\TestFiles\\Attachments\\";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                attachmentPath = Environment.CurrentDirectory + "/TestFiles/Attachments/";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                attachmentPath = Environment.CurrentDirectory + "/TestFiles/Attachments/";
+            var attachments = new List<string>
+            {
+               attachmentPath + "Attachment.bmp",
+               attachmentPath + "Attachment.docx",
+               attachmentPath + "Attachment.gif",
+               attachmentPath + "Attachment.jpg",
+               attachmentPath + "Attachment.pdf",
+               attachmentPath + "Attachment.png",
+               attachmentPath + "Attachment.pptx",
+               attachmentPath + "Attachment.tif",
+               attachmentPath + "Attachment.txt",
+               attachmentPath
+            };
+            try
+            {
+                GmailHelper.GetGmailService(ApplicationName)
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: attachments, cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "ATTACHMENT FILE NOT FOUND", body: "Hello");
+                Assert.Fail("No 'FileNotFoundException' Exception Thrown.");
+            }
+            catch (AssertFailedException ex) { throw ex; }
+            catch (FileNotFoundException ex)
+            {
+                Assert.AreEqual(string.Format("Attachment file '{0}' not found.", attachmentPath), ex.Message);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_MoveMessageToTrash()
         {
             //Test Data
