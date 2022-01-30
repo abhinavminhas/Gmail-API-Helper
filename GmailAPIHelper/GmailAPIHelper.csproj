@@ -30,13 +30,12 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Addition - Send email messages with attachments.
-2. SendMessage() - Changed thrown exception from 'Exception' to 'FormatException' for invalid email ids.</PackageReleaseNotes>
-    <Version>1.7.0</Version>
+    <PackageReleaseNotes>1. Gmail API dependency update ('1.55.0.2356' -&gt; '1.55.0.2510')</PackageReleaseNotes>
+    <Version>1.7.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.55.0.2356" />
+    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.55.0.2510" />
     <PackageReference Include="MimeKitLite" Version="3.1.0" />
   </ItemGroup>
 
