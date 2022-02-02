@@ -1106,12 +1106,12 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
-        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message labels for the criteria were modified or not.</returns>
-        public static bool ModifyMessage(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null, bool disposeGmailService = true)
+        public static bool ModifyMessage(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
                 throw new NullReferenceException("Either 'Labels To Add' or 'Labels to Remove' required.");
@@ -1159,12 +1159,12 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
-        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages with labels modified.</returns>
-        public static int ModifyMessages(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null, bool disposeGmailService = true)
+        public static int ModifyMessages(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
                 throw new NullReferenceException("Either 'Labels To Add' or 'Labels to Remove' required.");
