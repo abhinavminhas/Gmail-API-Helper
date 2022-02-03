@@ -337,6 +337,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email message attachments downloaded.</returns>
+        /// <exception cref="DirectoryNotFoundException">Throws 'DirectoryNotFoundException' if directory path not found.</exception>
         public static int GetMessageAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
@@ -406,6 +407,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Dictionary with message id and count of attachments downloaded for a particular message id.</returns>
+        /// <exception cref="DirectoryNotFoundException">Throws 'DirectoryNotFoundException' if directory path not found.</exception>
         public static Dictionary<string, int> GetMessagesAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
@@ -469,6 +471,7 @@ namespace GmailAPIHelper
         /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
+        /// <exception cref="FormatException">Throws 'FormatException' for invalid email id value in 'to', 'cc' & 'bcc'.</exception>
         public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
@@ -535,6 +538,8 @@ namespace GmailAPIHelper
         /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
+        /// <exception cref="FormatException">Throws 'FormatException' for invalid email id value in 'to', 'cc' & 'bcc'.</exception>
+        /// <exception cref="FileNotFoundException">Throws 'FileNotFoundException' if file path not found.</exception>
         public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, List<string> attachments, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
@@ -1112,6 +1117,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message labels for the criteria were modified or not.</returns>
+        /// <exception cref="NullReferenceException">Throws 'NullReferenceException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
         public static bool ModifyMessage(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
@@ -1165,6 +1171,7 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages with labels modified.</returns>
+        /// <exception cref="NullReferenceException">Throws 'NullReferenceException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
         public static int ModifyMessages(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
