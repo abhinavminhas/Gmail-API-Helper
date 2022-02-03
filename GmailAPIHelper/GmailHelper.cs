@@ -80,6 +80,7 @@ namespace GmailAPIHelper
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
         /// <param name="tokenPath">Token path value in case of 'TokenPathType - CUSTOM' value.</param>
         /// <returns>Credentials file path.</returns>
+        /// <exception cref="NotImplementedException">Throws - 'NotImplementedException' for OS Platforms other than Windows/Linux/OSX.</exception>
         private static string SetCredentialPath(TokenPathType tokenPathType, string tokenPath = "")
         {
             string credPath = "";
@@ -92,7 +93,7 @@ namespace GmailAPIHelper
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     credPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
                 else
-                    throw new Exception("OS Platform: Not 'Windows/Linux/OSX' Platform.");
+                    throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.WORKING_DIRECTORY)
             {
@@ -103,7 +104,7 @@ namespace GmailAPIHelper
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     credPath = Environment.CurrentDirectory + "/" + "token.json";
                 else
-                    throw new Exception("OS Platform: Not 'Windows/Linux/OSX' Platform.");
+                    throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.CUSTOM)
                 credPath = tokenPath;
