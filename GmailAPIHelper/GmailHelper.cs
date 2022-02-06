@@ -80,6 +80,7 @@ namespace GmailAPIHelper
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
         /// <param name="tokenPath">Token path value in case of 'TokenPathType - CUSTOM' value.</param>
         /// <returns>Credentials file path.</returns>
+        /// <exception cref="NotImplementedException">Throws - 'NotImplementedException' for OS Platforms other than Windows/Linux/OSX.</exception>
         private static string SetCredentialPath(TokenPathType tokenPathType, string tokenPath = "")
         {
             string credPath = "";
@@ -92,7 +93,7 @@ namespace GmailAPIHelper
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     credPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
                 else
-                    throw new Exception("OS Platform: Not 'Windows/Linux/OSX' Platform.");
+                    throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.WORKING_DIRECTORY)
             {
@@ -103,7 +104,7 @@ namespace GmailAPIHelper
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     credPath = Environment.CurrentDirectory + "/" + "token.json";
                 else
-                    throw new Exception("OS Platform: Not 'Windows/Linux/OSX' Platform.");
+                    throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.CUSTOM)
                 credPath = tokenPath;
@@ -166,8 +167,9 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="markRead">Boolean value to mark retrieved latest message as read. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Email message matching the search criteria.</returns>
-        public static Message GetMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
+        public static Message GetMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -199,12 +201,14 @@ namespace GmailAPIHelper
                     var labelToRemove = new List<string> { "UNREAD" };
                     service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
                 }
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return requiredLatestMessage;
             }
             else
             {
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return null;
             }
         }
@@ -216,8 +220,9 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="markRead">Boolean value to mark retrieved messages as read. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>List of email messages matching the search criteria.</returns>
-        public static List<Message> GetMessages(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
+        public static List<Message> GetMessages(this GmailService gmailService, string query, bool markRead = false, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -243,7 +248,8 @@ namespace GmailAPIHelper
                     service.RemoveLabels(message.Id, labelToRemove, userId: userId);
                 }
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return messages;
         }
 
@@ -254,8 +260,9 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="markRead">Boolean value to mark retrieved latest email as read. Default - 'false'.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Email message body in 'text/plain' format.</returns>
-        public static string GetLatestMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me")
+        public static string GetLatestMessage(this GmailService gmailService, string query, bool markRead = false, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -309,12 +316,14 @@ namespace GmailAPIHelper
                 }
                 else
                     requiredMessagePart = null;
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return requiredMessage;
             }
             else
             {
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return null;
             }
         }
@@ -326,8 +335,10 @@ namespace GmailAPIHelper
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="directoryPath">Directory path to download files into. Throws 'DirectoryNotFoundException' if path not found. Similar downloaded files in same path are overwritten.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email message attachments downloaded.</returns>
-        public static int GetMessageAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me")
+        /// <exception cref="DirectoryNotFoundException">Throws 'DirectoryNotFoundException' if directory path not found.</exception>
+        public static int GetMessageAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             if (!Directory.Exists(directoryPath))
@@ -374,12 +385,14 @@ namespace GmailAPIHelper
                         }
                     }
                 }
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return count;
             }
             else
             {
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return count;
             }
         }
@@ -392,8 +405,10 @@ namespace GmailAPIHelper
         /// <param name="directoryPath">Directory path to download files into. Throws 'DirectoryNotFoundException' if path not found. Similar downloaded files in same path are overwritten.
         /// Directories are created inside this path using message id to download all attachments linked to a particular message if present.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Dictionary with message id and count of attachments downloaded for a particular message id.</returns>
-        public static Dictionary<string, int> GetMessagesAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me")
+        /// <exception cref="DirectoryNotFoundException">Throws 'DirectoryNotFoundException' if directory path not found.</exception>
+        public static Dictionary<string, int> GetMessagesAttachments(this GmailService gmailService, string query, string directoryPath, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             var originalDirectoryPath = directoryPath;
@@ -439,7 +454,8 @@ namespace GmailAPIHelper
                     }
                 }
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return attachmentInfo;
         }
 
@@ -454,7 +470,9 @@ namespace GmailAPIHelper
         /// <param name="subject">'Subject' for email value.</param>
         /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me")
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
+        /// <exception cref="FormatException">Throws 'FormatException' for invalid email id value in 'to', 'cc' & 'bcc'.</exception>
+        public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             string payload = "";
@@ -502,7 +520,8 @@ namespace GmailAPIHelper
             };
             var sendRequest = service.Users.Messages.Send(message, userId);
             sendRequest.Execute();
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
         }
 
         /// <summary>
@@ -518,7 +537,10 @@ namespace GmailAPIHelper
         /// <param name="subject">'Subject' for email value.</param>
         /// <param name="body">'Body' for email 'text/plain' or 'text/html' value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
-        public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, List<string> attachments, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me")
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
+        /// <exception cref="FormatException">Throws 'FormatException' for invalid email id value in 'to', 'cc' & 'bcc'.</exception>
+        /// <exception cref="FileNotFoundException">Throws 'FileNotFoundException' if file path not found.</exception>
+        public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, List<string> attachments, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             var mailMessage = new MailMessage();
@@ -584,7 +606,8 @@ namespace GmailAPIHelper
             };
             var sendRequest = service.Users.Messages.Send(message, userId);
             sendRequest.Execute();
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
         }
 
         /// <summary>
@@ -593,8 +616,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message for the criteria was moved to trash or not.</returns>
-        public static bool MoveMessageToTrash(this GmailService gmailService, string query, string userId = "me")
+        public static bool MoveMessageToTrash(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -620,10 +644,12 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
                 moveToTrashRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return false;
         }
 
@@ -633,8 +659,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages moved to trash.</returns>
-        public static int MoveMessagesToTrash(this GmailService gmailService, string query, string userId = "me")
+        public static int MoveMessagesToTrash(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             int counter = 0;
             var service = gmailService;
@@ -654,7 +681,8 @@ namespace GmailAPIHelper
                 moveToTrashRequest.Execute();
                 counter++;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return counter;
         }
 
@@ -664,8 +692,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message for the criteria was untrashed and moved to inbox or not.</returns>
-        public static bool UntrashMessage(this GmailService gmailService, string query, string userId = "me")
+        public static bool UntrashMessage(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -693,10 +722,12 @@ namespace GmailAPIHelper
                 untrashMessageRequest.Execute();
                 var labelToAdd = new List<string> { "INBOX" };
                 service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return false;
         }
 
@@ -706,8 +737,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages untrashed and moved to inbox.</returns>
-        public static int UntrashMessages(this GmailService gmailService, string query, string userId = "me")
+        public static int UntrashMessages(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             int counter = 0;
             var service = gmailService;
@@ -729,7 +761,8 @@ namespace GmailAPIHelper
                 service.AddLabels(message.Id, labelToAdd, userId: userId);
                 counter++;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return counter;
         }
 
@@ -739,8 +772,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message for the criteria was marked as spam or not.</returns>
-        public static bool ReportSpamMessage(this GmailService gmailService, string query, string userId = "me")
+        public static bool ReportSpamMessage(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -771,10 +805,12 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
                 modifyMessageRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return false;
         }
 
@@ -784,8 +820,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages marked as spam.</returns>
-        public static int ReportSpamMessages(this GmailService gmailService, string query, string userId = "me")
+        public static int ReportSpamMessages(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -810,7 +847,8 @@ namespace GmailAPIHelper
                 modifyMessageRequest.Execute();
                 counter++;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return counter;
         }
 
@@ -820,8 +858,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message for the criteria was marked as not spam or not.</returns>
-        public static bool UnspamMessage(this GmailService gmailService, string query, string userId = "me")
+        public static bool UnspamMessage(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -852,10 +891,12 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
                 modifyMessageRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return false;
         }
 
@@ -865,8 +906,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages marked as not spam.</returns>
-        public static int UnspamMessages(this GmailService gmailService, string query, string userId = "me")
+        public static int UnspamMessages(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -891,7 +933,8 @@ namespace GmailAPIHelper
                 modifyMessageRequest.Execute();
                 counter++;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return counter;
         }
 
@@ -901,8 +944,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message for the criteria was marked as read or not.</returns>
-        public static bool MarkMessageAsRead(this GmailService gmailService, string query, string userId = "me")
+        public static bool MarkMessageAsRead(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -932,10 +976,12 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
                 modifyMessageRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return false;
         }
 
@@ -945,8 +991,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages marked as read.</returns>
-        public static int MarkMessagesAsRead(this GmailService gmailService, string query, string userId = "me")
+        public static int MarkMessagesAsRead(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -970,7 +1017,8 @@ namespace GmailAPIHelper
                 modifyMessageRequest.Execute();
                 counter++;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return counter;
         }
 
@@ -980,8 +1028,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message for the criteria was marked as unread or not.</returns>
-        public static bool MarkMessageAsUnread(this GmailService gmailService, string query, string userId = "me")
+        public static bool MarkMessageAsUnread(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -1011,10 +1060,12 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
                 modifyMessageRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return false;
         }
 
@@ -1024,8 +1075,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages marked as unread.</returns>
-        public static int MarkMessagesAsUnread(this GmailService gmailService, string query, string userId = "me")
+        public static int MarkMessagesAsUnread(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var mods = new ModifyMessageRequest
             {
@@ -1049,7 +1101,8 @@ namespace GmailAPIHelper
                 modifyMessageRequest.Execute();
                 counter++;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return counter;
         }
 
@@ -1059,11 +1112,13 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
-        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message labels for the criteria were modified or not.</returns>
-        public static bool ModifyMessage(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
+        /// <exception cref="NullReferenceException">Throws 'NullReferenceException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
+        public static bool ModifyMessage(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
                 throw new NullReferenceException("Either 'Labels To Add' or 'Labels to Remove' required.");
@@ -1096,10 +1151,12 @@ namespace GmailAPIHelper
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
                 modifyMessageRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return false;
         }
 
@@ -1109,11 +1166,13 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
-        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="labelsToAdd">Label values to add. Default - 'null'.</param>
         /// <param name="labelsToRemove">Label values to remove. Default - 'null'.</param>
+        /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages with labels modified.</returns>
-        public static int ModifyMessages(this GmailService gmailService, string query, string userId = "me", List<string> labelsToAdd = null, List<string> labelsToRemove = null)
+        /// <exception cref="NullReferenceException">Throws 'NullReferenceException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
+        public static int ModifyMessages(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
                 throw new NullReferenceException("Either 'Labels To Add' or 'Labels to Remove' required.");
@@ -1140,7 +1199,8 @@ namespace GmailAPIHelper
                 modifyMessageRequest.Execute();
                 counter++;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return counter;
         }
 
@@ -1150,8 +1210,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>List of email message labels.</returns>
-        public static List<Label> GetMessageLabels(this GmailService gmailService, string query, string userId = "me")
+        public static List<Label> GetMessageLabels(this GmailService gmailService, string query, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -1185,12 +1246,14 @@ namespace GmailAPIHelper
                         labels.Add(getLabelsResponse);
                     }
                 }
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return labels;
             }
             else
             {
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return labels;
             }
         }
@@ -1210,8 +1273,9 @@ namespace GmailAPIHelper
         /// 'SHOW' - 'Show the label in the message list'.
         /// 'HIDE' - 'Do not show the label in the message list'.
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Created user label.</returns>
-        public static Label CreateUserLabel(this GmailService gmailService, string labelName, string labelBackgroundColor = "#666666", string labelTextColor = "#ffffff", LabelListVisibility labelListVisibility = LabelListVisibility.LABEL_SHOW, MessageListVisibility messageListVisibility = MessageListVisibility.SHOW, string userId = "me")
+        public static Label CreateUserLabel(this GmailService gmailService, string labelName, string labelBackgroundColor = "#666666", string labelTextColor = "#ffffff", LabelListVisibility labelListVisibility = LabelListVisibility.LABEL_SHOW, MessageListVisibility messageListVisibility = MessageListVisibility.SHOW, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             var requiredLabelListVisibility = "";
@@ -1241,7 +1305,8 @@ namespace GmailAPIHelper
             };
             var createUserLabelRequest = service.Users.Labels.Create(labelBody, userId);
             var label = createUserLabelRequest.Execute();
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return label;
         }
 
@@ -1263,8 +1328,9 @@ namespace GmailAPIHelper
         /// 'SHOW' - 'Show the label in the message list'.
         /// 'HIDE' - 'Do not show the label in the message list'.
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Updated user label.</returns>
-        public static Label UpdateUserLabel(this GmailService gmailService, string oldLabelName, string newLabelName, string labelBackgroundColor = "#666666", string labelTextColor = "#ffffff", LabelListVisibility labelListVisibility = LabelListVisibility.LABEL_SHOW, MessageListVisibility messageListVisibility = MessageListVisibility.SHOW, string userId = "me")
+        public static Label UpdateUserLabel(this GmailService gmailService, string oldLabelName, string newLabelName, string labelBackgroundColor = "#666666", string labelTextColor = "#ffffff", LabelListVisibility labelListVisibility = LabelListVisibility.LABEL_SHOW, MessageListVisibility messageListVisibility = MessageListVisibility.SHOW, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             var requiredLabelListVisibility = "";
@@ -1299,10 +1365,12 @@ namespace GmailAPIHelper
             {
                 var updateUserLabelRequest = service.Users.Labels.Update(labelBody, userId, label.Id);
                 var updatedLabel = updateUserLabelRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return updatedLabel;
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return label;
         }
 
@@ -1313,8 +1381,9 @@ namespace GmailAPIHelper
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="labelName">Label name value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the label was deleted or not.</returns>
-        public static bool DeleteLabel(this GmailService gmailService, string labelName, string userId = "me")
+        public static bool DeleteLabel(this GmailService gmailService, string labelName, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             var listLabelRequest = service.Users.Labels.List(userId);
@@ -1324,12 +1393,14 @@ namespace GmailAPIHelper
             {
                 var deleteLabelRequest = service.Users.Labels.Delete(userId, label.Id);
                 deleteLabelRequest.Execute();
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return true;
             }
             else
             {
-                service.DisposeGmailService();
+                if (disposeGmailService)
+                    service.DisposeGmailService();
                 return false;
             }
         }
@@ -1339,8 +1410,9 @@ namespace GmailAPIHelper
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
+        /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Lists of Gmail user's mailbox labels.</returns>
-        public static List<Label> ListUserLabels(this GmailService gmailService, string userId = "me")
+        public static List<Label> ListUserLabels(this GmailService gmailService, string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
             List<Label> labels = new List<Label>();
@@ -1350,7 +1422,8 @@ namespace GmailAPIHelper
             {
                 labels.Add(label);
             }
-            service.DisposeGmailService();
+            if (disposeGmailService)
+                service.DisposeGmailService();
             return labels;
         }
 
