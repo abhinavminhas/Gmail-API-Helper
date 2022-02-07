@@ -31,13 +31,14 @@ Solution Version:
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReleaseNotes>1. Addition of additional optional parameter to current available extension methods that allows to keep Gmail service connection alive or dispose it (default value of this parameter is set to dispose the service connection in the method call).
-2. Slight refactoring &amp; documentation updates.</PackageReleaseNotes>
+2. MimeKitLite version update (3.1.0 -&gt; 3.1.1).
+3. Slight refactoring &amp; documentation updates.</PackageReleaseNotes>
     <Version>1.8.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.55.0.2510" />
-    <PackageReference Include="MimeKitLite" Version="3.1.0" />
+    <PackageReference Include="MimeKitLite" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
