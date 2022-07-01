@@ -1203,7 +1203,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("BadRequest. Invalid delete request")); }
             labelName = "DRAFT";
             try
             {
@@ -1211,7 +1211,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("BadRequest. Invalid delete request")); }
             labelName = "SENT";
             try
             {
@@ -1219,7 +1219,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("BadRequest. Invalid delete request")); }
             labelName = "SPAM";
             try
             {
@@ -1227,7 +1227,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("Invalid delete request [400]")); }
+            catch (GoogleApiException ex) { Assert.IsTrue(ex.Message.Contains("BadRequest. Invalid delete request")); }
         }
 
         [TestMethod]
