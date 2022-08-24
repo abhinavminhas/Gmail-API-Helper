@@ -30,13 +30,13 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. MimeKitLite dependency update ('3.2.0' -&gt; '3.3.0').</PackageReleaseNotes>
-    <Version>1.8.5</Version>
+    <PackageReleaseNotes>1. MimeKitLite dependency update ('3.3.0' -&gt; '3.4.0').</PackageReleaseNotes>
+    <Version>1.8.6</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.57.0.2650" />
-    <PackageReference Include="MimeKitLite" Version="3.3.0" />
+    <PackageReference Include="MimeKitLite" Version="3.4.0" />
   </ItemGroup>
 
   <ItemGroup>
