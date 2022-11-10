@@ -50,7 +50,7 @@ jobs:
         replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
         
     - name: Setup-VSTest
-      uses: darenm/Setup-VSTest@v1
+      uses: darenm/Setup-VSTest@v1.2
       
     - name: Test
       run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll /TestCaseFilter:"TestCategory=GMAIL-TESTS-DOTNETFRAMEWORK"
