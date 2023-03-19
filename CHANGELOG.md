@@ -2,6 +2,10 @@
 All notable changes to this project documented here.
 
 ## [Released]
+## [1.8.9](https://www.nuget.org/packages/GmailHelper/1.8.9) - 2023-03-19
+### Changed
+- MimeKitLite dependency update from ('3.4.2' -> '3.4.3').
+
 ## [1.8.8](https://www.nuget.org/packages/GmailHelper/1.8.8) - 2022-11-10
 ### Changed
 - MimeKitLite dependency update from ('3.4.1' -> '3.4.2').
