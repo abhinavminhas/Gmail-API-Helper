@@ -2,6 +2,10 @@
 All notable changes to this project documented here.
 
 ## [Released]
+## [1.8.17](https://www.nuget.org/packages/GmailHelper/1.8.17) - 2023-04-01
+### Changed
+- Gmail API dependency update ('1.59.0.2958' -> '1.60.0.2958').
+
 ## [1.8.16](https://www.nuget.org/packages/GmailHelper/1.8.16) - 2023-03-29
 ### Changed
 - Gmail API dependency update ('1.59.0.2944' -> '1.59.0.2958').
