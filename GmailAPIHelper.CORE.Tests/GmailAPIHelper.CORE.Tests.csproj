@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,5 +69,13 @@
   <ItemGroup>
     <Folder Include="TestFiles\Attachments\" />
   </ItemGroup>
+
+	<!-- Creates and copies required App.config to output folder.  -->
+	<Target Name="CopyAppConfig" AfterTargets="Build" DependsOnTargets="Build">
+		<CreateItem Include="$(OutputPath)$(AssemblyName).dll.config">
+			<Output TaskParameter="Include" ItemName="FilesToCopy" />
+		</CreateItem>
+		<Copy SourceFiles="@(FilesToCopy)" DestinationFiles="$(OutputPath)testhost.dll.config" />
+	</Target>
 
 </Project>

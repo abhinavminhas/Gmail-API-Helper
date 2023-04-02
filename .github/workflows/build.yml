@@ -36,6 +36,12 @@ jobs:
       id: build
       run: |
         msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+
+    - name: Find And Replace Values (App Config)
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll.config'
+        replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
     
     - name: Find And Replace Values (OAuth)
       uses: datamonsters/replace-action@v2
@@ -76,7 +82,14 @@ jobs:
         
     - name: Build
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
-      
+    
+    - name: Find And Replace Values (App Config)
+      if: ${{ matrix.dotnet-version == 'N/A' }}
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/GmailAPIHelper.CORE.Tests.dll.config'
+        replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
+        
     - name: Find And Replace Values (OAuth)
       if: ${{ matrix.dotnet-version == 'N/A' }}
       uses: datamonsters/replace-action@v2

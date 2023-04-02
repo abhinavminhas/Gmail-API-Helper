@@ -24,6 +24,13 @@ jobs:
         
     - name: Build
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
+
+    - name: Find And Replace Values (App Config)
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
+      uses: datamonsters/replace-action@v2
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/GmailAPIHelper.CORE.Tests.dll.config'
+        replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
       
     - name: Find And Replace Values (OAuth)
       if: ${{ matrix.dotnet-version == '3.1.x' }}

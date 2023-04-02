@@ -116,7 +116,7 @@ namespace GmailAPIHelper.CORE.Tests
             GmailHelper.DisposeGmailService(service);
             try
             {
-                service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                service.GetMessage(query: $"[from:{TestEmailId}][subject:'READ EMAIL']in:inbox is:read", markRead: true);
                 Assert.Fail("No Object Disposed Exception Thrown");
             }
             catch (AssertFailedException ex) { throw ex; }
@@ -131,7 +131,7 @@ namespace GmailAPIHelper.CORE.Tests
             service.DisposeGmailService();
             try
             {
-                service.GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                service.GetMessage(query: $"[from:{TestEmailId}][subject:'READ EMAIL']in:inbox is:read", markRead: true);
                 Assert.Fail("No Object Disposed Exception Thrown");
             }
             catch (AssertFailedException ex) { throw ex; }
@@ -146,7 +146,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_GetMessage()
         {
             var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                .GetMessage(query: $"[from:{TestEmailId}][subject:'READ EMAIL']in:inbox is:read", markRead: true);
             Assert.IsNotNull(message);
         }
 
@@ -164,7 +164,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_GetMessages()
         {
             var messages = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessages(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL']in:inbox is:read", markRead: true);
+                .GetMessages(query: $"[from:{TestEmailId}][subject:'EMAIL']in:inbox is:read", markRead: true);
             Assert.AreEqual(9, messages.Count);
         }
 
@@ -182,7 +182,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_GetLatestMessage_PlainText()
         {
             var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH PLAIN TEXT (TEXT/PLAIN)']in:inbox is:read", markRead: true);
+                .GetLatestMessage(query: $"[from:{TestEmailId}][subject:'READ EMAIL WITH PLAIN TEXT (TEXT/PLAIN)']in:inbox is:read", markRead: true);
             Assert.IsNotNull(message);
         }
 
@@ -191,7 +191,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_GetLatestMessage_HtmlText()
         {
             var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH HTML TEXT (TEXT/HTML)']in:inbox is:read", markRead: true);
+                .GetLatestMessage(query: $"[from:{TestEmailId}][subject:'READ EMAIL WITH HTML TEXT (TEXT/HTML)']in:inbox is:read", markRead: true);
             Assert.IsNotNull(message);
         }
 
@@ -200,7 +200,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_GetLatestMessage_Multipart_NoText()
         {
             var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL WITH NO TEXT (MULTIPART/ALTERNATIVE)']in:inbox is:read", markRead: true);
+                .GetLatestMessage(query: $"[from:{TestEmailId}][subject:'READ EMAIL WITH NO TEXT (MULTIPART/ALTERNATIVE)']in:inbox is:read", markRead: true);
             Assert.IsNull(message);
         }
 
@@ -227,7 +227,7 @@ namespace GmailAPIHelper.CORE.Tests
         public void Test_GetLatestMessage_MultipleMatchingEmails()
         {
             var message = GmailHelper.GetGmailService(ApplicationName)
-                .GetLatestMessage(query: "[from:test.auto.helper@gmail.com][subject:'READ EMAIL']in:inbox is:read", markRead: true);
+                .GetLatestMessage(query: $"[from:{TestEmailId}][subject:'READ EMAIL']in:inbox is:read", markRead: true);
             Assert.IsNotNull(message);
         }
 
@@ -254,15 +254,15 @@ namespace GmailAPIHelper.CORE.Tests
             Directory.CreateDirectory(destPath);
             //EMAIL WITH ATTACHMENTS AND NO BODY
             var countOfMessageAttachmentsDownloaded = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessageAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS AND NO BODY']in:inbox is:read", directoryPath: destPath);
+                .GetMessageAttachments(query: $"[from:{TestEmailId}][subject:'EMAIL WITH ATTACHMENTS AND NO BODY']in:inbox is:read", directoryPath: destPath);
             Assert.AreEqual(10, countOfMessageAttachmentsDownloaded);
             //EMAIL WITH ATTACHMENTS AND PLAIN TEXT BODY
             countOfMessageAttachmentsDownloaded = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessageAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS AND PLAIN TEXT BODY']in:inbox is:read", directoryPath: destPath);
+                .GetMessageAttachments(query: $"[from:{TestEmailId}][subject:'EMAIL WITH ATTACHMENTS AND PLAIN TEXT BODY']in:inbox is:read", directoryPath: destPath);
             Assert.AreEqual(10, countOfMessageAttachmentsDownloaded);
             //EMAIL WITH ATTACHMENTS AND HTML BODY
             countOfMessageAttachmentsDownloaded = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessageAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS AND HTML BODY']in:inbox is:read", directoryPath: destPath);
+                .GetMessageAttachments(query: $"[from:{TestEmailId}][subject:'EMAIL WITH ATTACHMENTS AND HTML BODY']in:inbox is:read", directoryPath: destPath);
             Assert.AreEqual(10, countOfMessageAttachmentsDownloaded);
             Directory.Delete(destPath, recursive: true);
         }
@@ -275,7 +275,7 @@ namespace GmailAPIHelper.CORE.Tests
             {
                 var destPath = "/home/user/attachments";
                 GmailHelper.GetGmailService(ApplicationName)
-                    .GetMessageAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS AND NO BODY']in:inbox is:read", directoryPath: destPath);
+                    .GetMessageAttachments(query: $"[from:{TestEmailId}][subject:'EMAIL WITH ATTACHMENTS AND NO BODY']in:inbox is:read", directoryPath: destPath);
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
@@ -313,7 +313,7 @@ namespace GmailAPIHelper.CORE.Tests
                 destPath = Environment.CurrentDirectory + "/" + "DotNet-Multi-Attach-Files";
             Directory.CreateDirectory(destPath);
             var messagesAttachmentsDownloaded = GmailHelper.GetGmailService(ApplicationName)
-                .GetMessagesAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS']in:inbox is:read", directoryPath: destPath);
+                .GetMessagesAttachments(query: $"[from:{TestEmailId}][subject:'EMAIL WITH ATTACHMENTS']in:inbox is:read", directoryPath: destPath);
             Assert.AreEqual(3, messagesAttachmentsDownloaded.Count);
             foreach (var messagesAttachments in messagesAttachmentsDownloaded)
                 Assert.AreEqual(10, messagesAttachments.Value);
@@ -328,7 +328,7 @@ namespace GmailAPIHelper.CORE.Tests
             {
                 var destPath = "/home/user/attachments";
                 GmailHelper.GetGmailService(ApplicationName)
-                    .GetMessagesAttachments(query: "[from:test.auto.helper@gmail.com][subject:'EMAIL WITH ATTACHMENTS AND NO BODY']in:inbox is:read", directoryPath: destPath);
+                    .GetMessagesAttachments(query: $"[from:{TestEmailId}][subject:'EMAIL WITH ATTACHMENTS AND NO BODY']in:inbox is:read", directoryPath: destPath);
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
@@ -366,7 +366,7 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "EMAIL WITH PLAIN TEXT", body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: "EMAIL WITH PLAIN TEXT", body: body);
         }
 
         [TestMethod]
@@ -382,7 +382,7 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/HTMLEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.HTML, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "EMAIL WITH HTML TEXT", body: body);
+                .SendMessage(GmailHelper.EmailContentType.HTML, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: "EMAIL WITH HTML TEXT", body: body);
         }
 
         [TestMethod]
@@ -417,7 +417,7 @@ namespace GmailAPIHelper.CORE.Tests
             {
                 try
                 {
-                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: invalidEmailType);
+                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: invalidEmailType);
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
@@ -439,7 +439,7 @@ namespace GmailAPIHelper.CORE.Tests
             {
                 try
                 {
-                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", bcc: invalidEmailType);
+                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, bcc: invalidEmailType);
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
@@ -484,7 +484,7 @@ namespace GmailAPIHelper.CORE.Tests
                attachmentPath + "Attachment.wmv"
             };
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: attachments, cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "SEND DOTNETCORE EMAIL WITH PLAIN TEXT BODY AND ATTACHMENTS", body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, attachments: attachments, cc: TestEmailId, bcc: TestEmailId, subject: "SEND DOTNETCORE EMAIL WITH PLAIN TEXT BODY AND ATTACHMENTS", body: body);
         }
 
         [TestMethod]
@@ -520,7 +520,7 @@ namespace GmailAPIHelper.CORE.Tests
                attachmentPath + "Attachment.wmv"
             };
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.HTML, "test.auto.helper@gmail.com", attachments: attachments, cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "SEND DOTNETCORE EMAIL WITH HTML TEXT BODY AND ATTACHMENTS", body: body);
+                .SendMessage(GmailHelper.EmailContentType.HTML, TestEmailId, attachments: attachments, cc: TestEmailId, bcc: TestEmailId, subject: "SEND DOTNETCORE EMAIL WITH HTML TEXT BODY AND ATTACHMENTS", body: body);
         }
 
         [TestMethod]
@@ -555,7 +555,7 @@ namespace GmailAPIHelper.CORE.Tests
             {
                 try
                 {
-                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: null, cc: invalidEmailType);
+                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, attachments: null, cc: invalidEmailType);
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
@@ -577,7 +577,7 @@ namespace GmailAPIHelper.CORE.Tests
             {
                 try
                 {
-                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: null, bcc: invalidEmailType);
+                    GmailHelper.GetGmailService(ApplicationName).SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, attachments: null, bcc: invalidEmailType);
                     Assert.Fail(string.Format("No Invalid Email Exception Thrown. Email Id - '{0}'.", invalidEmailType));
                 }
                 catch (AssertFailedException ex) { throw ex; }
@@ -616,7 +616,7 @@ namespace GmailAPIHelper.CORE.Tests
             try
             {
                 GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", attachments: attachments, cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: "ATTACHMENT FILE NOT FOUND", body: "Hello");
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, attachments: attachments, cc: TestEmailId, bcc: TestEmailId, subject: "ATTACHMENT FILE NOT FOUND", body: "Hello");
                 Assert.Fail("No 'FileNotFoundException' Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
@@ -641,11 +641,11 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
 
             //Test Run
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETCORE MESSAGE TO TRASH " + subject + "']in:inbox is:unread");
+                .MoveMessageToTrash(query: $"[from:{TestEmailId}][subject:'MOVE DOTNETCORE MESSAGE TO TRASH " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isMovedToTrash);
         }
 
@@ -675,12 +675,12 @@ namespace GmailAPIHelper.CORE.Tests
                     path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
                 var body = File.ReadAllText(path);
                 GmailHelper.GetGmailService(ApplicationName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             }
 
             //Test Run
             var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'MOVE DOTNETCORE MESSAGES TO TRASH " + subject + "']in:inbox is:unread");
+                .MoveMessagesToTrash(query: $"[from:{TestEmailId}][subject:'MOVE DOTNETCORE MESSAGES TO TRASH " + subject + "']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMovedToTrash);
         }
 
@@ -708,14 +708,14 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             var isMovedToTrash = GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessageToTrash(query: "[from:test.auto.helper@gmail.com][subject:'UNTRASH DOTNETCORE MESSAGE  " + subject + "']in:inbox is:unread");
+                .MoveMessageToTrash(query: $"[from:{TestEmailId}][subject:'UNTRASH DOTNETCORE MESSAGE  " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isMovedToTrash);
 
             //Test Run
             var isUntrashed = GmailHelper.GetGmailService(ApplicationName)
-                .UntrashMessage(query: "[from:test.auto.helper@gmail.com][subject:'UNTRASH DOTNETCORE MESSAGE  " + subject + "']in:trash is:unread");
+                .UntrashMessage(query: $"[from:{TestEmailId}][subject:'UNTRASH DOTNETCORE MESSAGE  " + subject + "']in:trash is:unread");
             Assert.IsTrue(isUntrashed);
         }
 
@@ -745,15 +745,15 @@ namespace GmailAPIHelper.CORE.Tests
                     path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
                 var body = File.ReadAllText(path);
                 GmailHelper.GetGmailService(ApplicationName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             }
             var countOfMessagesMovedToTrash = GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com][subject:'UNTRASH DOTNETCORE MESSAGES " + subject + "']in:inbox is:unread");
+                .MoveMessagesToTrash(query: $"[from:{TestEmailId}][subject:'UNTRASH DOTNETCORE MESSAGES " + subject + "']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMovedToTrash);
 
             //Test Run
             var countOfMessagesUntrashed = GmailHelper.GetGmailService(ApplicationName)
-                .UntrashMessages(query: "[from:test.auto.helper@gmail.com][subject:'UNTRASH DOTNETCORE MESSAGES " + subject + "']in:trash is:unread");
+                .UntrashMessages(query: $"[from:{TestEmailId}][subject:'UNTRASH DOTNETCORE MESSAGES " + subject + "']in:trash is:unread");
             Assert.AreEqual(2, countOfMessagesUntrashed);
         }
 
@@ -781,11 +781,11 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
 
             //Test Run
             var isSpamReported = GmailHelper.GetGmailService(ApplicationName)
-                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETCORE SPAM MESSAGE " + subject + "']in:inbox is:unread");
+                .ReportSpamMessage(query: $"[from:{TestEmailId}][subject:'REPORT DOTNETCORE SPAM MESSAGE " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isSpamReported);
         }
 
@@ -815,12 +815,12 @@ namespace GmailAPIHelper.CORE.Tests
                     path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
                 var body = File.ReadAllText(path);
                 GmailHelper.GetGmailService(ApplicationName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             }
 
             //Test Run
             var countOfMessagesReportedAsSpam = GmailHelper.GetGmailService(ApplicationName)
-                .ReportSpamMessages(query: "[from:test.auto.helper@gmail.com][subject:'REPORT DOTNETCORE SPAM MESSAGES " + subject + "']in:inbox is:unread");
+                .ReportSpamMessages(query: $"[from:{TestEmailId}][subject:'REPORT DOTNETCORE SPAM MESSAGES " + subject + "']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesReportedAsSpam);
         }
 
@@ -848,14 +848,14 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             var isSpamReported = GmailHelper.GetGmailService(ApplicationName)
-                .ReportSpamMessage(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETCORE MESSAGE " + subject + "']in:inbox is:unread");
+                .ReportSpamMessage(query: $"[from:{TestEmailId}][subject:'UNSPAM DOTNETCORE MESSAGE " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isSpamReported);
 
             //Test Run
             var isUnspamed = GmailHelper.GetGmailService(ApplicationName)
-                .UnspamMessage(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETCORE MESSAGE " + subject + "']in:spam is:unread");
+                .UnspamMessage(query: $"[from:{TestEmailId}][subject:'UNSPAM DOTNETCORE MESSAGE " + subject + "']in:spam is:unread");
             Assert.IsTrue(isUnspamed);
         }
 
@@ -885,15 +885,15 @@ namespace GmailAPIHelper.CORE.Tests
                     path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
                 var body = File.ReadAllText(path);
                 GmailHelper.GetGmailService(ApplicationName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             }
             var countOfMessagesReportedAsSpam = GmailHelper.GetGmailService(ApplicationName)
-                .ReportSpamMessages(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETCORE MESSAGES " + subject + "']in:inbox is:unread");
+                .ReportSpamMessages(query: $"[from:{TestEmailId}][subject:'UNSPAM DOTNETCORE MESSAGES " + subject + "']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesReportedAsSpam);
 
             //Test Run
             var countOfMessagesUnspamed = GmailHelper.GetGmailService(ApplicationName)
-                .UnspamMessages(query: "[from:test.auto.helper@gmail.com][subject:'UNSPAM DOTNETCORE MESSAGES " + subject + "']in:spam is:unread");
+                .UnspamMessages(query: $"[from:{TestEmailId}][subject:'UNSPAM DOTNETCORE MESSAGES " + subject + "']in:spam is:unread");
             Assert.AreEqual(2, countOfMessagesUnspamed);
         }
 
@@ -921,11 +921,11 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
 
             //Test Run
             var isMarkedRead = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessageAsRead(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETCORE MESSAGE AS READ  " + subject + "']in:inbox is:unread");
+                .MarkMessageAsRead(query: $"[from:{TestEmailId}][subject:'MARK DOTNETCORE MESSAGE AS READ  " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isMarkedRead);
         }
 
@@ -955,12 +955,12 @@ namespace GmailAPIHelper.CORE.Tests
                     path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
                 var body = File.ReadAllText(path);
                 GmailHelper.GetGmailService(ApplicationName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             }
 
             //Test Run
             var countOfMessagesMarkedAsRead = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessagesAsRead(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETCORE MESSAGES AS READ " + subject + "']in:inbox is:unread");
+                .MarkMessagesAsRead(query: $"[from:{TestEmailId}][subject:'MARK DOTNETCORE MESSAGES AS READ " + subject + "']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMarkedAsRead);
         }
 
@@ -988,14 +988,14 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             var isMarkedRead = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessageAsRead(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETCORE MESSAGE AS UNREAD  " + subject + "']in:inbox is:unread");
+                .MarkMessageAsRead(query: $"[from:{TestEmailId}][subject:'MARK DOTNETCORE MESSAGE AS UNREAD  " + subject + "']in:inbox is:unread");
             Assert.IsTrue(isMarkedRead);
 
             //Test Run
             var isMarkedUnread = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessageAsUnread(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETCORE MESSAGE AS UNREAD  " + subject + "']in:inbox is:read");
+                .MarkMessageAsUnread(query: $"[from:{TestEmailId}][subject:'MARK DOTNETCORE MESSAGE AS UNREAD  " + subject + "']in:inbox is:read");
             Assert.IsTrue(isMarkedUnread);
         }
 
@@ -1025,15 +1025,15 @@ namespace GmailAPIHelper.CORE.Tests
                     path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
                 var body = File.ReadAllText(path);
                 GmailHelper.GetGmailService(ApplicationName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             }
             var countOfMessagesMarkedAsRead = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessagesAsRead(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETCORE MESSAGES AS UNREAD " + subject + "']in:inbox is:unread");
+                .MarkMessagesAsRead(query: $"[from:{TestEmailId}][subject:'MARK DOTNETCORE MESSAGES AS UNREAD " + subject + "']in:inbox is:unread");
             Assert.AreEqual(2, countOfMessagesMarkedAsRead);
 
             //Test Run
             var countOfMessagesMarkedAsUnread = GmailHelper.GetGmailService(ApplicationName)
-                .MarkMessagesAsUnread(query: "[from:test.auto.helper@gmail.com][subject:'MARK DOTNETCORE MESSAGES AS UNREAD " + subject + "']in:inbox is:read");
+                .MarkMessagesAsUnread(query: $"[from:{TestEmailId}][subject:'MARK DOTNETCORE MESSAGES AS UNREAD " + subject + "']in:inbox is:read");
             Assert.AreEqual(2, countOfMessagesMarkedAsUnread);
         }
 
@@ -1061,17 +1061,17 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
 
             //Test Run
             var isModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
+                .ModifyMessage(query: $"[from:{TestEmailId}][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
             Assert.IsTrue(isModified);
             isModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
+                .ModifyMessage(query: $"[from:{TestEmailId}][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
             Assert.IsTrue(isModified);
             isModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
+                .ModifyMessage(query: $"[from:{TestEmailId}][subject:'MODIFY DOTNETCORE MESSAGE " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
             Assert.IsTrue(isModified);
         }
 
@@ -1115,18 +1115,18 @@ namespace GmailAPIHelper.CORE.Tests
                     path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
                 var body = File.ReadAllText(path);
                 GmailHelper.GetGmailService(ApplicationName)
-                    .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                    .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             }
 
             //Test Run
             var countOfMessagesModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessages(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGES " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
+                .ModifyMessages(query: $"[from:{TestEmailId}][subject:'MODIFY DOTNETCORE MESSAGES " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "SPAM", });
             Assert.AreEqual(2, countOfMessagesModified);
             countOfMessagesModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessages(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGES " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
+                .ModifyMessages(query: $"[from:{TestEmailId}][subject:'MODIFY DOTNETCORE MESSAGES " + subject + "']in:spam", labelsToRemove: new List<string>() { "IMPORTANT", "UNREAD" });
             Assert.AreEqual(2, countOfMessagesModified);
             countOfMessagesModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessages(query: "[from:test.auto.helper@gmail.com][subject:'MODIFY DOTNETCORE MESSAGES " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
+                .ModifyMessages(query: $"[from:{TestEmailId}][subject:'MODIFY DOTNETCORE MESSAGES " + subject + "']in:spam", labelsToAdd: new List<string>() { "INBOX", "STARRED", "UNREAD", }, labelsToRemove: new List<string>() { "SPAM" });
             Assert.AreEqual(2, countOfMessagesModified);
         }
 
@@ -1168,9 +1168,9 @@ namespace GmailAPIHelper.CORE.Tests
                 path = Environment.CurrentDirectory + "/TestFiles/PlainEmail.txt";
             var body = File.ReadAllText(path);
             GmailHelper.GetGmailService(ApplicationName)
-                .SendMessage(GmailHelper.EmailContentType.PLAIN, "test.auto.helper@gmail.com", cc: "test.auto.helper@gmail.com", bcc: "test.auto.helper@gmail.com", subject: subject, body: body);
+                .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: subject, body: body);
             var isModified = GmailHelper.GetGmailService(ApplicationName)
-                .ModifyMessage(query: "[from:test.auto.helper@gmail.com][subject:'GET DOTNETCORE MESSAGE LABELS " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "STARRED", });
+                .ModifyMessage(query: $"[from:{TestEmailId}][subject:'GET DOTNETCORE MESSAGE LABELS " + subject + "']in:inbox", labelsToAdd: new List<string>() { "IMPORTANT", "STARRED", });
             Assert.IsTrue(isModified);
 
             //Test Run
@@ -1485,9 +1485,9 @@ namespace GmailAPIHelper.CORE.Tests
         public void Inbox_CleanUp()
         {
             GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com]in:inbox is:unread");
+                .MoveMessagesToTrash(query: $"[from:{TestEmailId}]in:inbox is:unread");
             GmailHelper.GetGmailService(ApplicationName)
-                .MoveMessagesToTrash(query: "[from:test.auto.helper@gmail.com]in:spam is:unread");
+                .MoveMessagesToTrash(query: $"[from:{TestEmailId}]in:spam is:unread");
             GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETCORE MESSAGE AS READ']in:inbox is:read");
             GmailHelper.GetGmailService(ApplicationName)
