@@ -30,8 +30,8 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. MimeKitLite dependency update from '3.5.0' -&gt; '3.6.0'.</PackageReleaseNotes>
-    <Version>1.8.18</Version>
+    <PackageReleaseNotes>1. MimeKitLite dependency update from '3.6.0' -&gt; '3.6.1'.</PackageReleaseNotes>
+    <Version>1.8.19</Version>
   </PropertyGroup>
 
   <ItemGroup>
