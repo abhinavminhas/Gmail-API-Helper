@@ -30,8 +30,9 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Gmail API dependency update ('1.60.0.2958' -&gt; '1.60.0.3014').</PackageReleaseNotes>
-    <Version>1.8.20</Version>
+    <PackageReleaseNotes>1. MimeKitLite dependency update from ('3.6.1' -&gt; '4.0.0').
+2. Send message with attachments update, uses 'MimeMessage' instead of 'MailMessage' to construct message body.</PackageReleaseNotes>
+    <Version>1.9.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
