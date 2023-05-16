@@ -3,6 +3,11 @@ All notable changes to this project documented here.
 
 ## [Released]
 
+## [1.9.0](https://www.nuget.org/packages/GmailHelper/1.9.0) - 2023-05-17
+### Changed
+- MimeKitLite dependency update from ('3.6.1' -> '4.0.0').
+- Send message with attachments update, uses 'MimeMessage' instead of 'MailMessage' to construct message body.
+
 ## [1.8.20](https://www.nuget.org/packages/GmailHelper/1.8.20) - 2023-04-16
 ### Changed
 - Gmail API dependency update ('1.60.0.2958' -> '1.60.0.3014').

@@ -367,7 +367,7 @@ namespace GmailAPIHelper.NET.Tests
         [TestCategory("GMAIL-TESTS-DOTNETFRAMEWORK")]
         public void Test_SendMessage_Attachments_PlainText()
         {
-            var path = Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt";
+            var path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
             var body = File.ReadAllText(path);
             var attachmentPath = Environment.CurrentDirectory + "\\TestFiles\\Attachments\\";
             var attachments = new List<string>

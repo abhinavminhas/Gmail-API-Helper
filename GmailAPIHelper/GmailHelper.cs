@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -543,14 +542,14 @@ namespace GmailAPIHelper
         public static void SendMessage(this GmailService gmailService, EmailContentType emailContentType, string to, List<string> attachments, string cc = "", string bcc = "", string subject = "", string body = "", string userId = "me", bool disposeGmailService = true)
         {
             var service = gmailService;
-            var mailMessage = new MailMessage();
+            var mimeMessage = new MimeMessage();
             var toList = to.Split(',');
             foreach (var email in toList)
             {
                 if (!email.IsValidEmail())
                     throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
                 else
-                    mailMessage.To.Add(new MailAddress(email));
+                    mimeMessage.To.Add(new MailboxAddress(null, email));
             }
             if (cc != "")
             {
@@ -560,7 +559,7 @@ namespace GmailAPIHelper
                     if (!email.IsValidEmail())
                         throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
                     else
-                        mailMessage.CC.Add(new MailAddress(email));
+                        mimeMessage.Cc.Add(new MailboxAddress(null, email));
                 }
             }
             if (bcc != "")
@@ -571,28 +570,27 @@ namespace GmailAPIHelper
                     if (!email.IsValidEmail())
                         throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
                     else
-                        mailMessage.Bcc.Add(new MailAddress(email));
+                        mimeMessage.Bcc.Add(new MailboxAddress(null, email));
                 }
             }
-            mailMessage.Subject = subject;
+            mimeMessage.Subject = subject;
+            var builder = new BodyBuilder();
             if (emailContentType.Equals(EmailContentType.PLAIN))
             {
-                mailMessage.IsBodyHtml = false;
-                mailMessage.Body = body;
+                builder.TextBody = body;
             }
             else if (emailContentType.Equals(EmailContentType.HTML))
             {
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = body;
+                builder.HtmlBody = body;
             }
             foreach (var attachment in attachments)
             {
                 if (File.Exists(attachment))
-                    mailMessage.Attachments.Add(new Attachment(attachment));
+                    builder.Attachments.Add(attachment);
                 else
                     throw new FileNotFoundException(string.Format("Attachment file '{0}' not found.", attachment));
             }
-            var mimeMessage = (MimeMessage)mailMessage;
+            mimeMessage.Body = builder.ToMessageBody();
             byte[] data;
             using (MemoryStream stream = new MemoryStream())
             {
