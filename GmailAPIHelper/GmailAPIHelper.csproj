@@ -30,7 +30,7 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Gmail API dependency update ('1.62.0.3105' -&gt; '1.62.0.375').</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Gmail API dependency update ('1.62.0.3105' -&gt; '1.62.0.3175').</PackageReleaseNotes>
     <Version>1.9.11</Version>
   </PropertyGroup>
 
