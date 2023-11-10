@@ -30,12 +30,12 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Gmail API dependency update ('1.62.1.3196' -&gt; '1.62.1.3217').</PackageReleaseNotes>
-    <Version>1.9.15</Version>
+    <PackageReleaseNotes>1. Gmail API dependency update ('1.62.1.3217' -&gt; '1.63.0.3217').</PackageReleaseNotes>
+    <Version>1.9.16</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.62.1.3217" />
+    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.63.0.3217" />
     <PackageReference Include="MimeKitLite" Version="4.2.0" />
   </ItemGroup>
 
