@@ -2,9 +2,10 @@ name: Test CleanUp
 
 on:
   workflow_run:
-    workflows: [ Build ]
+    workflows: [ "Build" ]
     branches: [ main, dev ]
-    types: [ completed ]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
