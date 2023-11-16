@@ -4,14 +4,14 @@ name: Build
 on:
   push:
     branches: [ main, dev ]
-  pull_request:
-    branches: [ main ]
     paths-ignore:
       - '**.md'
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  DotNet_OS-VSVersion:
+  Build_DotNet_OS-VSVersion:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -62,7 +62,7 @@ jobs:
       run: vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll /TestCaseFilter:"TestCategory=GMAIL-TESTS-DOTNETFRAMEWORK"
     
   
-  DotNetCore_OS-Version:
+  Build_DotNetCore_OS-Version:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -106,3 +106,53 @@ jobs:
     - name: Test
       if: ${{ matrix.dotnet-version == 'N/A' }}
       run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE
+
+  Code-Coverage:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-2019, ubuntu-20.04, macOS-11 ]
+        dotnet-version: [ '3.1.x' ]
+        
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Dotnet Version (${{ matrix.dotnet-version }})
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+        
+    - name: Find And Replace Values (App Config)
+      uses: abhinavminhas/replace-tokens@v1.0
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/App.config'
+        replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
+
+    - name: Build
+      run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
+
+    - name: Find And Replace Values (OAuth)
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
+      uses: abhinavminhas/replace-tokens@v1.0
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
+        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
+
+    - name: Find And Replace Values (Client Secret)
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
+      uses: abhinavminhas/replace-tokens@v1.0
+      with:
+        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/credentials.json'
+        replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
+        
+    - name: Test
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
+      run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+    
+    - name: Upload Coverage To Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}

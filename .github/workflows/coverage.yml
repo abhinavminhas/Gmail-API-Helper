@@ -1,12 +1,6 @@
 name: Code Coverage
 
 on:
-  push:
-    branches: [ main, dev ]
-  pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - '**.md'
   workflow_dispatch:
 
 jobs:
