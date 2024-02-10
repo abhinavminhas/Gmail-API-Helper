@@ -3,6 +3,10 @@ All notable changes to this project documented here.
 
 ## [Released]
 
+## [1.9.21](https://www.nuget.org/packages/GmailHelper/1.9.21) - 2024-02-10
+### Changed
+- Gmail API dependency update ('1.64.0.3287' -> '1.65.0.3287').
+
 ## [1.9.20](https://www.nuget.org/packages/GmailHelper/1.9.20) - 2024-01-11
 ### Changed
 - Gmail API dependency update ('1.64.0.3231' -> '1.64.0.3287').
