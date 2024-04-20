@@ -28,7 +28,7 @@ jobs:
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
     - name: Setup-MSBuild VS-Version (${{ matrix.vs-version }})
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
       with:
         vs-version: ${{ matrix.vs-version }}
       
