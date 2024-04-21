@@ -33,7 +33,7 @@ jobs:
         vs-version: ${{ matrix.vs-version }}
       
     - name: Find And Replace Values (App Config)
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\App.config'
         replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
@@ -44,13 +44,13 @@ jobs:
         msbuild GmailAPIHelper.sln /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
 
     - name: Find And Replace Values (OAuth)
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
     
     - name: Find And Replace Values (Client Secret)
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\credentials.json'
         replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
@@ -81,7 +81,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
         
     - name: Find And Replace Values (App Config)
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/App.config'
         replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
@@ -91,14 +91,14 @@ jobs:
 
     - name: Find And Replace Values (OAuth)
       if: ${{ matrix.dotnet-version == 'N/A' }}
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
 
     - name: Find And Replace Values (Client Secret)
       if: ${{ matrix.dotnet-version == 'N/A' }}
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/credentials.json'
         replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
@@ -126,7 +126,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
         
     - name: Find And Replace Values (App Config)
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/App.config'
         replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
@@ -136,14 +136,14 @@ jobs:
 
     - name: Find And Replace Values (OAuth)
       if: ${{ matrix.dotnet-version == '3.1.x' }}
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
 
     - name: Find And Replace Values (Client Secret)
       if: ${{ matrix.dotnet-version == '3.1.x' }}
-      uses: abhinavminhas/replace-tokens@1.2
+      uses: abhinavminhas/replace-tokens@v1.2
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/credentials.json'
         replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
