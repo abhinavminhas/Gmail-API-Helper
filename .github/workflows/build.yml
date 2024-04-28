@@ -57,7 +57,7 @@ jobs:
         
     - name: Setup-VSTest
       env:
-        VSTEST_CONSOLE_PATH: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
+        VSTEST_CONSOLE_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow
       
     - name: Test
       run: ${{env.VSTEST_CONSOLE_PATH}}\vstest.console.exe ${{ github.workspace }}\GmailAPIHelper.NET.Tests\bin\Release\GmailAPIHelper.NET.Tests.dll /TestCaseFilter:"TestCategory=GMAIL-TESTS-DOTNETFRAMEWORK"
