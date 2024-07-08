@@ -1,7 +1,7 @@
 name: Publish Nuget Package
 
 env:
-    NUGET_PACKAGE_NAME_VERSION: "GmailHelper.1.9.29.nupkg"
+    NUGET_PACKAGE_NAME_VERSION: "GmailHelper.1.9.30.nupkg"
 
 on:
   workflow_dispatch:
