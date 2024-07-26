@@ -190,13 +190,16 @@ namespace GmailAPIHelper
             if (messages.Count > 0)
             {
                 var requiredLatestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var messageRequest = service.Users.Messages.Get(userId, requiredLatestMessage.Id);
-                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
-                requiredLatestMessage = messageRequest.Execute();
-                if (markRead)
+                if (requiredLatestMessage != null)
                 {
-                    var labelToRemove = new List<string> { "UNREAD" };
-                    service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
+                    var messageRequest = service.Users.Messages.Get(userId, requiredLatestMessage.Id);
+                    messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                    requiredLatestMessage = messageRequest.Execute();
+                    if (markRead)
+                    {
+                        var labelToRemove = new List<string> { "UNREAD" };
+                        service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
+                    }
                 }
                 if (disposeGmailService)
                     service.DisposeGmailService();
