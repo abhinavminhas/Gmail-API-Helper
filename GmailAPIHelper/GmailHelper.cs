@@ -141,7 +141,6 @@ namespace GmailAPIHelper
                     new FileDataStore(credPath, true)).Result;
             }
             //Create Gmail API service.
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             var service = new GmailService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
