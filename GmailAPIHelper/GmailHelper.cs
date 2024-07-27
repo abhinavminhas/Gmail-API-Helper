@@ -302,7 +302,7 @@ namespace GmailAPIHelper
                         if (latestMessageDetails.Payload.Parts != null)
                         {
                             requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
-                            if (requiredMessagePart.Body.Data == "" || requiredMessagePart.Body.Data == null)
+                            if (requiredMessagePart != null || requiredMessagePart.Body.Data == "" || requiredMessagePart.Body.Data == null)
                                 requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/html");
                         }
                     }
