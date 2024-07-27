@@ -1087,12 +1087,17 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
+                var isModified = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
-                modifyMessageRequest.Execute();
+                if (latestMessage != null)
+                {
+                    var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                    modifyMessageRequest.Execute();
+                    isModified = true;
+                }
                 if (disposeGmailService)
                     service.DisposeGmailService();
-                return true;
+                return isModified;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
