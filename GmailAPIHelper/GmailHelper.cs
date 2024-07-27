@@ -727,14 +727,19 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
+                var isMoved = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var untrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
-                untrashMessageRequest.Execute();
-                var labelToAdd = new List<string> { "INBOX" };
-                service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
+                if (latestMessage != null)
+                {
+                    var untrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
+                    untrashMessageRequest.Execute();
+                    var labelToAdd = new List<string> { "INBOX" };
+                    service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
+                    isMoved = true;
+                }
                 if (disposeGmailService)
                     service.DisposeGmailService();
-                return true;
+                return isMoved;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
