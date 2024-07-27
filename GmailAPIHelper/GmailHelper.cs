@@ -287,35 +287,38 @@ namespace GmailAPIHelper
             {
                 string requiredMessage = null;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
-                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
-                var latestMessageDetails = messageRequest.Execute();
-                MessagePart requiredMessagePart = null;
-                if (latestMessageDetails.Payload.MimeType == "text/plain")
-                    requiredMessagePart = latestMessageDetails.Payload;
-                else if (latestMessageDetails.Payload.MimeType == "text/html")
-                    requiredMessagePart = latestMessageDetails.Payload;
-                else
+                if (latestMessage != null)
                 {
-                    if (latestMessageDetails.Payload.Parts != null)
+                    var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
+                    messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                    var latestMessageDetails = messageRequest.Execute();
+                    MessagePart requiredMessagePart = null;
+                    if (latestMessageDetails.Payload.MimeType == "text/plain")
+                        requiredMessagePart = latestMessageDetails.Payload;
+                    else if (latestMessageDetails.Payload.MimeType == "text/html")
+                        requiredMessagePart = latestMessageDetails.Payload;
+                    else
                     {
-                        requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
-                        if (requiredMessagePart.Body.Data == "" || requiredMessagePart.Body.Data == null)
-                            requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/html");
+                        if (latestMessageDetails.Payload.Parts != null)
+                        {
+                            requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
+                            if (requiredMessagePart.Body.Data == "" || requiredMessagePart.Body.Data == null)
+                                requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/html");
+                        }
                     }
-                }
-                if (requiredMessagePart != null)
-                {
-                    byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
-                    requiredMessage = Encoding.UTF8.GetString(data);
-                    if (markRead)
+                    if (requiredMessagePart != null)
                     {
-                        var labelToRemove = new List<string> { "UNREAD" };
-                        service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
+                        byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                        requiredMessage = Encoding.UTF8.GetString(data);
+                        if (markRead)
+                        {
+                            var labelToRemove = new List<string> { "UNREAD" };
+                            service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
+                        }
                     }
+                    else
+                        requiredMessagePart = null;
                 }
-                else
-                    requiredMessagePart = null;
                 if (disposeGmailService)
                     service.DisposeGmailService();
                 return requiredMessage;
