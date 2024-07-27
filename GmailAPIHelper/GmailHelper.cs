@@ -1277,7 +1277,7 @@ namespace GmailAPIHelper
             if (messages.Count > 0)
             {
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage.LabelIds.Count > 0)
+                if (latestMessage != null && latestMessage.LabelIds.Count > 0)
                 {
                     foreach (var labelId in latestMessage.LabelIds)
                     {
