@@ -368,22 +368,25 @@ namespace GmailAPIHelper
             if (messages.Count > 0)
             {
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
-                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
-                var latestMessageDetails = messageRequest.Execute();
-                if (latestMessageDetails.Payload != null)
+                if (latestMessage != null)
                 {
-                    if (latestMessageDetails.Payload.Parts.Count > 0)
+                    var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
+                    messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                    var latestMessageDetails = messageRequest.Execute();
+                    if (latestMessageDetails.Payload != null)
                     {
-                        foreach (var part in latestMessageDetails.Payload.Parts)
+                        if (latestMessageDetails.Payload.Parts.Count > 0)
                         {
-                            if (part.Filename != "")
+                            foreach (var part in latestMessageDetails.Payload.Parts)
                             {
-                                var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
-                                var messageAttachmentResponse = messageAttachmentRequest.Execute();
-                                var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
-                                File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
-                                count++;
+                                if (part.Filename != "")
+                                {
+                                    var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
+                                    var messageAttachmentResponse = messageAttachmentRequest.Execute();
+                                    var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                                    File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
+                                    count++;
+                                }
                             }
                         }
                     }
