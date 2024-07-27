@@ -646,12 +646,17 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
+                var isMoved = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
-                moveToTrashRequest.Execute();
+                if (latestMessage != null)
+                {
+                    var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
+                    moveToTrashRequest.Execute();
+                    isMoved = true;
+                }
                 if (disposeGmailService)
                     service.DisposeGmailService();
-                return true;
+                return isMoved;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
