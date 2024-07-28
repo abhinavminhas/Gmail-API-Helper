@@ -1136,7 +1136,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Modifies the labels on the latest message for a specified query criteria.
-        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'ArgumentNullException' if none supplied.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'ArgumentException' if none supplied.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -1145,11 +1145,11 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Boolean value to confirm if the email message labels for the criteria were modified or not.</returns>
-        /// <exception cref="ArgumentNullException">Throws 'ArgumentNullException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
+        /// <exception cref="ArgumentException">Throws 'ArgumentException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
         public static bool ModifyMessage(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
-                throw new ArgumentNullException("<labelsToAdd> / <labelsToRemove> required.");
+                throw new ArgumentException("Parameters 'labelsToAdd' / 'labelsToRemove' required.");
             var mods = new ModifyMessageRequest();
             if (labelsToAdd != null)
                 mods.AddLabelIds = labelsToAdd;
@@ -1195,7 +1195,7 @@ namespace GmailAPIHelper
 
         /// <summary>
         /// Modifies the labels on the messages for a specified query criteria.
-        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'ArgumentNullException' if none supplied.
+        /// Requires - 'labelsToAdd' And/Or 'labelsToRemove' param value. Throws 'ArgumentException' if none supplied.
         /// </summary>
         /// <param name="gmailService">'Gmail' service initializer value.</param>
         /// <param name="query">'Query' criteria for the email to search.</param>
@@ -1204,11 +1204,11 @@ namespace GmailAPIHelper
         /// <param name="userId">User's email address. 'User Id' for request to authenticate. Default - 'me (authenticated user)'.</param>
         /// <param name="disposeGmailService">Boolean value to choose whether to dispose Gmail service instance used or not. Default - 'true'.</param>
         /// <returns>Count of email messages with labels modified.</returns>
-        /// <exception cref="ArgumentNullException">Throws 'ArgumentNullException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
+        /// <exception cref="ArgumentException">Throws 'ArgumentException' if none of 'labelsToAdd' and 'labelsToRemove' value is supplied</exception>
         public static int ModifyMessages(this GmailService gmailService, string query, List<string> labelsToAdd = null, List<string> labelsToRemove = null, string userId = "me", bool disposeGmailService = true)
         {
             if (labelsToAdd == null && labelsToRemove == null)
-                throw new ArgumentNullException("<labelsToAdd> / <labelsToRemove> required.");
+                throw new ArgumentException("Parameters 'labelsToAdd' / 'labelsToRemove' required.");
             var mods = new ModifyMessageRequest();
             if (labelsToAdd != null)
                 mods.AddLabelIds = labelsToAdd;
