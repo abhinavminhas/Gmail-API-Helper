@@ -23,6 +23,7 @@ namespace GmailAPIHelper
     {
         private static List<string> _scopes;
         private static string _applicationName;
+        private const string _tokenFile = "token.json";
 
         /// <summary>
         /// 'Token Path Type' enum.
@@ -85,22 +86,22 @@ namespace GmailAPIHelper
             if (tokenPathType == TokenPathType.HOME)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    credPath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\" + "token.json";
+                    credPath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    credPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
+                    credPath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    credPath = Environment.GetEnvironmentVariable("HOME") + "/" + "token.json";
+                    credPath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
                 else
                     throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.WORKING_DIRECTORY)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    credPath = Environment.CurrentDirectory + "\\" + "token.json";
+                    credPath = Environment.CurrentDirectory + "\\" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    credPath = Environment.CurrentDirectory + "/" + "token.json";
+                    credPath = Environment.CurrentDirectory + "/" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    credPath = Environment.CurrentDirectory + "/" + "token.json";
+                    credPath = Environment.CurrentDirectory + "/" + _tokenFile;
                 else
                     throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
