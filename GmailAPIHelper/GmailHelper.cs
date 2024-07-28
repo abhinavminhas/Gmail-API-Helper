@@ -317,8 +317,6 @@ namespace GmailAPIHelper
                             service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
                         }
                     }
-                    else
-                        requiredMessagePart = null;
                 }
                 if (disposeGmailService)
                     service.DisposeGmailService();
