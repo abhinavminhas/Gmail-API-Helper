@@ -882,7 +882,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (ArgumentNullException ex) { Assert.AreEqual("Value cannot be null. (Parameter '<labelsToAdd> / <labelsToRemove> required.')", ex.Message); }
+            catch (ArgumentNullException ex) { Assert.AreEqual("Value cannot be null.\r\nParameter name: <labelsToAdd> / <labelsToRemove> required.", ex.Message); }
         }
 
         [TestMethod]
@@ -930,7 +930,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (ArgumentNullException ex) { Assert.AreEqual("Value cannot be null. (Parameter '<labelsToAdd> / <labelsToRemove> required.')", ex.Message); }
+            catch (ArgumentNullException ex) { Assert.AreEqual("Value cannot be null.\r\nParameter name: <labelsToAdd> / <labelsToRemove> required.", ex.Message); }
         }
 
         [TestMethod]
