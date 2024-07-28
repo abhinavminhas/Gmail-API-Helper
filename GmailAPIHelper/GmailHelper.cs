@@ -373,20 +373,17 @@ namespace GmailAPIHelper
                     var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
                     messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
                     var latestMessageDetails = messageRequest.Execute();
-                    if (latestMessageDetails.Payload != null)
+                    if (latestMessageDetails.Payload != null && latestMessageDetails.Payload.Parts.Count > 0)
                     {
-                        if (latestMessageDetails.Payload.Parts.Count > 0)
+                        foreach (var part in latestMessageDetails.Payload.Parts)
                         {
-                            foreach (var part in latestMessageDetails.Payload.Parts)
+                            if (part.Filename != "")
                             {
-                                if (part.Filename != "")
-                                {
-                                    var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
-                                    var messageAttachmentResponse = messageAttachmentRequest.Execute();
-                                    var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
-                                    File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
-                                    count++;
-                                }
+                                var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
+                                var messageAttachmentResponse = messageAttachmentRequest.Execute();
+                                var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                                File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
+                                count++;
                             }
                         }
                     }
@@ -436,28 +433,25 @@ namespace GmailAPIHelper
                 var messageRequest = service.Users.Messages.Get(userId, message.Id);
                 messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
                 var latestMessageDetails = messageRequest.Execute();
-                if (latestMessageDetails.Payload != null)
+                if (latestMessageDetails.Payload != null && latestMessageDetails.Payload.Parts.Count > 0)
                 {
-                    if (latestMessageDetails.Payload.Parts.Count > 0)
+                    int count = 0;
+                    foreach (var part in latestMessageDetails.Payload.Parts)
                     {
-                        int count = 0;
-                        foreach (var part in latestMessageDetails.Payload.Parts)
+                        if (part.Filename != "")
                         {
-                            if (part.Filename != "")
-                            {
-                                directoryPath = Path.Combine(originalDirectoryPath, message.Id);
-                                if (!Directory.Exists(directoryPath))
-                                    Directory.CreateDirectory(directoryPath);
-                                var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
-                                var messageAttachmentResponse = messageAttachmentRequest.Execute();
-                                var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
-                                File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
-                                count++;
-                            }
+                            directoryPath = Path.Combine(originalDirectoryPath, message.Id);
+                            if (!Directory.Exists(directoryPath))
+                                Directory.CreateDirectory(directoryPath);
+                            var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
+                            var messageAttachmentResponse = messageAttachmentRequest.Execute();
+                            var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                            File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
+                            count++;
                         }
-                        if (count > 0)
-                            attachmentInfo.Add(message.Id, count);
                     }
+                    if (count > 0)
+                        attachmentInfo.Add(message.Id, count);
                 }
             }
             if (disposeGmailService)
