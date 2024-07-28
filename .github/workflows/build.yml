@@ -1,5 +1,5 @@
 #CI/MANUAL TRIGGER
-name: Build / Test / Code Coverage (Codecov) / Code Quality (SonarCloud)
+name: Build / Test
 
 on:
   push:
