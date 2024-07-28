@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    name: Test Cleanup
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

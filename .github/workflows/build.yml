@@ -1,5 +1,5 @@
 #CI/MANUAL TRIGGER
-name: Build / Test / Code Coverage / Code Quality (SonarCloud)
+name: Build / Test / Code Coverage (Codecov) / Code Quality (SonarCloud)
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   Build_DotNet_OS-VSVersion:
-    name: Build And Test (.NET Framework)
+    name: Build/Test (.NET Framework)
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -66,7 +66,7 @@ jobs:
     
   
   Build_DotNetCore_OS-Version:
-    name: Build And Test (.NET Core)
+    name: Build (.NET Core)
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -112,7 +112,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE
 
   Code-Coverage:
-    name: Code Cpverage (Codecov)
+    name: Code Coverage (Codecov)
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

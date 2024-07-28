@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Publish Nuget Package
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
