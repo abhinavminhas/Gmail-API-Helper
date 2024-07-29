@@ -26,6 +26,7 @@ namespace GmailAPIHelper
         private const string _tokenFile = "token.json";
         private const string _labelUnread = "UNREAD";
         private const string _labelInbox = "INBOX";
+        private const string _labelSpam = "SPAM"
 
         /// <summary>
         /// 'Token Path Type' enum.
@@ -788,7 +789,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                AddLabelIds = new List<string> { "SPAM" },
+                AddLabelIds = new List<string> { _labelSpam },
                 RemoveLabelIds = new List<string> { _labelInbox }
             };
             var service = gmailService;
@@ -841,7 +842,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                AddLabelIds = new List<string> { "SPAM" },
+                AddLabelIds = new List<string> { _labelSpam },
                 RemoveLabelIds = new List<string> { _labelInbox }
             };
             int counter = 0;
@@ -880,7 +881,7 @@ namespace GmailAPIHelper
             var mods = new ModifyMessageRequest
             {
                 AddLabelIds = new List<string> { _labelInbox },
-                RemoveLabelIds = new List<string> { "SPAM" }
+                RemoveLabelIds = new List<string> { _labelSpam }
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -933,7 +934,7 @@ namespace GmailAPIHelper
             var mods = new ModifyMessageRequest
             {
                 AddLabelIds = new List<string> { _labelInbox },
-                RemoveLabelIds = new List<string> { "SPAM" }
+                RemoveLabelIds = new List<string> { _labelSpam }
             };
             int counter = 0;
             var service = gmailService;
