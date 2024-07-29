@@ -24,6 +24,7 @@ namespace GmailAPIHelper
         private static List<string> _scopes;
         private static string _applicationName;
         private const string _tokenFile = "token.json";
+        private const string _labelUnread = "UNREAD";
 
         /// <summary>
         /// 'Token Path Type' enum.
@@ -198,7 +199,7 @@ namespace GmailAPIHelper
                     requiredLatestMessage = messageRequest.Execute();
                     if (markRead)
                     {
-                        var labelToRemove = new List<string> { "UNREAD" };
+                        var labelToRemove = new List<string> { _labelUnread };
                         service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
                     }
                 }
@@ -245,7 +246,7 @@ namespace GmailAPIHelper
                 messages.Add(currentMessage);
                 if (markRead)
                 {
-                    var labelToRemove = new List<string> { "UNREAD" };
+                    var labelToRemove = new List<string> { _labelUnread };
                     service.RemoveLabels(message.Id, labelToRemove, userId: userId);
                 }
             }
@@ -313,7 +314,7 @@ namespace GmailAPIHelper
                         requiredMessage = Encoding.UTF8.GetString(data);
                         if (markRead)
                         {
-                            var labelToRemove = new List<string> { "UNREAD" };
+                            var labelToRemove = new List<string> { _labelUnread };
                             service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
                         }
                     }
@@ -968,7 +969,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                RemoveLabelIds = new List<string> { "UNREAD" }
+                RemoveLabelIds = new List<string> { _labelUnread }
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -1020,7 +1021,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                RemoveLabelIds = new List<string> { "UNREAD" }
+                RemoveLabelIds = new List<string> { _labelUnread }
             };
             int counter = 0;
             var service = gmailService;
@@ -1057,7 +1058,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                AddLabelIds = new List<string> { "UNREAD" }
+                AddLabelIds = new List<string> { _labelUnread }
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -1109,7 +1110,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                AddLabelIds = new List<string> { "UNREAD" }
+                AddLabelIds = new List<string> { _labelUnread }
             };
             int counter = 0;
             var service = gmailService;
