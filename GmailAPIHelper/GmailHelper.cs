@@ -25,6 +25,7 @@ namespace GmailAPIHelper
         private static string _applicationName;
         private const string _tokenFile = "token.json";
         private const string _labelUnread = "UNREAD";
+        private const string _labelInbox = "INBOX";
 
         /// <summary>
         /// 'Token Path Type' enum.
@@ -727,7 +728,7 @@ namespace GmailAPIHelper
                 {
                     var untrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
                     untrashMessageRequest.Execute();
-                    var labelToAdd = new List<string> { "INBOX" };
+                    var labelToAdd = new List<string> { _labelInbox };
                     service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
                     isMoved = true;
                 }
@@ -766,7 +767,7 @@ namespace GmailAPIHelper
             {
                 var untrashMessageRequest = service.Users.Messages.Untrash(userId, message.Id);
                 untrashMessageRequest.Execute();
-                var labelToAdd = new List<string> { "INBOX" };
+                var labelToAdd = new List<string> { _labelInbox };
                 service.AddLabels(message.Id, labelToAdd, userId: userId);
                 counter++;
             }
@@ -788,7 +789,7 @@ namespace GmailAPIHelper
             var mods = new ModifyMessageRequest
             {
                 AddLabelIds = new List<string> { "SPAM" },
-                RemoveLabelIds = new List<string> { "INBOX" }
+                RemoveLabelIds = new List<string> { _labelInbox }
             };
             var service = gmailService;
             List<Message> result = new List<Message>();
@@ -841,7 +842,7 @@ namespace GmailAPIHelper
             var mods = new ModifyMessageRequest
             {
                 AddLabelIds = new List<string> { "SPAM" },
-                RemoveLabelIds = new List<string> { "INBOX" }
+                RemoveLabelIds = new List<string> { _labelInbox }
             };
             int counter = 0;
             var service = gmailService;
@@ -878,7 +879,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                AddLabelIds = new List<string> { "INBOX" },
+                AddLabelIds = new List<string> { _labelInbox },
                 RemoveLabelIds = new List<string> { "SPAM" }
             };
             var service = gmailService;
@@ -931,7 +932,7 @@ namespace GmailAPIHelper
         {
             var mods = new ModifyMessageRequest
             {
-                AddLabelIds = new List<string> { "INBOX" },
+                AddLabelIds = new List<string> { _labelInbox },
                 RemoveLabelIds = new List<string> { "SPAM" }
             };
             int counter = 0;
