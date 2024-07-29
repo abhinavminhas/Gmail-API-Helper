@@ -26,7 +26,7 @@ namespace GmailAPIHelper
         private const string _tokenFile = "token.json";
         private const string _labelUnread = "UNREAD";
         private const string _labelInbox = "INBOX";
-        private const string _labelSpam = "SPAM"
+        private const string _labelSpam = "SPAM";
 
         /// <summary>
         /// 'Token Path Type' enum.
