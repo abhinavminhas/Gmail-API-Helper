@@ -21,8 +21,6 @@ namespace GmailAPIHelper
     /// </summary>
     public static class GmailHelper
     {
-        private static List<string> _scopes;
-        private static string _applicationName;
         private const string _tokenFile = "token.json";
         private const string _labelUnread = "UNREAD";
         private const string _labelInbox = "INBOX";
@@ -124,13 +122,14 @@ namespace GmailAPIHelper
         /// <returns>Gmail Service.</returns>
         public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType = TokenPathType.WORKING_DIRECTORY, string tokenPath = "")
         {
-            _scopes = new List<string>();
-            _applicationName = applicationName;
-            _scopes.Add(GmailService.Scope.GmailMetadata);
-            _scopes.Add(GmailService.Scope.GmailReadonly);
-            _scopes.Add(GmailService.Scope.GmailModify);
-            _scopes.Add(GmailService.Scope.GmailLabels);
-            _scopes.Add(GmailService.Scope.GmailSend);
+            var scopes = new List<string>
+            {
+                GmailService.Scope.GmailMetadata,
+                GmailService.Scope.GmailReadonly,
+                GmailService.Scope.GmailModify,
+                GmailService.Scope.GmailLabels,
+                GmailService.Scope.GmailSend
+            };
             UserCredential credential;
             using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
             {
@@ -138,7 +137,7 @@ namespace GmailAPIHelper
                 string credPath = SetCredentialPath(tokenPathType, tokenPath);
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.FromStream(stream).Secrets,
-                    _scopes,
+                    scopes,
                     "user",
                     CancellationToken.None,
                     new FileDataStore(credPath, true)).Result;
@@ -147,7 +146,7 @@ namespace GmailAPIHelper
             var service = new GmailService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = _applicationName
+                ApplicationName = applicationName
             });
             return service;
         }
