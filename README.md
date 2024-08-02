@@ -2,9 +2,14 @@
 *Gmail API helper solution in .NET*. </br></br>
 ![Gmail-API-Helper (Build)](https://github.com/abhinavminhas/Gmail-API-Helper/actions/workflows/build.yml/badge.svg)
 [![codecov](https://codecov.io/gh/abhinavminhas/Gmail-API-Helper/branch/main/graph/badge.svg?token=18ZV2GGET8)](https://codecov.io/gh/abhinavminhas/Gmail-API-Helper)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=abhinavminhas_Gmail-API-Helper&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=abhinavminhas_Gmail-API-Helper)
 ![maintainer](https://img.shields.io/badge/Creator/Maintainer-abhinavminhas-e65c00)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![NuGet](https://img.shields.io/nuget/v/GmailHelper?color=%23004880&label=Nuget)](https://www.nuget.org/packages/GmailHelper/)
+[![NuGet](https://img.shields.io/nuget/v/GmailHelper?color=%23004880&label=Nuget)](https://www.nuget.org/packages/GmailHelper/)  
+
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=abhinavminhas_Gmail-API-Helper&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=abhinavminhas_Gmail-API-Helper)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=abhinavminhas_Gmail-API-Helper&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=abhinavminhas_Gmail-API-Helper)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=abhinavminhas_Gmail-API-Helper&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=abhinavminhas_Gmail-API-Helper)
 
 The [Gmail API](https://developers.google.com/gmail/api) is used to interact with users' Gmail inboxes and settings, supports several popular programming languages. This solution is the implementation of the same providing certain useful extension methods in .NET to retrieve/send/manipulate email messages and manage labels. The solution uses 'Gmail Search Query' to retrieve/manipulate required email messages.
 
