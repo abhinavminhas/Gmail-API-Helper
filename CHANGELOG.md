@@ -3,6 +3,40 @@ All notable changes to this project documented here.
 
 ## [Released]
 
+## [1.10.0](https://www.nuget.org/packages/GmailHelper/1.10.0) - 2024-08-04
+### Changed
+* Security Updates
+    * Remove security protocol usage completely _(Due to deprecated versions in .Net Standard 2.0, should rely on .NET version's security protocol using this package)_.
+    * Email regex match - Introduce timeout to limit the execution time (DDoS protection).
+* Code Quality Updates
+    * Remove null execution path (below impacted)
+        * GetMessage
+        * GetLatestMessage
+        * GetMessageAttachments
+        * MoveMessageToTrash
+        * UntrashMessage
+        * ReportSpamMessage
+        * UnspamMessage
+        * MarkMessageAsRead
+        * MarkMessageAsUnread
+        * ModifyMessage
+        * GetMessageLabels
+    *   Merge if statement with the enclosing if statement (below impacted) 
+        * GetMessageAttachments
+        * GetMessagesAttachments
+    *   Remove useless assignment to local variable 'requiredMessagePart' (below impacted) 
+        * GetLatestMessage
+    *   Throw 'ArgumentException' instead of 'NullReferenceException' (below impacted) 
+        * ModifyMessage
+        * ModifyMessages
+    * Define a constant instead of using the literal multiple times for 
+        * 'token.json'
+        * 'INBOX'
+        * 'SPAM'
+    * Remove member variables and declare it as a local variable in the relevant methods 
+        * _scope
+        * _applicationName
+
 ## [1.9.31](https://www.nuget.org/packages/GmailHelper/1.9.31) - 2024-07-23
 ### Changed
 - MimeKitLite dependency update from ('4.7.0' -> '4.7.1').
