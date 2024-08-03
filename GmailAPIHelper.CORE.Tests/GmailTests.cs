@@ -83,6 +83,14 @@ namespace GmailAPIHelper.CORE.Tests
 
         [TestMethod]
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetGmailService_TokenPath_WorkingDirectory()
+        {
+            var service = GmailHelper.GetGmailService(ApplicationName, GmailHelper.TokenPathType.WORKING_DIRECTORY);
+            Assert.IsTrue(service.GetType() == typeof(Google.Apis.Gmail.v1.GmailService));
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetGmailService_TokenPath_Custom()
         {
             var credPath = "";
