@@ -5,6 +5,7 @@ on:
 
 jobs:
   build:
+    name: Code Coverage (Codecov)
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

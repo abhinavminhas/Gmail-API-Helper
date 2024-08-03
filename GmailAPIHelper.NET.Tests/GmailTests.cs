@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GmailAPIHelper.NET.Tests
 {
@@ -284,6 +285,7 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_SendMessage_PlainText()
         {
             var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt");
+            Assert.IsFalse(Regex.IsMatch(body, "<(.|\n)*?>", RegexOptions.None, TimeSpan.FromMilliseconds(100)));
             GmailHelper.GetGmailService(ApplicationName)
                 .SendMessage(GmailHelper.EmailContentType.PLAIN, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: "EMAIL WITH PLAIN TEXT", body: body);
         }
@@ -293,6 +295,7 @@ namespace GmailAPIHelper.NET.Tests
         public void Test_SendMessage_HtmlText()
         {
             var body = File.ReadAllText(Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt");
+            Assert.IsTrue(Regex.IsMatch(body, "<(.|\n)*?>", RegexOptions.None, TimeSpan.FromMilliseconds(100)));
             GmailHelper.GetGmailService(ApplicationName)
                 .SendMessage(GmailHelper.EmailContentType.HTML, TestEmailId, cc: TestEmailId, bcc: TestEmailId, subject: "EMAIL WITH HTML TEXT", body: body);
         }
@@ -369,6 +372,7 @@ namespace GmailAPIHelper.NET.Tests
         {
             var path = Environment.CurrentDirectory + "\\TestFiles\\PlainEmail.txt";
             var body = File.ReadAllText(path);
+            Assert.IsFalse(Regex.IsMatch(body, "<(.|\n)*?>", RegexOptions.None, TimeSpan.FromMilliseconds(100)));
             var attachmentPath = Environment.CurrentDirectory + "\\TestFiles\\Attachments\\";
             var attachments = new List<string>
             {
@@ -393,6 +397,7 @@ namespace GmailAPIHelper.NET.Tests
         {
             var path = Environment.CurrentDirectory + "\\TestFiles\\HTMLEmail.txt";
             var body = File.ReadAllText(path);
+            Assert.IsTrue(Regex.IsMatch(body, "<(.|\n)*?>", RegexOptions.None, TimeSpan.FromMilliseconds(100)));
             var attachmentPath = Environment.CurrentDirectory + "\\TestFiles\\Attachments\\";
             var attachments = new List<string>
             {
@@ -877,7 +882,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (NullReferenceException ex) { Assert.AreEqual("Either 'Labels To Add' or 'Labels to Remove' required.", ex.Message); }
+            catch (ArgumentException ex) { Assert.AreEqual("Parameters 'labelsToAdd' / 'labelsToRemove' required.", ex.Message); }
         }
 
         [TestMethod]
@@ -925,7 +930,7 @@ namespace GmailAPIHelper.NET.Tests
                 Assert.Fail("No Exception Thrown.");
             }
             catch (AssertFailedException ex) { throw ex; }
-            catch (NullReferenceException ex) { Assert.AreEqual("Either 'Labels To Add' or 'Labels to Remove' required.", ex.Message); }
+            catch (ArgumentException ex) { Assert.AreEqual("Parameters 'labelsToAdd' / 'labelsToRemove' required.", ex.Message); }
         }
 
         [TestMethod]
@@ -1261,18 +1266,20 @@ namespace GmailAPIHelper.NET.Tests
         [TestCategory("TestCleanup")]
         public void Inbox_CleanUp()
         {
-            GmailHelper.GetGmailService(ApplicationName)
+            var mesagesMoved = 0;
+            mesagesMoved += GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: $"[from:{TestEmailId}]in:inbox is:unread");
-            GmailHelper.GetGmailService(ApplicationName)
+            mesagesMoved += GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: $"[from:{TestEmailId}]in:spam is:unread");
-            GmailHelper.GetGmailService(ApplicationName)
+            mesagesMoved += GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETCORE MESSAGE AS READ']in:inbox is:read");
-            GmailHelper.GetGmailService(ApplicationName)
+            mesagesMoved += GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETFRAMEWORK MESSAGE AS READ']in:inbox is:read");
-            GmailHelper.GetGmailService(ApplicationName)
+            mesagesMoved += GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETCORE MESSAGES AS READ']in:inbox is:read");
-            GmailHelper.GetGmailService(ApplicationName)
+            mesagesMoved += GmailHelper.GetGmailService(ApplicationName)
                 .MoveMessagesToTrash(query: "[subject:'MARK DOTNETFRAMEWORK MESSAGES AS READ']in:inbox is:read");
+            Assert.IsTrue(mesagesMoved >= 0);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Configuration;
 
 namespace GmailAPIHelper.NET.Tests
 {
-    [TestClass]
     public class TestBase
     {
         private TestContext _testContextInstance;
