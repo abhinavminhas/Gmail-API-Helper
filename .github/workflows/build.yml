@@ -70,7 +70,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, ubuntu-20.04, macOS-12 ]
+        os: [ windows-2019, ubuntu-20.04, macOS-15 ]
         dotnet-version: [ '3.1.x', '6.0.x' ]
         
     steps:
@@ -116,7 +116,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, ubuntu-20.04, macOS-12 ]
+        os: [ windows-2019, ubuntu-20.04, macOS-15 ]
         dotnet-version: [ '3.1.x' ]
         
     steps:
