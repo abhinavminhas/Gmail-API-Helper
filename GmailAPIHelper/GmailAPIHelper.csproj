@@ -30,19 +30,13 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>Security Updates:
-1. Remove security protocol usage completely (Due to deprecated versions in .Net Standard 2.0, should rely on .NET version's security protocol using this package).
-2. Email regex match - Introduce timeout to limit the execution time (DDoS protection).
-
-Code Quality Updates:
-1. Throw 'ArgumentException' instead of 'NullReferenceException' (ModifyMessage/ModifyMessages).
-</PackageReleaseNotes>
-    <Version>1.10.0</Version>
+    <PackageReleaseNotes>1. MimeKitLite dependency update from ('4.7.1' -&gt; '4.8.0').</PackageReleaseNotes>
+    <Version>1.10.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.68.0.3427" />
-    <PackageReference Include="MimeKitLite" Version="4.7.1" />
+    <PackageReference Include="MimeKitLite" Version="4.8.0" />
   </ItemGroup>
 
   <ItemGroup>
