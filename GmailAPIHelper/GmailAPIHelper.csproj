@@ -42,7 +42,7 @@ Code Quality Updates:
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.68.0.3427" />
-    <PackageReference Include="MimeKitLite" Version="4.7.1" />
+    <PackageReference Include="MimeKitLite" Version="4.8.0" />
   </ItemGroup>
 
   <ItemGroup>
