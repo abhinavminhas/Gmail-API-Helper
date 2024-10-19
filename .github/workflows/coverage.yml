@@ -48,7 +48,7 @@ jobs:
         
     - name: Test
       if: ${{ matrix.dotnet-version == '3.1.x' }}
-      run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+      run: dotnet test --no-build --verbosity detailed --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
     
     - name: Upload Coverage To Codecov
       uses: codecov/codecov-action@v4
