@@ -75,40 +75,54 @@ namespace GmailAPIHelper
         }
 
         /// <summary>
-        /// Sets the credentials path to be used.
+        /// Sets the token file path to be used.
         /// </summary>
         /// <param name="tokenPathType">'TokenPathType' enum value. 'HOME' for users home directory, 'WORKING_DIRECTORY' for working directory, 'CUSTOM' for any other custom path to be used.</param>
-        /// <param name="tokenPath">Token path value in case of 'TokenPathType - CUSTOM' value.</param>
-        /// <returns>Credentials file path.</returns>
+        /// <param name="tokenPath">Token file path value in case of 'TokenPathType - CUSTOM' value.</param>
+        /// <returns>Token file path.</returns>
         /// <exception cref="NotImplementedException">Throws - 'NotImplementedException' for OS Platforms other than Windows/Linux/OSX.</exception>
-        private static string SetCredentialPath(TokenPathType tokenPathType, string tokenPath = "")
+        private static string SetTokenPath(TokenPathType tokenPathType, string tokenPath = "")
         {
-            string credPath = "";
+            string filePath = "";
             if (tokenPathType == TokenPathType.HOME)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    credPath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\" + _tokenFile;
+                    filePath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    credPath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
+                    filePath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    credPath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
+                    filePath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
                 else
                     throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.WORKING_DIRECTORY)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    credPath = Environment.CurrentDirectory + "\\" + _tokenFile;
+                    filePath = Environment.CurrentDirectory + "\\" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    credPath = Environment.CurrentDirectory + "/" + _tokenFile;
+                    filePath = Environment.CurrentDirectory + "/" + _tokenFile;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    credPath = Environment.CurrentDirectory + "/" + _tokenFile;
+                    filePath = Environment.CurrentDirectory + "/" + _tokenFile;
                 else
                     throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.CUSTOM)
-                credPath = tokenPath;
-            return credPath;
+                filePath = tokenPath;
+            return filePath;
+        }
+
+        /// <summary>
+        /// Sets the 'credentials.json' file path to be used.
+        /// </summary>
+        /// <param name="credentialsPath">'credentials.json' file path.</param>
+        /// <returns>'credentials.json' file path.</returns>
+        private static string SetCredentialsPath(string credentialsPath)
+        {
+            string file = "credentials.json";
+            if (string.IsNullOrEmpty(credentialsPath))
+                return file;
+            else
+                return credentialsPath;
         }
 
         /// <summary>
@@ -119,8 +133,9 @@ namespace GmailAPIHelper
         /// Default value - 'WORKING_DIRECTORY'.</param>
         /// <param name="tokenPath">'token.json' path to save generated token from gmail authentication/authorization. 
         /// Always asks in case of change in gmail authentication or valid token file missing in the given path. Default path is blank, required for 'TokenPathType - CUSTOM'.</param>
+        /// <param name="credentialsPath">'credentials.json' file path. Default path is blank in which case uses working directory for 'credentials.json' file lookup.
         /// <returns>Gmail Service.</returns>
-        public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType = TokenPathType.WORKING_DIRECTORY, string tokenPath = "")
+        public static GmailService GetGmailService(string applicationName, TokenPathType tokenPathType = TokenPathType.WORKING_DIRECTORY, string tokenPath = "", string credentialsPath = "")
         {
             var scopes = new List<string>
             {
@@ -131,10 +146,11 @@ namespace GmailAPIHelper
                 GmailService.Scope.GmailSend
             };
             UserCredential credential;
-            using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
+            var credentials = SetCredentialsPath(credentialsPath);
+            using (var stream = new FileStream(credentials, FileMode.Open, FileAccess.Read))
             {
                 //The file token.json stores the user's access and refresh tokens, and is created automatically when the authorization flow completes for the first time.
-                string credPath = SetCredentialPath(tokenPathType, tokenPath);
+                string credPath = SetTokenPath(tokenPathType, tokenPath);
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.FromStream(stream).Secrets,
                     scopes,
