@@ -3,6 +3,10 @@ All notable changes to this project documented here.
 
 ## [Released]
 
+## [1.11.0](https://www.nuget.org/packages/GmailHelper/1.11.0) - 2024-12-22
+### Changed
+- GetGmailService() - Additional optional argument 'credentialsPath' to define custom 'credentials.json' file path.
+
 ## [1.10.2](https://www.nuget.org/packages/GmailHelper/1.10.2) - 2024-12-13
 ### Changed
 - MimeKitLite dependency update from ('4.8.0' -> '4.9.0').

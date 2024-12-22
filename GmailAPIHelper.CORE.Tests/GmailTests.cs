@@ -93,14 +93,14 @@ namespace GmailAPIHelper.CORE.Tests
         [TestCategory("GMAIL-TESTS-DOTNETCORE")]
         public void Test_GetGmailService_TokenPath_Custom()
         {
-            var credPath = "";
+            var tokenPath = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                credPath = Environment.CurrentDirectory + "\\" + "token.json";
+                tokenPath = Environment.CurrentDirectory + "\\" + "token.json";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                credPath = Environment.CurrentDirectory + "/" + "token.json";
+                tokenPath = Environment.CurrentDirectory + "/" + "token.json";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                credPath = Environment.CurrentDirectory + "/" + "token.json";
-            var service = GmailHelper.GetGmailService(ApplicationName, GmailHelper.TokenPathType.CUSTOM, credPath);
+                tokenPath = Environment.CurrentDirectory + "/" + "token.json";
+            var service = GmailHelper.GetGmailService(ApplicationName, GmailHelper.TokenPathType.CUSTOM, tokenPath);
             Assert.IsTrue(service.GetType() == typeof(Google.Apis.Gmail.v1.GmailService));
         }
 
@@ -115,6 +115,29 @@ namespace GmailAPIHelper.CORE.Tests
             }
             catch (AssertFailedException ex) { throw ex; }
             catch (ArgumentException) { }
+        }
+
+        [TestMethod]
+        [TestCategory("GMAIL-TESTS-DOTNETCORE")]
+        public void Test_GetGmailService_CredentialsPath_Custom()
+        {
+            var tokenPath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                tokenPath = Environment.CurrentDirectory + "\\" + "token.json";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                tokenPath = Environment.CurrentDirectory + "/" + "token.json";
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                tokenPath = Environment.CurrentDirectory + "/" + "token.json";
+            var credentialsPath = Environment.CurrentDirectory + "/" + "credentials.json";
+            // Token Path & Credentials Path
+            var service = GmailHelper.GetGmailService(ApplicationName, GmailHelper.TokenPathType.CUSTOM, tokenPath, credentialsPath);
+            Assert.IsTrue(service.GetType() == typeof(Google.Apis.Gmail.v1.GmailService));
+            // Only Token Path
+            service = GmailHelper.GetGmailService(ApplicationName, GmailHelper.TokenPathType.CUSTOM, tokenPath);
+            Assert.IsTrue(service.GetType() == typeof(Google.Apis.Gmail.v1.GmailService));
+            // Only Credentials Path
+            service = GmailHelper.GetGmailService(ApplicationName, GmailHelper.TokenPathType.WORKING_DIRECTORY, credentialsPath: credentialsPath);
+            Assert.IsTrue(service.GetType() == typeof(Google.Apis.Gmail.v1.GmailService));
         }
 
         [TestMethod]
