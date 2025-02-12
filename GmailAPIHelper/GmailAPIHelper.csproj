@@ -30,8 +30,8 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. GetGmailService() - Additional optional argument 'credentialsPath' to define custom 'credentials.json' file path.</PackageReleaseNotes>
-    <Version>1.11.0</Version>
+    <PackageReleaseNotes>1. MimeKitLite dependency update from ('4.9.0' -&gt; '4.10.0').</PackageReleaseNotes>
+    <Version>1.11.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
