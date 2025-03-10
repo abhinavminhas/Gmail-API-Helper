@@ -87,22 +87,22 @@ namespace GmailAPIHelper
             if (tokenPathType == TokenPathType.HOME)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    filePath = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%") + "\\" + _tokenFile;
+                    filePath = Path.Combine(Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%"), _tokenFile);
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    filePath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
+                    filePath = Path.Combine(Environment.GetEnvironmentVariable("HOME"), _tokenFile);
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    filePath = Environment.GetEnvironmentVariable("HOME") + "/" + _tokenFile;
+                    filePath = Path.Combine(Environment.GetEnvironmentVariable("HOME"), _tokenFile);
                 else
                     throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
             else if (tokenPathType == TokenPathType.WORKING_DIRECTORY)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    filePath = Environment.CurrentDirectory + "\\" + _tokenFile;
+                    filePath = Path.Combine(Environment.CurrentDirectory, _tokenFile);
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    filePath = Environment.CurrentDirectory + "/" + _tokenFile;
+                    filePath = Path.Combine(Environment.CurrentDirectory, _tokenFile);
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    filePath = Environment.CurrentDirectory + "/" + _tokenFile;
+                    filePath = Path.Combine(Environment.CurrentDirectory, _tokenFile);
                 else
                     throw new NotImplementedException("OS Platform: Not 'Windows/Linux/OSX' Platform.");
             }
