@@ -106,9 +106,14 @@ Gmail API solution is built on .NetStandard 2.0
 
     <img src="https://user-images.githubusercontent.com/17473202/138043843-8bfbdac9-99c1-45d8-91bf-211c246aacda.png" />  
 9. Include the '**credentials.json**' in the solution project and invoke **GmailHelper.GetGmailService()** function below to generate OAuth token.
+   ``` csharp
+   GmailHelper.GetGmailService(<Created Application Name>, <'token.json' file path>)
    ```
-   GmailHelper.GetGmailService(<Created Application Name>, <'token.json' path for OAuth to be saved>)
+   Additional optional param to set credentials path if not in the solution project
+   ``` csharp
+   GmailHelper.GetGmailService(<Created Application Name>, <'token.json' file path>, <'credentials.json' file path>)
    ```
+
 10. Sign-In to the login prompt presented with user account used to create the app.  
 
     <img src="https://user-images.githubusercontent.com/17473202/138043907-0d1f6f12-ba23-4331-9bc0-d97ab257e96d.png" />  
@@ -122,7 +127,7 @@ Gmail API solution is built on .NetStandard 2.0
     **NOTE:** *Keep contents of '**token.json**' & '**credentials.json**' safe to avoid any misuse. Checkout solution tests for more understanding on usage.*
 13. For concurrent usage create a lock object for the used extension methods in a non-static class.  
     **Examples:**
-```
+``` csharp
 public class Gmail {
   private static readonly object _lock = new object();
 
@@ -136,7 +141,7 @@ public class Gmail {
   }
 }
 ```
-```
+``` csharp
 public class Gmail {
   private static readonly object _lock = new object();
 
