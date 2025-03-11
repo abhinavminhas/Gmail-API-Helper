@@ -1,7 +1,7 @@
 name: Publish Nuget Package
 
 env:
-    NUGET_PACKAGE_NAME_VERSION: "GmailHelper.1.11.1.nupkg"
+    NUGET_PACKAGE_NAME_VERSION: "GmailHelper.1.11.2.nupkg"
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-20.04 ]
+        os: [ ubuntu-22.04 ]
         dotnet-version: [ '3.1.x' ]
     
     steps:
