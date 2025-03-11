@@ -109,7 +109,7 @@ Gmail API solution is built on .NetStandard 2.0
    ``` csharp
    GmailHelper.GetGmailService(<Created Application Name>, <'token.json' file path>)
    ```
-   Additional optional param to set credentials path if not in the solution project
+   Additional optional param to set '**credentials.json**' path if not in the solution project
    ``` csharp
    GmailHelper.GetGmailService(<Created Application Name>, <'token.json' file path>, <'credentials.json' file path>)
    ```
