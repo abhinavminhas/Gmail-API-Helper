@@ -30,13 +30,12 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. MimeKitLite dependency update from ('4.10.0' -&gt; '4.11.0').
-2. CQ - Remove hardcoded path-delimiters.</PackageReleaseNotes>
-    <Version>1.11.2</Version>
+    <PackageReleaseNotes>1. Gmail API dependency update ('1.68.0.3427' -&gt; '1.69.0.3472').</PackageReleaseNotes>
+    <Version>1.11.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.68.0.3427" />
+    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.69.0.3742" />
     <PackageReference Include="MimeKitLite" Version="4.11.0" />
   </ItemGroup>
 
