@@ -131,11 +131,19 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Dotnet Version (${{ matrix.dotnet-version }})
+    - name: Dotnet Version (${{ matrix.dotnet-version }}) - (x64)
+      if: ${{ runner.os != 'macOS' }}
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
         architecture: 'x64'
+
+    - name: Dotnet Version (${{ matrix.dotnet-version }}) - (arm64)
+      if: ${{ runner.os == 'macOS' }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+        architecture: 'arm64'
         
     - name: Find And Replace Values (App Config)
       uses: abhinavminhas/replace-tokens@main
