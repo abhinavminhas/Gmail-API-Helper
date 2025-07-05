@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019 ]
+        os: [ windows-2022 ]
         vs-version: [ '16.1']
     env:
       VSTEST_CONSOLE_PATH: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow
@@ -70,7 +70,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, ubuntu-22.04, macOS-13 ]
+        os: [ windows-2022, ubuntu-22.04, macOS-13 ]
         dotnet-version: [ '3.1.x', '6.0.x' ]
         
     steps:
@@ -116,7 +116,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, ubuntu-22.04, macOS-13 ]
+        os: [ windows-2022, ubuntu-22.04, macOS-13 ]
         dotnet-version: [ '3.1.x' ]
         
     steps:
