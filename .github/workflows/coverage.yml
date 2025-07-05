@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2022, ubuntu-22.04, macOS-15 ]
+        os: [ windows-2022, ubuntu-22.04, macOS-13 ]
         dotnet-version: [ '3.1.x' ]
         
     steps:
@@ -22,7 +22,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
-        architecture: 'x64'
         
     - name: Find And Replace Values (App Config)
       uses: abhinavminhas/replace-tokens@main

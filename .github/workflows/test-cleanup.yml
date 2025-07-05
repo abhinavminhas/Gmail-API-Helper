@@ -26,7 +26,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
-        architecture: 'x64'
         
     - name: Find And Replace Values (App Config)
       uses: abhinavminhas/replace-tokens@main

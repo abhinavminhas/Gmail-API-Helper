@@ -27,7 +27,7 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: .NET Framework Version (4.6.1)
+    - name: .NET Framework Version [4.6.1]
       shell: powershell
       run: |
         choco install netfx-4.6.1-devpack
@@ -75,7 +75,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2022, ubuntu-22.04, macOS-15 ]
+        os: [ windows-2022, ubuntu-22.04, macOS-13 ]
         dotnet-version: [ '3.1.x', '6.0.x' ]
         
     steps:
@@ -88,7 +88,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
-        architecture: 'x64'
         
     - name: Find And Replace Values (App Config)
       uses: abhinavminhas/replace-tokens@main
@@ -122,7 +121,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2022, ubuntu-22.04, macOS-15 ]
+        os: [ windows-2022, ubuntu-22.04, macOS-13 ]
         dotnet-version: [ '3.1.x' ]
         
     steps:
@@ -131,19 +130,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Dotnet Version (${{ matrix.dotnet-version }}) - (x64)
-      if: ${{ runner.os != 'macOS' }}
+    - name: Dotnet Version (${{ matrix.dotnet-version }})
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
-        architecture: 'x64'
-
-    - name: Dotnet Version (${{ matrix.dotnet-version }}) - (arm64)
-      if: ${{ runner.os == 'macOS' }}
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ matrix.dotnet-version }}
-        architecture: 'arm64'
         
     - name: Find And Replace Values (App Config)
       uses: abhinavminhas/replace-tokens@main
@@ -151,49 +141,26 @@ jobs:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/App.config'
         replacements: '__GMAILID__=${{ secrets.GMAIL_ID }}'
 
-    - name: Build - (x64)
-      if: ${{ runner.os != 'macOS' && matrix.dotnet-version == '3.1.x' }}
+    - name: Build
       run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
 
-    - name: Build - (arm64)
-      if: ${{ runner.os == 'macOS' && matrix.dotnet-version == '3.1.x' }}
-      run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --runtime osx-arm64 --configuration Release
-
-    - name: Find And Replace Values (OAuth) - (x64)
-      if: ${{ runner.os != 'macOS' && matrix.dotnet-version == '3.1.x' }}
+    - name: Find And Replace Values (OAuth)
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
       uses: abhinavminhas/replace-tokens@main
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
         replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
-    
-    - name: Find And Replace Values (OAuth) - (arm64)
-      if: ${{ runner.os == 'macOS' && matrix.dotnet-version == '3.1.x' }}
-      uses: abhinavminhas/replace-tokens@main
-      with:
-        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/osx-arm64/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user'
-        replacements: '__ACCESSTOKEN__=${{ secrets.ACCESS_TOKEN }}'
 
-    - name: Find And Replace Values (Client Secret) - (x64)
-      if: ${{ runner.os != 'macOS' && matrix.dotnet-version == '3.1.x' }}
+    - name: Find And Replace Values (Client Secret)
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
       uses: abhinavminhas/replace-tokens@main
       with:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/credentials.json'
         replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
-    
-    - name: Find And Replace Values (Client Secret) - (arm64)
-      if: ${{ runner.os == 'macOS' && matrix.dotnet-version == '3.1.x' }}
-      uses: abhinavminhas/replace-tokens@main
-      with:
-        files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/osx-arm64/credentials.json'
-        replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
         
-    - name: Test - (x64)
-      if: ${{ runner.os != 'macOS' && matrix.dotnet-version == '3.1.x' }}
+    - name: Test
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
       run: dotnet test --no-build --verbosity detailed --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
-
-    - name: Test - (arm64)
-      if: ${{ runner.os == 'macOS' && matrix.dotnet-version == '3.1.x' }}
-      run: dotnet test --no-build --verbosity detailed --runtime osx-arm64 --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
     
     - name: Upload Coverage To Codecov
       uses: codecov/codecov-action@v4
