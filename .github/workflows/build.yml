@@ -168,9 +168,13 @@ jobs:
         files: '${{ github.workspace }}/GmailAPIHelper.CORE.Tests/bin/Release/netcoreapp3.1/credentials.json'
         replacements: '__CLIENTSECRET__=${{ secrets.CLIENT_SECRET }}'
         
-    - name: Test
-      if: ${{ matrix.dotnet-version == '3.1.x' }}
+    - name: Test - (x64)
+      if: ${{ runner.os != 'macOS' && matrix.dotnet-version == '3.1.x' }}
       run: dotnet test --no-build --verbosity detailed --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+
+    - name: Test - (arm64)
+      if: ${{ runner.os == 'macOS' && matrix.dotnet-version == '3.1.x' }}
+      run: dotnet test --no-build --verbosity detailed --runtime osx-arm64 --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
     
     - name: Upload Coverage To Codecov
       uses: codecov/codecov-action@v4
