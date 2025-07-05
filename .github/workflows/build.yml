@@ -17,9 +17,9 @@ jobs:
     strategy:
       matrix:
         os: [ windows-2022 ]
-        vs-version: [ '16.1']
+        vs-version: [ '17.14']
     env:
-      VSTEST_CONSOLE_PATH: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow
+      VSTEST_CONSOLE_PATH: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow
         
     steps:
     - name: Checkout Repository
@@ -27,7 +27,7 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: .NET Framework Version
+    - name: .NET Framework Version (4.6.1)
       shell: powershell
       run: |
         choco install netfx-4.6.1-devpack
