@@ -26,6 +26,11 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+    
+    - name: .NET Framework Version
+      shell: powershell
+      run: |
+        choco install netfx-4.6.1-devpack
         
     - name: Nuget Restore
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
