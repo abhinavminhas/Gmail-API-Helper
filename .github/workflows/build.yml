@@ -168,33 +168,41 @@ jobs:
 
   Code-Quality:
     name: Code Quality (SonarCloud)
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        dotnet-version: [ '3.1.x' ]
+    runs-on: windows-latest
 
     steps:
+      - name: Set Up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Dotnet Version (${{ matrix.dotnet-version }})
-        uses: actions/setup-dotnet@v4
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@v4
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
-
-      - name: Build
-        run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
-        
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Build and analyze
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_1 }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.newCode.referenceBranch=none
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"abhinavminhas_Gmail-API-Helper" /o:"abhinavminhas" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet build
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
