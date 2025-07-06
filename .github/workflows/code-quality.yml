@@ -25,7 +25,7 @@ jobs:
         run: dotnet build GmailAPIHelper.CORE.Tests/GmailAPIHelper.CORE.Tests.csproj --configuration Release
         
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v4.1.0
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
