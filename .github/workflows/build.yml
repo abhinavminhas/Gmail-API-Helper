@@ -27,7 +27,7 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: .NET Framework Version [ 4.6.1 ]
+    - name: Install .NET Framework SDK [ Version - 4.6.1 ]
       shell: powershell
       run: |
         choco install netfx-4.6.1-devpack
@@ -83,7 +83,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core (MacOS)
+    - name: Install .NET Core SDK (MacOS)
       if: runner.os == 'macOS'
       uses: ./.github/workflows/install-dotnet-core
       with:
@@ -137,7 +137,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core (MacOS)
+    - name: Install .NET Core SDK (MacOS)
       if: runner.os == 'macOS'
       uses: ./.github/workflows/install-dotnet-core
       with:
