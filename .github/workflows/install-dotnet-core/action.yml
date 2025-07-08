@@ -1,0 +1,35 @@
+name: Install .NET Core SDK
+description: Installs a specified .NET Core SDK version
+
+inputs:
+  dotnet-version:
+    description: The version of .NET SDK to install (e.g., 3.1.426)
+    required: true
+  architecture:
+    description: Target architecture (e.g., x64 or arm64)
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install .NET Core SDK [ ${{ inputs.dotnet-version }} ]
+      shell: bash
+      run: |
+        DOTNET_VERSION=${{ inputs.dotnet-version }}
+        ARCHITECTURE="${{ inputs.architecture }}"
+        INSTALL_DIR=$HOME/dotnet
+
+        echo "Installing .NET SDK $DOTNET_VERSION for $ARCHITECTURE..."
+        mkdir -p "$INSTALL_DIR"
+        curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh -o dotnet-install.sh
+        chmod +x dotnet-install.sh
+        ./dotnet-install.sh --version "$DOTNET_VERSION" --install-dir "$INSTALL_DIR" --architecture "$ARCHITECTURE"
+
+    - name: Add dotnet to PATH
+      shell: bash
+      run: echo "$HOME/dotnet" >> $GITHUB_PATH
+
+    - name: Check .NET SDK
+      shell: bash
+      run: |
+        dotnet --info

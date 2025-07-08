@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2022, ubuntu-22.04 ]
+        os: [ windows-2022, ubuntu-22.04, macOS-15 ]
         dotnet-version: [ '3.1.x' ]
         
     steps:
@@ -18,7 +18,15 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Install .NET Core (MacOS)
+      if: runner.os == 'macOS'
+      uses: ./.github/workflows/install-dotnet-core
+      with:
+          dotnet-version: 3.1.426
+          architecture: x64
+
     - name: Dotnet Version (${{ matrix.dotnet-version }})
+      if: runner.os != 'macOS'
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
@@ -48,7 +56,7 @@ jobs:
         
     - name: Test
       if: ${{ matrix.dotnet-version == '3.1.x' }}
-      run: dotnet test --no-build --verbosity detailed --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+      run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
     
     - name: Upload Coverage To Codecov
       uses: codecov/codecov-action@v4
