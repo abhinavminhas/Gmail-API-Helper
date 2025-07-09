@@ -19,14 +19,14 @@ jobs:
         fetch-depth: 0
 
     - name: Install .NET Core SDK (MacOS)
-      if: runner.os == 'macOS'
+      if: ${{ runner.os == 'macOS' }}
       uses: ./.github/workflows/install-dotnet-core
       with:
           dotnet-version: 3.1.426
           architecture: x64
 
     - name: Dotnet Version (${{ matrix.dotnet-version }})
-      if: runner.os != 'macOS'
+      if: ${{ runner.os != 'macOS' }}
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
@@ -59,6 +59,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal --configuration Release --filter TestCategory=GMAIL-TESTS-DOTNETCORE /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
     
     - name: Upload Coverage To Codecov
+      if: ${{ matrix.dotnet-version == '3.1.x' }}
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
