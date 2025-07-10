@@ -14,8 +14,9 @@ runs:
   steps:
     - name: Resolve .NET Core SDK Version
       shell: bash
+      env:
+        RAW_INPUT: ${{ inputs.dotnet-version }}
       run: |
-        RAW_INPUT="${{ inputs.dotnet-version }}"
         DOTNET_CHANNEL="${RAW_INPUT%%.x}"
         RELEASE_INDEX_URL="https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json"
 
@@ -36,6 +37,7 @@ runs:
           | head -n1)
         
         echo "Resolved full SDK version: $DOTNET_VERSION"
+        echo "DOTNET_VERSION=$DOTNET_VERSION" >> $GITHUB_ENV
 
     - name: Install .NET Core SDK [ ${{ inputs.dotnet-version }} ]
       shell: bash
