@@ -18,7 +18,6 @@ runs:
         RAW_INPUT: ${{ inputs.dotnet-version }}
       run: |
         DOTNET_CHANNEL="${RAW_INPUT%%.x}"
-        echo "Resolved DOTNET_CHANNEL=$DOTNET_CHANNEL"
 
         RELEASE_INDEX_URL="https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json"
 
@@ -30,7 +29,7 @@ runs:
               | ."releases.json"')
 
         if [ -z "$RELEASES_JSON_URL" ]; then
-        echo "❌ Could not resolve releases.json URL for channel $DOTNET_CHANNEL"
+        echo "Could not resolve releases.json URL for channel $DOTNET_CHANNEL"
         exit 1
         fi
         
@@ -44,7 +43,7 @@ runs:
           | head -n1)
 
         if [ -z "$DOTNET_VERSION" ]; then
-        echo "❌ Could not resolve SDK version from $RELEASES_JSON_URL"
+        echo "Could not resolve SDK version from $RELEASES_JSON_URL"
         exit 1
         fi
         

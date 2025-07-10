@@ -83,14 +83,14 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core SDK (MacOS)
+    - name: Install .NET Core SDK [ Version - ${{ matrix.dotnet-version }} ] (MacOS)
       if: ${{ runner.os == 'macOS' }}
       uses: ./.github/workflows/install-dotnet-core
       with:
           dotnet-version: ${{ matrix.dotnet-version }}
           architecture: x64
 
-    - name: Dotnet Version (${{ matrix.dotnet-version }})
+    - name: Setup Dotnet [ Version - ${{ matrix.dotnet-version }} ]
       if: ${{ runner.os != 'macOS' }}
       uses: actions/setup-dotnet@v4
       with:
@@ -137,14 +137,14 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core SDK (MacOS)
+    - name: Install .NET Core SDK [ Version - ${{ matrix.dotnet-version }} ] (MacOS)
       if: ${{ runner.os == 'macOS' }}
       uses: ./.github/workflows/install-dotnet-core
       with:
           dotnet-version: ${{ matrix.dotnet-version }}
           architecture: x64
 
-    - name: Dotnet Version (${{ matrix.dotnet-version }})
+    - name: Setup Dotnet [ Version - ${{ matrix.dotnet-version }} ]
       if: ${{ runner.os != 'macOS' }}
       uses: actions/setup-dotnet@v4
       with:
