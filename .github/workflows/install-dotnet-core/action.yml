@@ -18,6 +18,8 @@ runs:
         RAW_INPUT: ${{ inputs.dotnet-version }}
       run: |
         DOTNET_CHANNEL="${RAW_INPUT%%.x}"
+        echo "Resolved DOTNET_CHANNEL=$DOTNET_CHANNEL"
+
         RELEASE_INDEX_URL="https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json"
 
         # Get the URL to the channel-specific releases.json
@@ -26,6 +28,11 @@ runs:
               .releasesIndex[]
               | select(.["channel-version"] == $ver)
               | .releases | .json')
+
+        if [ -z "$RELEASES_JSON_URL" ]; then
+        echo "❌ Could not resolve releases.json URL for channel $DOTNET_CHANNEL"
+        exit 1
+        fi
         
         # Download and extract latest SDK version
         DOTNET_VERSION=$(curl -s $RELEASES_JSON_URL \
@@ -35,6 +42,11 @@ runs:
               | .sdk.version' \
           | sort -Vr \
           | head -n1)
+
+        if [ -z "$DOTNET_VERSION" ]; then
+        echo "❌ Could not resolve SDK version from $RELEASES_JSON_URL"
+        exit 1
+        fi
         
         echo "Resolved full SDK version: $DOTNET_VERSION"
         echo "DOTNET_VERSION=$DOTNET_VERSION" >> $GITHUB_ENV
