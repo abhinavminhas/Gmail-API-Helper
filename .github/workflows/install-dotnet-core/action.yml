@@ -24,7 +24,7 @@ runs:
         RELEASES_JSON_URL=$(curl -s $RELEASE_INDEX_URL \
           | jq -r --arg ver "$DOTNET_CHANNEL" '
               .releasesIndex[]
-              | select(.channel-version == $ver)
+              | select(.["channel-version"] == $ver)
               | .releases | .json')
         
         # Download and extract latest SDK version
