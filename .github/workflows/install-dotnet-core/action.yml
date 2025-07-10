@@ -15,18 +15,22 @@ runs:
     - name: Resolve .NET Core SDK Version
       shell: bash
       run: |
+        DOTNET_CHANNEL="${{ inputs.dotnet-version }}"
         RELEASE_INDEX_URL="https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json"
 
-        DOTNET_VERSION=$(curl -s $RELEASE_INDEX_URL \
-          | jq -r --arg ver "${{ inputs.dotnet-version }}" '
-            .releasesIndex[]
-            | select(.channel-version == $ver)
-            | .releases.json' \
-          | xargs curl -s \
+        # Get the URL to the channel-specific releases.json
+        RELEASES_JSON_URL=$(curl -s $RELEASE_INDEX_URL \
+          | jq -r --arg ver "$DOTNET_CHANNEL" '
+              .releasesIndex[]
+              | select(.channel-version == $ver)
+              | .releases | .json')
+        
+        # Download and extract latest SDK version
+        DOTNET_VERSION=$(curl -s $RELEASES_JSON_URL \
           | jq -r '
-            .releases[]
-            | select(.sdk.version != null)
-            | .sdk.version' \
+              .releases[]
+              | select(.sdk.version != null)
+              | .sdk.version' \
           | sort -Vr \
           | head -n1)
         
