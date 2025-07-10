@@ -12,10 +12,29 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Resolve .NET Core SDK Version
+      shell: bash
+      run: |
+        RELEASE_INDEX_URL="https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json"
+
+        DOTNET_VERSION=$(curl -s $RELEASE_INDEX_URL \
+          | jq -r --arg ver "${{ inputs.dotnet-version }}" '
+            .releasesIndex[]
+            | select(.channel-version == $ver)
+            | .releases.json' \
+          | xargs curl -s \
+          | jq -r '
+            .releases[]
+            | select(.sdk.version != null)
+            | .sdk.version' \
+          | sort -Vr \
+          | head -n1)
+        
+        echo "Resolved full SDK version: $DOTNET_VERSION"
+
     - name: Install .NET Core SDK [ ${{ inputs.dotnet-version }} ]
       shell: bash
       run: |
-        DOTNET_VERSION=${{ inputs.dotnet-version }}
         ARCHITECTURE="${{ inputs.architecture }}"
         INSTALL_DIR=$HOME/dotnet
 

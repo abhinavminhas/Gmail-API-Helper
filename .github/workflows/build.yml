@@ -141,7 +141,7 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       uses: ./.github/workflows/install-dotnet-core
       with:
-          dotnet-version: 3.1.426
+          dotnet-version: ${{ matrix.dotnet-version }}
           architecture: x64
 
     - name: Dotnet Version (${{ matrix.dotnet-version }})
