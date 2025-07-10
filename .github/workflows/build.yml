@@ -84,13 +84,14 @@ jobs:
         fetch-depth: 0
 
     - name: Install .NET Core SDK (MacOS)
-      if: ${{ runner.os == 'macOS' && matrix.dotnet-version == '3.1.x' }}
+      if: ${{ runner.os == 'macOS' }}
       uses: ./.github/workflows/install-dotnet-core
       with:
-          dotnet-version: 3.1.426
+          dotnet-version: ${{ matrix.dotnet-version }}
           architecture: x64
 
     - name: Dotnet Version (${{ matrix.dotnet-version }})
+      if: ${{ runner.os != 'macOS' }}
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
