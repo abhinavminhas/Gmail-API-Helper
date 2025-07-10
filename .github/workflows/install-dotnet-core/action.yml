@@ -31,7 +31,7 @@ runs:
         DOTNET_VERSION=$(curl -s $RELEASES_JSON_URL \
           | jq -r '
               .releases[]
-              | select(.sdk.version != null)
+              | select(.["sdk.version"] != null)
               | .sdk.version' \
           | sort -Vr \
           | head -n1)
