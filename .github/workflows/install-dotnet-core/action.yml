@@ -15,7 +15,8 @@ runs:
     - name: Resolve .NET Core SDK Version
       shell: bash
       run: |
-        DOTNET_CHANNEL="${{ inputs.dotnet-version }}"
+        RAW_INPUT="${{ inputs.dotnet-version }}"
+        DOTNET_CHANNEL="${RAW_INPUT%%.x}"
         RELEASE_INDEX_URL="https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json"
 
         # Get the URL to the channel-specific releases.json
