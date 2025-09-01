@@ -28,5 +28,7 @@ jobs:
       run: dotnet pack --configuration=Release GmailAPIHelper/GmailAPIHelper.csproj
       
     - name: Publish Nuget Package
-      run: dotnet nuget push GmailAPIHelper/bin/Release/${{ env.NUGET_PACKAGE_NAME_VERSION }} -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push GmailAPIHelper/bin/Release/${{ env.NUGET_PACKAGE_NAME_VERSION }} -s https://api.nuget.org/v3/index.json -k $env:NUGET_API_KEY
       
