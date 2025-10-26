@@ -53,13 +53,9 @@ runs:
     - name: Install .NET Core SDK [ ${{ inputs.dotnet-version }} ]
       shell: bash
       env:
-        ARCH: ${{ inputs.architecture }}
+        ARCH_INPUT: ${{ inputs.architecture }}
       run: |
-        if [ "${{ runner.os }}" == "Windows" ]; then
-          echo "ARCHITECTURE=${env:ARCH}" >> $GITHUB_ENV
-        else
-          echo "ARCHITECTURE=${ARCH}" >> $GITHUB_ENV
-        fi
+        ARCHITECTURE="$ARCH_INPUT"
         INSTALL_DIR=$HOME/dotnet
 
         echo "Installing .NET SDK $DOTNET_VERSION for $ARCHITECTURE..."
