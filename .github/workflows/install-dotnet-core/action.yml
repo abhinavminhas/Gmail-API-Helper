@@ -52,8 +52,10 @@ runs:
 
     - name: Install .NET Core SDK [ ${{ inputs.dotnet-version }} ]
       shell: bash
+      env:
+        ARCH_INPUT: ${{ inputs.architecture }}
       run: |
-        ARCHITECTURE="${{ inputs.architecture }}"
+        ARCHITECTURE="$ARCH_INPUT"
         INSTALL_DIR=$HOME/dotnet
 
         echo "Installing .NET SDK $DOTNET_VERSION for $ARCHITECTURE..."
