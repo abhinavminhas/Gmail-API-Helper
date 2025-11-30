@@ -190,6 +190,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            Message requiredLatestMessage = null;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -208,7 +209,7 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var requiredLatestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
+                requiredLatestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (requiredLatestMessage != null)
                 {
                     var messageRequest = service.Users.Messages.Get(userId, requiredLatestMessage.Id);
@@ -220,16 +221,10 @@ namespace GmailAPIHelper
                         service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
                     }
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return requiredLatestMessage;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return null;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return requiredLatestMessage;
         }
 
         /// <summary>
@@ -286,6 +281,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            string requiredMessage = null;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -304,7 +300,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                string requiredMessage = null;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -336,16 +331,10 @@ namespace GmailAPIHelper
                         }
                     }
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return requiredMessage;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return null;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return requiredMessage;
         }
 
         /// <summary>
@@ -405,16 +394,10 @@ namespace GmailAPIHelper
                         }
                     }
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return count;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return count;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return count;
         }
 
         /// <summary>
@@ -639,6 +622,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isMoved = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -657,7 +641,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isMoved = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -665,13 +648,10 @@ namespace GmailAPIHelper
                     moveToTrashRequest.Execute();
                     isMoved = true;
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isMoved;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isMoved;
         }
 
         /// <summary>
@@ -720,6 +700,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isMoved = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -738,7 +719,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isMoved = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -748,13 +728,10 @@ namespace GmailAPIHelper
                     service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
                     isMoved = true;
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isMoved;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isMoved;
         }
 
         /// <summary>
@@ -810,6 +787,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -828,7 +806,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -836,13 +813,10 @@ namespace GmailAPIHelper
                     modifyMessageRequest.Execute();
                     isModified = true;
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -901,6 +875,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -919,7 +894,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -927,13 +901,10 @@ namespace GmailAPIHelper
                     modifyMessageRequest.Execute();
                     isModified = true;
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -991,6 +962,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -1009,7 +981,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -1017,13 +988,10 @@ namespace GmailAPIHelper
                     modifyMessageRequest.Execute();
                     isModified = true;
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -1080,6 +1048,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -1098,7 +1067,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -1106,13 +1074,10 @@ namespace GmailAPIHelper
                     modifyMessageRequest.Execute();
                     isModified = true;
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -1297,16 +1262,10 @@ namespace GmailAPIHelper
                         labels.Add(getLabelsResponse);
                     }
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return labels;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return labels;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return labels;
         }
 
         /// <summary>
@@ -1396,6 +1355,7 @@ namespace GmailAPIHelper
                 requiredMessageListVisibility = "show";
             else if (messageListVisibility.Equals(MessageListVisibility.HIDE))
                 requiredMessageListVisibility = "hide";
+            Label updatedLabel = null;
             var labelColor = new LabelColor()
             {
                 BackgroundColor = labelBackgroundColor,
@@ -1415,14 +1375,11 @@ namespace GmailAPIHelper
             if (label != null)
             {
                 var updateUserLabelRequest = service.Users.Labels.Update(labelBody, userId, label.Id);
-                var updatedLabel = updateUserLabelRequest.Execute();
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return updatedLabel;
+                updatedLabel = updateUserLabelRequest.Execute();
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return label;
+            return updatedLabel;
         }
 
         /// <summary>
@@ -1440,20 +1397,16 @@ namespace GmailAPIHelper
             var listLabelRequest = service.Users.Labels.List(userId);
             var listLabelResponse = listLabelRequest.Execute();
             var label = listLabelResponse.Labels.FirstOrDefault(x => x.Name.Equals(labelName));
+            bool isDeleted = false;
             if (label != null)
             {
                 var deleteLabelRequest = service.Users.Labels.Delete(userId, label.Id);
                 deleteLabelRequest.Execute();
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return true;
+                isDeleted = true;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return false;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return isDeleted;
         }
 
         /// <summary>
