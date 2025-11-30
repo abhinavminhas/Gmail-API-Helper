@@ -250,16 +250,16 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            foreach (var message in result)
+            foreach (var messageId in result.Select(message => message.Id))
             {
-                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                var messageRequest = service.Users.Messages.Get(userId, messageId);
                 messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
                 var currentMessage = messageRequest.Execute();
                 messages.Add(currentMessage);
                 if (markRead)
                 {
                     var labelToRemove = new List<string> { _labelUnread };
-                    service.RemoveLabels(message.Id, labelToRemove, userId: userId);
+                    service.RemoveLabels(messageId, labelToRemove, userId: userId);
                 }
             }
             if (disposeGmailService)
@@ -428,9 +428,9 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            foreach (var message in result)
+            foreach (var messageId in result.Select(message => message.Id))
             {
-                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                var messageRequest = service.Users.Messages.Get(userId, messageId);
                 messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
                 var latestMessageDetails = messageRequest.Execute();
                 if (latestMessageDetails.Payload != null && latestMessageDetails.Payload.Parts.Count > 0)
@@ -440,7 +440,7 @@ namespace GmailAPIHelper
                     {
                         if (part.Filename != "")
                         {
-                            directoryPath = Path.Combine(originalDirectoryPath, message.Id);
+                            directoryPath = Path.Combine(originalDirectoryPath, messageId);
                             if (!Directory.Exists(directoryPath))
                                 Directory.CreateDirectory(directoryPath);
                             var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
@@ -451,7 +451,7 @@ namespace GmailAPIHelper
                         }
                     }
                     if (count > 0)
-                        attachmentInfo.Add(message.Id, count);
+                        attachmentInfo.Add(messageId, count);
                 }
             }
             if (disposeGmailService)
@@ -756,12 +756,12 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            foreach (var message in result)
+            foreach (var messageId in result.Select(message => message.Id))
             {
-                var untrashMessageRequest = service.Users.Messages.Untrash(userId, message.Id);
+                var untrashMessageRequest = service.Users.Messages.Untrash(userId, messageId);
                 untrashMessageRequest.Execute();
                 var labelToAdd = new List<string> { _labelInbox };
-                service.AddLabels(message.Id, labelToAdd, userId: userId);
+                service.AddLabels(messageId, labelToAdd, userId: userId);
                 counter++;
             }
             if (disposeGmailService)
