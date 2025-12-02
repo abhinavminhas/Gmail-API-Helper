@@ -544,36 +544,11 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             var mimeMessage = new MimeMessage();
-            var toList = to.Split(',');
-            foreach (var email in toList)
-            {
-                if (!email.IsValidEmail())
-                    throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
-                else
-                    mimeMessage.To.Add(new MailboxAddress(null, email));
-            }
-            if (cc != "")
-            {
-                var ccList = cc.Split(',');
-                foreach (var email in ccList)
-                {
-                    if (!email.IsValidEmail())
-                        throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
-                    else
-                        mimeMessage.Cc.Add(new MailboxAddress(null, email));
-                }
-            }
-            if (bcc != "")
-            {
-                var bccList = bcc.Split(',');
-                foreach (var email in bccList)
-                {
-                    if (!email.IsValidEmail())
-                        throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
-                    else
-                        mimeMessage.Bcc.Add(new MailboxAddress(null, email));
-                }
-            }
+            AddEmailsToMimeMessage(to, mimeMessage.To, "To");
+            if (!string.IsNullOrEmpty(cc))
+                AddEmailsToMimeMessage(cc, mimeMessage.Cc, "Cc");
+            if (!string.IsNullOrEmpty(bcc))
+                AddEmailsToMimeMessage(bcc, mimeMessage.Bcc, "Bcc");
             mimeMessage.Subject = subject;
             var builder = new BodyBuilder();
             if (emailContentType.Equals(EmailContentType.PLAIN))
@@ -1443,6 +1418,23 @@ namespace GmailAPIHelper
                             + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
             var regex = new Regex(pattern, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
             return regex.IsMatch(email);
+        }
+
+        /// <summary>
+        /// Validates and adds email addresses to the specified recipient collection.
+        /// </summary>
+        /// <param name="emailString">Comma-separated email addresses string.</param>
+        /// <param name="recipientCollection">The MimeKit InternetAddressList collection (To, Cc, or Bcc).</param>
+        /// <param name="recipientType">The type of recipient for error messages ('To', 'Cc', or 'Bcc').</param>
+        /// <exception cref="FormatException">Throws 'FormatException' for invalid email address.</exception>
+        private static void AddEmailsToMimeMessage(string emailString, InternetAddressList recipientCollection, string recipientType)
+        {
+            foreach (var email in emailString.Split(',').Select(e => e.Trim()))
+            {
+                if (!email.IsValidEmail())
+                    throw new FormatException(string.Format("Not a valid '{0}' email address. Email: '{1}'", recipientType, email));
+                recipientCollection.Add(new MailboxAddress(null, email));
+            }
         }
 
         /// <summary>
