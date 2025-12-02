@@ -1113,6 +1113,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -1131,7 +1132,6 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
                 var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
                 if (latestMessage != null)
                 {
@@ -1139,13 +1139,10 @@ namespace GmailAPIHelper
                     modifyMessageRequest.Execute();
                     isModified = true;
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
