@@ -477,19 +477,19 @@ namespace GmailAPIHelper
             var service = gmailService;
             string payload = "";
             var toList = to.Split(',');
-            if (toList.Where(email => !email.IsValidEmail()).Any())
-                throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", toList.Where(email => !email.IsValidEmail()).First()));
+            if (toList.Any(email => !email.IsValidEmail()))
+                throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", toList.First(email => !email.IsValidEmail())));
             if (!string.IsNullOrEmpty(cc))
             {
                 var ccList = cc.Split(',');
-                if (ccList.Where(email => !email.IsValidEmail()).Any())
-                    throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", ccList.Where(email => !email.IsValidEmail()).First()));
+                if (ccList.Any(email => !email.IsValidEmail()))
+                    throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", ccList.First(email => !email.IsValidEmail())));
             }
             if (!string.IsNullOrEmpty(bcc))
             {
                 var bccList = bcc.Split(',');
-                if (bccList.Where(email => !email.IsValidEmail()).Any())
-                    throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", bccList.Where(email => !email.IsValidEmail()).First()));
+                if (bccList.Any(email => !email.IsValidEmail()))
+                    throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", bccList.First(email => !email.IsValidEmail())));
             }
             if (emailContentType.Equals(EmailContentType.PLAIN))
             {
