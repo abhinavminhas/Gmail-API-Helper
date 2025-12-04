@@ -190,6 +190,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            Message requiredLatestMessage = null;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -208,28 +209,19 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var requiredLatestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (requiredLatestMessage != null)
+                requiredLatestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var messageRequest = service.Users.Messages.Get(userId, requiredLatestMessage.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                requiredLatestMessage = messageRequest.Execute();
+                if (markRead)
                 {
-                    var messageRequest = service.Users.Messages.Get(userId, requiredLatestMessage.Id);
-                    messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
-                    requiredLatestMessage = messageRequest.Execute();
-                    if (markRead)
-                    {
-                        var labelToRemove = new List<string> { _labelUnread };
-                        service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
-                    }
+                    var labelToRemove = new List<string> { _labelUnread };
+                    service.RemoveLabels(requiredLatestMessage.Id, labelToRemove, userId: userId);
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return requiredLatestMessage;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return null;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return requiredLatestMessage;
         }
 
         /// <summary>
@@ -255,16 +247,16 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            foreach (var message in result)
+            foreach (var messageId in result.Select(message => message.Id))
             {
-                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                var messageRequest = service.Users.Messages.Get(userId, messageId);
                 messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
                 var currentMessage = messageRequest.Execute();
                 messages.Add(currentMessage);
                 if (markRead)
                 {
                     var labelToRemove = new List<string> { _labelUnread };
-                    service.RemoveLabels(message.Id, labelToRemove, userId: userId);
+                    service.RemoveLabels(messageId, labelToRemove, userId: userId);
                 }
             }
             if (disposeGmailService)
@@ -286,6 +278,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            string requiredMessage = null;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -304,48 +297,38 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                string requiredMessage = null;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                var latestMessageDetails = messageRequest.Execute();
+                MessagePart requiredMessagePart = null;
+                if (latestMessageDetails.Payload.MimeType == "text/plain")
+                    requiredMessagePart = latestMessageDetails.Payload;
+                else if (latestMessageDetails.Payload.MimeType == "text/html")
+                    requiredMessagePart = latestMessageDetails.Payload;
+                else
                 {
-                    var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
-                    messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
-                    var latestMessageDetails = messageRequest.Execute();
-                    MessagePart requiredMessagePart = null;
-                    if (latestMessageDetails.Payload.MimeType == "text/plain")
-                        requiredMessagePart = latestMessageDetails.Payload;
-                    else if (latestMessageDetails.Payload.MimeType == "text/html")
-                        requiredMessagePart = latestMessageDetails.Payload;
-                    else
+                    if (latestMessageDetails.Payload.Parts != null)
                     {
-                        if (latestMessageDetails.Payload.Parts != null)
-                        {
-                            requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
-                            if (requiredMessagePart == null || requiredMessagePart.Body.Data == "" || requiredMessagePart.Body.Data == null)
-                                requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/html");
-                        }
-                    }
-                    if (requiredMessagePart != null)
-                    {
-                        byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
-                        requiredMessage = Encoding.UTF8.GetString(data);
-                        if (markRead)
-                        {
-                            var labelToRemove = new List<string> { _labelUnread };
-                            service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
-                        }
+                        requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/plain");
+                        if (requiredMessagePart == null || requiredMessagePart.Body.Data == "" || requiredMessagePart.Body.Data == null)
+                            requiredMessagePart = latestMessageDetails.Payload.Parts.FirstOrDefault(x => x.MimeType == "text/html");
                     }
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return requiredMessage;
+                if (requiredMessagePart != null)
+                {
+                    byte[] data = Convert.FromBase64String(requiredMessagePart.Body.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                    requiredMessage = Encoding.UTF8.GetString(data);
+                    if (markRead)
+                    {
+                        var labelToRemove = new List<string> { _labelUnread };
+                        service.RemoveLabels(latestMessage.Id, labelToRemove, userId: userId);
+                    }
+                }
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return null;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return requiredMessage;
         }
 
         /// <summary>
@@ -384,37 +367,28 @@ namespace GmailAPIHelper
             int count = 0;
             if (messages.Count > 0)
             {
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
+                messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
+                var latestMessageDetails = messageRequest.Execute();
+                if (latestMessageDetails.Payload != null && latestMessageDetails.Payload.Parts.Count > 0)
                 {
-                    var messageRequest = service.Users.Messages.Get(userId, latestMessage.Id);
-                    messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
-                    var latestMessageDetails = messageRequest.Execute();
-                    if (latestMessageDetails.Payload != null && latestMessageDetails.Payload.Parts.Count > 0)
+                    foreach (var part in latestMessageDetails.Payload.Parts)
                     {
-                        foreach (var part in latestMessageDetails.Payload.Parts)
+                        if (part.Filename != "")
                         {
-                            if (part.Filename != "")
-                            {
-                                var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
-                                var messageAttachmentResponse = messageAttachmentRequest.Execute();
-                                var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
-                                File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
-                                count++;
-                            }
+                            var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
+                            var messageAttachmentResponse = messageAttachmentRequest.Execute();
+                            var messageAttachmentData = Convert.FromBase64String(messageAttachmentResponse.Data.Replace('-', '+').Replace('_', '/').Replace(" ", "+"));
+                            File.WriteAllBytes(Path.Combine(directoryPath, part.Filename), messageAttachmentData);
+                            count++;
                         }
                     }
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return count;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return count;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return count;
         }
 
         /// <summary>
@@ -445,9 +419,9 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            foreach (var message in result)
+            foreach (var messageId in result.Select(message => message.Id))
             {
-                var messageRequest = service.Users.Messages.Get(userId, message.Id);
+                var messageRequest = service.Users.Messages.Get(userId, messageId);
                 messageRequest.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
                 var latestMessageDetails = messageRequest.Execute();
                 if (latestMessageDetails.Payload != null && latestMessageDetails.Payload.Parts.Count > 0)
@@ -457,7 +431,7 @@ namespace GmailAPIHelper
                     {
                         if (part.Filename != "")
                         {
-                            directoryPath = Path.Combine(originalDirectoryPath, message.Id);
+                            directoryPath = Path.Combine(originalDirectoryPath, messageId);
                             if (!Directory.Exists(directoryPath))
                                 Directory.CreateDirectory(directoryPath);
                             var messageAttachmentRequest = service.Users.Messages.Attachments.Get(userId, latestMessageDetails.Id, part.Body.AttachmentId);
@@ -468,7 +442,7 @@ namespace GmailAPIHelper
                         }
                     }
                     if (count > 0)
-                        attachmentInfo.Add(message.Id, count);
+                        attachmentInfo.Add(messageId, count);
                 }
             }
             if (disposeGmailService)
@@ -494,22 +468,19 @@ namespace GmailAPIHelper
             var service = gmailService;
             string payload = "";
             var toList = to.Split(',');
-            foreach (var email in toList)
-                if (!email.IsValidEmail())
-                    throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
-            if (cc != "")
+            if (toList.Any(email => !email.IsValidEmail()))
+                throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", toList.First(email => !email.IsValidEmail())));
+            if (!string.IsNullOrEmpty(cc))
             {
                 var ccList = cc.Split(',');
-                foreach (var email in ccList)
-                    if (!email.IsValidEmail())
-                        throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
+                if (ccList.Any(email => !email.IsValidEmail()))
+                    throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", ccList.First(email => !email.IsValidEmail())));
             }
-            if (bcc != "")
+            if (!string.IsNullOrEmpty(bcc))
             {
                 var bccList = bcc.Split(',');
-                foreach (var email in bccList)
-                    if (!email.IsValidEmail())
-                        throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
+                if (bccList.Any(email => !email.IsValidEmail()))
+                    throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", bccList.First(email => !email.IsValidEmail())));
             }
             if (emailContentType.Equals(EmailContentType.PLAIN))
             {
@@ -561,36 +532,11 @@ namespace GmailAPIHelper
         {
             var service = gmailService;
             var mimeMessage = new MimeMessage();
-            var toList = to.Split(',');
-            foreach (var email in toList)
-            {
-                if (!email.IsValidEmail())
-                    throw new FormatException(string.Format("Not a valid 'To' email address. Email: '{0}'", email));
-                else
-                    mimeMessage.To.Add(new MailboxAddress(null, email));
-            }
-            if (cc != "")
-            {
-                var ccList = cc.Split(',');
-                foreach (var email in ccList)
-                {
-                    if (!email.IsValidEmail())
-                        throw new FormatException(string.Format("Not a valid 'Cc' email address. Email: '{0}'", email));
-                    else
-                        mimeMessage.Cc.Add(new MailboxAddress(null, email));
-                }
-            }
-            if (bcc != "")
-            {
-                var bccList = bcc.Split(',');
-                foreach (var email in bccList)
-                {
-                    if (!email.IsValidEmail())
-                        throw new FormatException(string.Format("Not a valid 'Bcc' email address. Email: '{0}'", email));
-                    else
-                        mimeMessage.Bcc.Add(new MailboxAddress(null, email));
-                }
-            }
+            AddEmailsToMimeMessage(to, mimeMessage.To, "To");
+            if (!string.IsNullOrEmpty(cc))
+                AddEmailsToMimeMessage(cc, mimeMessage.Cc, "Cc");
+            if (!string.IsNullOrEmpty(bcc))
+                AddEmailsToMimeMessage(bcc, mimeMessage.Bcc, "Bcc");
             mimeMessage.Subject = subject;
             var builder = new BodyBuilder();
             if (emailContentType.Equals(EmailContentType.PLAIN))
@@ -639,6 +585,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isMoved = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -657,21 +604,14 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isMoved = false;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
-                {
-                    var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
-                    moveToTrashRequest.Execute();
-                    isMoved = true;
-                }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isMoved;
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var moveToTrashRequest = service.Users.Messages.Trash(userId, latestMessage.Id);
+                moveToTrashRequest.Execute();
+                isMoved = true;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isMoved;
         }
 
         /// <summary>
@@ -720,6 +660,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isMoved = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -738,23 +679,16 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isMoved = false;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
-                {
-                    var untrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
-                    untrashMessageRequest.Execute();
-                    var labelToAdd = new List<string> { _labelInbox };
-                    service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
-                    isMoved = true;
-                }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isMoved;
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var untrashMessageRequest = service.Users.Messages.Untrash(userId, latestMessage.Id);
+                untrashMessageRequest.Execute();
+                var labelToAdd = new List<string> { _labelInbox };
+                service.AddLabels(latestMessage.Id, labelToAdd, userId: userId);
+                isMoved = true;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isMoved;
         }
 
         /// <summary>
@@ -779,12 +713,12 @@ namespace GmailAPIHelper
                     result.AddRange(response.Messages);
                 request.PageToken = response.NextPageToken;
             } while (!string.IsNullOrEmpty(request.PageToken));
-            foreach (var message in result)
+            foreach (var messageId in result.Select(message => message.Id))
             {
-                var untrashMessageRequest = service.Users.Messages.Untrash(userId, message.Id);
+                var untrashMessageRequest = service.Users.Messages.Untrash(userId, messageId);
                 untrashMessageRequest.Execute();
                 var labelToAdd = new List<string> { _labelInbox };
-                service.AddLabels(message.Id, labelToAdd, userId: userId);
+                service.AddLabels(messageId, labelToAdd, userId: userId);
                 counter++;
             }
             if (disposeGmailService)
@@ -810,6 +744,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -828,21 +763,14 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
-                {
-                    var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
-                    modifyMessageRequest.Execute();
-                    isModified = true;
-                }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                isModified = true;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -901,6 +829,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -919,21 +848,14 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
-                {
-                    var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
-                    modifyMessageRequest.Execute();
-                    isModified = true;
-                }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                isModified = true;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -991,6 +913,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -1009,21 +932,14 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
-                {
-                    var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
-                    modifyMessageRequest.Execute();
-                    isModified = true;
-                }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                isModified = true;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -1080,6 +996,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -1098,21 +1015,14 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
-                {
-                    var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
-                    modifyMessageRequest.Execute();
-                    isModified = true;
-                }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                isModified = true;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -1176,6 +1086,7 @@ namespace GmailAPIHelper
             var service = gmailService;
             List<Message> result = new List<Message>();
             List<Message> messages = new List<Message>();
+            bool isModified = false;
             UsersResource.MessagesResource.ListRequest request = service.Users.Messages.List(userId);
             request.Q = query;
             do
@@ -1194,21 +1105,14 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var isModified = false;
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null)
-                {
-                    var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
-                    modifyMessageRequest.Execute();
-                    isModified = true;
-                }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return isModified;
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                var modifyMessageRequest = service.Users.Messages.Modify(mods, userId, latestMessage.Id);
+                modifyMessageRequest.Execute();
+                isModified = true;
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return false;
+            return isModified;
         }
 
         /// <summary>
@@ -1287,8 +1191,8 @@ namespace GmailAPIHelper
             }
             if (messages.Count > 0)
             {
-                var latestMessage = messages.OrderByDescending(item => item.InternalDate).FirstOrDefault();
-                if (latestMessage != null && latestMessage.LabelIds.Count > 0)
+                var latestMessage = messages.OrderByDescending(item => item.InternalDate).First();
+                if (latestMessage.LabelIds.Count > 0)
                 {
                     foreach (var labelId in latestMessage.LabelIds)
                     {
@@ -1297,16 +1201,10 @@ namespace GmailAPIHelper
                         labels.Add(getLabelsResponse);
                     }
                 }
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return labels;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return labels;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return labels;
         }
 
         /// <summary>
@@ -1396,6 +1294,7 @@ namespace GmailAPIHelper
                 requiredMessageListVisibility = "show";
             else if (messageListVisibility.Equals(MessageListVisibility.HIDE))
                 requiredMessageListVisibility = "hide";
+            Label updatedLabel = null;
             var labelColor = new LabelColor()
             {
                 BackgroundColor = labelBackgroundColor,
@@ -1415,14 +1314,11 @@ namespace GmailAPIHelper
             if (label != null)
             {
                 var updateUserLabelRequest = service.Users.Labels.Update(labelBody, userId, label.Id);
-                var updatedLabel = updateUserLabelRequest.Execute();
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return updatedLabel;
+                updatedLabel = updateUserLabelRequest.Execute();
             }
             if (disposeGmailService)
                 service.DisposeGmailService();
-            return label;
+            return updatedLabel;
         }
 
         /// <summary>
@@ -1440,20 +1336,16 @@ namespace GmailAPIHelper
             var listLabelRequest = service.Users.Labels.List(userId);
             var listLabelResponse = listLabelRequest.Execute();
             var label = listLabelResponse.Labels.FirstOrDefault(x => x.Name.Equals(labelName));
+            bool isDeleted = false;
             if (label != null)
             {
                 var deleteLabelRequest = service.Users.Labels.Delete(userId, label.Id);
                 deleteLabelRequest.Execute();
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return true;
+                isDeleted = true;
             }
-            else
-            {
-                if (disposeGmailService)
-                    service.DisposeGmailService();
-                return false;
-            }
+            if (disposeGmailService)
+                service.DisposeGmailService();
+            return isDeleted;
         }
 
         /// <summary>
@@ -1490,6 +1382,23 @@ namespace GmailAPIHelper
                             + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
             var regex = new Regex(pattern, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
             return regex.IsMatch(email);
+        }
+
+        /// <summary>
+        /// Validates and adds email addresses to the specified recipient collection.
+        /// </summary>
+        /// <param name="emailString">Comma-separated email addresses string.</param>
+        /// <param name="recipientCollection">The MimeKit InternetAddressList collection (To, Cc, or Bcc).</param>
+        /// <param name="recipientType">The type of recipient for error messages ('To', 'Cc', or 'Bcc').</param>
+        /// <exception cref="FormatException">Throws 'FormatException' for invalid email address.</exception>
+        private static void AddEmailsToMimeMessage(string emailString, InternetAddressList recipientCollection, string recipientType)
+        {
+            foreach (var email in emailString.Split(',').Select(e => e.Trim()))
+            {
+                if (!email.IsValidEmail())
+                    throw new FormatException(string.Format("Not a valid '{0}' email address. Email: '{1}'", recipientType, email));
+                recipientCollection.Add(new MailboxAddress(null, email));
+            }
         }
 
         /// <summary>
