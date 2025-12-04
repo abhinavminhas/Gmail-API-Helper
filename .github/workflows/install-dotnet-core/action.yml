@@ -60,7 +60,7 @@ runs:
 
         echo "Installing .NET SDK $DOTNET_VERSION for $ARCHITECTURE..."
         mkdir -p "$INSTALL_DIR"
-        curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh -o dotnet-install.sh
+        curl --proto '=https' --tlsv1.2 -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh -o dotnet-install.sh
         chmod +x dotnet-install.sh
         ./dotnet-install.sh --version "$DOTNET_VERSION" --install-dir "$INSTALL_DIR" --architecture "$ARCHITECTURE"
 
