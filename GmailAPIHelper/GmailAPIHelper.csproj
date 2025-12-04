@@ -30,8 +30,10 @@ Solution Version:
     <PackageId>GmailHelper</PackageId>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReleaseNotes>1. Gmail API dependency update ('1.70.0.3833' -&gt; '1.72.0.3966').</PackageReleaseNotes>
-    <Version>1.11.9</Version>
+    <PackageReleaseNotes>Code Quality Updates:
+1. Refactor to reduce Cognitive Complexity.
+2. Simplify loops using LINQ.</PackageReleaseNotes>
+    <Version>1.12.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

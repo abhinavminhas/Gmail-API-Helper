@@ -3,6 +3,42 @@ All notable changes to this project documented here.
 
 ## [Released]
 
+## [1.12.0](https://www.nuget.org/packages/GmailHelper/1.20.0) - 2025-12-05
+### Changed
+- Code Quality Updates
+    * Refactor to reduce Cognitive Complexity
+        * GetMessage
+        * GetLatestMessage
+        * MoveMessageToTrash
+        * UntrashMessage
+        * ReportSpamMessage
+        * UnspamMessage
+        * MarkMessageAsRead
+        * MarkMessageAsUnread
+        * UpdateUserLabel
+        * DeleteLabel
+        * ModifyMessage
+    * Simplify loop by calling Select(message => message.Id)
+        * GetMessages
+        * GetMessagesAttachments
+        * UntrashMessages
+    * Simplify loops using LINQ
+        * SendMessage (with / without attachments)
+    * Use 'First' instead of 'FirstOrDefault' since collection is never empty in these cases
+        * GetMessage
+        * GetLatestMessage
+        * GetMessageAttachments
+        * MoveMessageToTrash
+        * UntrashMessage
+        * ReportSpamMessage
+        * UnspamMessage
+        * MarkMessageAsRead
+        * MarkMessageAsUnread
+        * ModifyMessage
+        * GetMessageLabels
+### Added
+- AddEmailsToMimeMessage() - Validates and adds email addresses to the specified recipient collection.
+
 ## [1.11.9](https://www.nuget.org/packages/GmailHelper/1.11.9) - 2025-11-30
 ### Changed
 - Gmail API dependency update ('1.70.0.3833' -> '1.72.0.3966').
