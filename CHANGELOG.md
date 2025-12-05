@@ -3,7 +3,7 @@ All notable changes to this project documented here.
 
 ## [Released]
 
-## [1.12.0](https://www.nuget.org/packages/GmailHelper/1.20.0) - 2025-12-05
+## [1.12.0](https://www.nuget.org/packages/GmailHelper/1.20.0) - 2025-12-04
 ### Added
 - AddEmailsToMimeMessage() - Validates and adds email addresses to the specified recipient collection.
 ### Changed
