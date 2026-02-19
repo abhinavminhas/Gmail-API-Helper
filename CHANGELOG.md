@@ -3,6 +3,10 @@ All notable changes to this project documented here.
 
 ## [Released]
 
+## [1.12.1](https://www.nuget.org/packages/GmailHelper/1.12.1) - 2026-02-19
+### Changed
+- Gmail API dependency update ('1.72.0.3966' -> '1.73.0.3987').
+
 ## [1.12.0](https://www.nuget.org/packages/GmailHelper/1.20.0) - 2025-12-04
 ### Added
 - AddEmailsToMimeMessage() - Validates and adds email addresses to the specified recipient collection.
