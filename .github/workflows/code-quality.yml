@@ -38,6 +38,8 @@ jobs:
         shell: powershell
         run: |
           choco install netfx-4.6.1-devpack
+      - name: Nuget Restore
+        run: nuget restore GmailAPIHelper.sln -Verbosity quiet
       - name: Build And Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
