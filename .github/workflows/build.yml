@@ -3,7 +3,7 @@ name: Build / Test
 
 on:
   push:
-    branches: [ main, dev1 ]
+    branches: [ main, dev ]
     paths-ignore:
       - '**.md'
   pull_request:

@@ -1,7 +1,5 @@
 name: Code Quality (SonarCloud)
 on:
-  push:
-    branches: [ dev ]
   workflow_dispatch:
 
 jobs:
