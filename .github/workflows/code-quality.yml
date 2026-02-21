@@ -42,7 +42,5 @@ jobs:
         shell: powershell
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"abhinavminhas_Gmail-API-Helper" /o:"abhinavminhas" /d:sonar.token="$env:SONAR_TOKEN"
-          dotnet restore
-          choco install netfx-4.6.1-devpack
-          dotnet build --no-restore
+          dotnet build
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
