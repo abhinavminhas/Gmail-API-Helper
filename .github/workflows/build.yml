@@ -3,15 +3,11 @@ name: Build / Test
 
 on:
   push:
-    branches: [ main ]
-  push:
-    branches: [ dev ]
-    paths-ignore:
-      - '**.md'
-  pull_request:
     branches: [ main, dev ]
     paths-ignore:
       - '**.md'
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
