@@ -115,7 +115,11 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
     - Replace with: `NUGET_PACKAGE_NAME_VERSION: "GmailHelper.[newProjectVersion].nupkg"`
 
 14. **Update `CHANGELOG.md`**:
-    - Get today's date (format: `YYYY-MM-DD`)
+    - Get today's date in Melbourne time (AEDT/AEST) using:
+      ```
+      $melbourneTime = [System.TimeZoneInfo]::ConvertTime([DateTime]::Now, [System.TimeZoneInfo]::FindSystemTimeZoneById('AUS Eastern Standard Time'))
+      $todayDate = $melbourneTime.ToString('yyyy-MM-dd')
+      ```
     - Prepend new entry at top of file:
     ```
     ## [newProjectVersion] - [today]
