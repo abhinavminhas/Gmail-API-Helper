@@ -219,34 +219,11 @@ Agent output:
 
 ---
 
-## Prerequisites
+## Notes
 
-- **Git configured** with user `abhinavminhas` and email `abhinavminhas@users.noreply.github.com`
-- **GitHub CLI (`gh`) installed** (for PR creation)
-- **Latest dependency versions**: Check NuGet.org for latest Google.Apis.Gmail.v1 versions
-  - Visit: https://www.nuget.org/packages/Google.Apis.Gmail.v1
-  - Or run: `dotnet list package --outdated` in the project directory
-- **Working directory**: Repository root with clean git status
-- **Permissions**: Write access to repository and ability to create PRs
-
-## Finding Latest Versions
-
-Since agents cannot automatically query external APIs, you need to manually find the latest versions:
-
-**For Gmail API packages:**
-```bash
-# Check latest versions on NuGet
-curl -s "https://api.nuget.org/v3/registration5-gz-semver2/google.apis.gmail.v1/index.json" | jq '.items[0].items[0].catalogEntry.version'
-```
-
-**For MimeKitLite:**
-```bash
-curl -s "https://api.nuget.org/v3/registration5-gz-semver2/mimekitlite/index.json" | jq '.items[0].items[0].catalogEntry.version'
-```
-
-**Or use dotnet CLI:**
-```bash
-dotnet list package --outdated
-```
-
-
+- **Fully automated**: Copilot executes all steps without manual intervention
+- **Build validation**: Release configuration only; integration tests run in CI/CD on PR
+- **Version bump strategy**: Always increments project patch version (X.Y.Z → X.Y.Z+1)
+- **PR target**: Always `dev` branch
+- **Commit author**: abhinavminhas (abhinavminhas@users.noreply.github.com)
+- **Reversible**: Branch can be deleted with `git branch -D [branchName]` to restart
