@@ -1,7 +1,7 @@
 ---
 name: Bump MimeKitLite Version
 description: Automate MimeKitLite dependency version bumping with two-commit workflow, build validation, and PR creation
-argument-hint: "Provide the new version for MimeKitLite (e.g., 4.16.0)"
+argument-hint: "Provide the new version for MimeKitLite (e.g., 4.15.0)"
 ---
 
 # Bump MimeKitLite Version Agent
@@ -27,7 +27,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 1: Gather Current Versions & Validate Input
 
-1. **Validate the `newVersion` argument** — must match format `X.Y.Z` (e.g., `4.16.0`)
+1. **Validate the `newVersion` argument** — must match format `X.Y.Z` (e.g., `4.15.0`)
    - If not provided or invalid format, halt and report error
 
 2. **Extract current MimeKitLite version** from `GmailAPIHelper/GmailAPIHelper.csproj`:
@@ -103,7 +103,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 ### Phase 4: Commit 2 — Bump Package Version & Update Release Files
 
 14. **Calculate new project version**:
-    - Parse `currentProjectVersion` (e.g., `1.12.2`) into parts: major, minor, patch
+    - Parse `currentProjectVersion` (e.g., `1.12.1`) into parts: major, minor, patch
     - Increment patch version: `major.minor.(patch+1)`
     - Store as `newProjectVersion`
 
@@ -196,21 +196,21 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 ## Example Execution
 
 ```
-User request: @copilot /bump-mimekit-lite newVersion=4.16.0
+User request: @copilot /bump-mimekit-lite newVersion=4.15.0
 
 Agent output:
-✓ Validating newVersion format: 4.16.0 ✓
+✓ Validating newVersion format: 4.15.0 ✓
 ✓ Current versions detected:
-  - MimeKitLite: 4.15.0
-  - Project:     1.12.2
-✓ Creating branch: bump/mimekit-lite-4-16-0
-✓ Updating dependency versions in 2 files...
+  - MimeKitLite: 4.14.0
+  - Project:     1.12.1
+✓ Creating branch: bump/mimekit-lite-4-15-0
+✓ Updating dependency versions in 3 files...
 ✓ Building solution (Release config)...
 ✓ Build successful
-✓ Commit 1: MimeKitLite dependency update ('4.15.0' -> '4.16.0')
-✓ Calculating new project version: 1.12.3
+✓ Commit 1: MimeKitLite dependency update ('4.14.0' -> '4.15.0')
+✓ Calculating new project version: 1.12.2
 ✓ Updating .csproj, workflow, and CHANGELOG...
-✓ Commit 2: Nuget package creation - v1.12.3
+✓ Commit 2: Nuget package creation - v1.12.2
 ✓ Pushing branch...
 ✓ Pull request created: https://github.com/abhinavminhas/Gmail-API-Helper/pull/XX
 ```

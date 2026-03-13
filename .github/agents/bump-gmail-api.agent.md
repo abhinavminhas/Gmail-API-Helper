@@ -1,7 +1,7 @@
 ---
 name: Bump Gmail API Version
 description: Automate Gmail API dependency version bumping with two-commit workflow, build validation, and PR creation
-argument-hint: "Provide the new version for Google.Apis.Gmail.v1 (e.g., 1.73.0.4030)"
+argument-hint: "Provide the new version for Google.Apis.Gmail.v1 (e.g., 1.73.0.4029)"
 ---
 
 # Bump Gmail API Version Agent
@@ -27,7 +27,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 1: Gather Current Versions & Validate Input
 
-1. **Validate the `newVersion` argument** — must match format `X.Y.Z.W` (e.g., `1.73.0.4030`)
+1. **Validate the `newVersion` argument** — must match format `X.Y.Z.W` (e.g., `1.73.0.4029`)
    - If not provided or invalid format, halt and report error
 
 2. **Extract current Gmail API version** from `GmailAPIHelper/GmailAPIHelper.csproj`:
@@ -112,7 +112,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 ### Phase 4: Commit 2 — Bump Package Version & Update Release Files
 
 14. **Calculate new project version**:
-    - Parse `currentProjectVersion` (e.g., `1.12.2`) into parts: major, minor, patch
+    - Parse `currentProjectVersion` (e.g., `1.12.1`) into parts: major, minor, patch
     - Increment patch version: `major.minor.(patch+1)`
     - Store as `newProjectVersion`
 
@@ -205,21 +205,21 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 ## Example Execution
 
 ```
-User request: @copilot /bump-gmail-api newVersion=1.73.0.4031
+User request: @copilot /bump-gmail-api newVersion=1.73.0.4029
 
 Agent output:
-✓ Validating newVersion format: 1.73.0.4031 ✓
+✓ Validating newVersion format: 1.73.0.4029 ✓
 ✓ Current versions detected:
-  - Gmail API: 1.73.0.4029
-  - Project:   1.12.2
-✓ Creating branch: bump/gmail-api-1-73-0-4031
+  - Gmail API: 1.73.0.3987
+  - Project:   1.12.1
+✓ Creating branch: bump/gmail-api-1-73-0-4029
 ✓ Updating dependency versions in 3 files...
 ✓ Building solution (Release config)...
 ✓ Build successful
-✓ Commit 1: Gmail API dependency update ('1.73.0.4029' -> '1.73.0.4031')
-✓ Calculating new project version: 1.12.3
+✓ Commit 1: Gmail API dependency update ('1.73.0.3987' -> '1.73.0.4029')
+✓ Calculating new project version: 1.12.2
 ✓ Updating .csproj, workflow, and CHANGELOG...
-✓ Commit 2: Nuget package creation - v1.12.3
+✓ Commit 2: Nuget package creation - v1.12.2
 ✓ Pushing branch...
 ✓ Pull request created: https://github.com/abhinavminhas/Gmail-API-Helper/pull/XX
 ```
