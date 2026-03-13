@@ -6,12 +6,12 @@ argument-hint: "Provide the new version for Google.Apis.Gmail.v1 (e.g., 1.73.0.4
 
 # Bump Gmail API Version Agent
 
+This GitHub Copilot agent automates the complete two-commit dependency bump workflow for Gmail API, including build validation and PR creation.
+
 ## Usage
 ```
 @copilot /bump-gmail-api newVersion=1.73.0.4029
 ```
-
-This GitHub Copilot agent automates the complete two-commit dependency bump workflow for Gmail API, including build validation and PR creation.
 
 ## Execution Flow
 

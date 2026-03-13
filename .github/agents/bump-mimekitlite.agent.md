@@ -6,12 +6,12 @@ argument-hint: "Provide the new version for MimeKitLite (e.g., 4.16.0)"
 
 # Bump MimeKitLite Version Agent
 
+This GitHub Copilot agent automates the complete two-commit dependency bump workflow for MimeKitLite, including build validation and PR creation.
+
 ## Usage
 ```
 @copilot /bump-mimekit-lite newVersion=4.15.0
 ```
-
-This GitHub Copilot agent automates the complete two-commit dependency bump workflow for MimeKitLite, including build validation and PR creation.
 
 ## Execution Flow
 
