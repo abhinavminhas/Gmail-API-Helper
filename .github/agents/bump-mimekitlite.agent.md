@@ -1,23 +1,15 @@
 ---
 name: Bump MimeKitLite Version
 description: Automate MimeKitLite dependency version bumping with two-commit workflow, build validation, and PR creation
-arguments:
-  - name: newVersion
-    type: string
-    description: "New version for MimeKitLite (e.g., 4.16.0)"
-    required: true
-applyTo:
-  - GmailAPIHelper/**
-  - .github/workflows/publish-nuget-Package.yml
-  - CHANGELOG.md
-tools:
-  - name: terminal
-    restrict: false
-  - name: file_operations
-    restrict: false
+argument-hint: "Provide the new version for MimeKitLite (e.g., 4.16.0)"
 ---
 
 # Bump MimeKitLite Version Agent
+
+## Usage
+```
+@copilot /bump-mimekit-lite newVersion=4.15.0
+```
 
 This GitHub Copilot agent automates the complete two-commit dependency bump workflow for MimeKitLite, including build validation and PR creation.
 

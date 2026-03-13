@@ -1,23 +1,15 @@
 ---
 name: Bump Gmail API Version
 description: Automate Gmail API dependency version bumping with two-commit workflow, build validation, and PR creation
-arguments:
-  - name: newVersion
-    type: string
-    description: "New version for Google.Apis.Gmail.v1 (e.g., 1.73.0.4030)"
-    required: true
-applyTo:
-  - GmailAPIHelper/**
-  - .github/workflows/publish-nuget-Package.yml
-  - CHANGELOG.md
-tools:
-  - name: terminal
-    restrict: false
-  - name: file_operations
-    restrict: false
+argument-hint: "Provide the new version for Google.Apis.Gmail.v1 (e.g., 1.73.0.4030)"
 ---
 
 # Bump Gmail API Version Agent
+
+## Usage
+```
+@copilot /bump-gmail-api newVersion=1.73.0.4029
+```
 
 This GitHub Copilot agent automates the complete two-commit dependency bump workflow for Gmail API, including build validation and PR creation.
 
