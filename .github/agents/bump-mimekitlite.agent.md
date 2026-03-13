@@ -154,7 +154,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
     - **Project Version**: [currentProjectVersion] → [newProjectVersion]
 
     ## Changes
-    - Updated dependency version across 2 project files
+    - Updated dependency version across 3 project files
     - Bumped NuGet package version
     - Updated workflow configuration
     - Updated CHANGELOG
