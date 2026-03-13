@@ -186,7 +186,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ## Prerequisites
 
-- Git configured: user.name=abhinavminhas, user.email=abhinavminhas@users.noreply.github.com
+- Git configured: user.name=copilot-agent[bot], user.email=copilot-agent@users.noreply.github.com
 - dotnet CLI installed and on PATH
 - GitHub CLI (`gh`) installed for PR creation
 - Working directory: Gmail-API-Helper repository root
