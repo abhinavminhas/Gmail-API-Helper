@@ -51,37 +51,44 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 2: Create Feature Branch
 
-5. **Check out `dev` branch first**:
+5. **Configure git user for automated commits** (branch-specific):
+   ```
+   git config user.name "copilot-agent[bot]"
+   git config user.email "copilot-agent@users.noreply.github.com"
+   ```
+   - Sets bot identity for commits on this feature branch only
+
+6. **Check out `dev` branch first**:
    ```
    git checkout dev
    git pull origin dev
    ```
    - Ensures feature branch is based on latest `dev`
 
-6. **Create branch name**: `bump/mimekit-lite-X-Y-Z` (replace dots with dashes)
+7. **Create branch name**: `bump/mimekit-lite-X-Y-Z` (replace dots with dashes)
 
-7. **Execute**: `git checkout -b [branchName]`
+8. **Execute**: `git checkout -b [branchName]`
    - If branch already exists, delete it first: `git branch -D [branchName]`
 
 ---
 
 ### Phase 3: Commit 1 — Update Dependency Versions
 
-7. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
+8. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
    - Find: `<PackageReference Include="MimeKitLite" Version="[currentMimeVersion]" />`
    - Replace with: `<PackageReference Include="MimeKitLite" Version="[newVersion]" />`
 
-8. **Update `GmailAPIHelper.NET.Tests/packages.config`**:
+9. **Update `GmailAPIHelper.NET.Tests/packages.config`**:
    - Find: `<package id="MimeKitLite" version="[currentMimeVersion]" targetFramework=`
    - Replace with: `<package id="MimeKitLite" version="[newVersion]" targetFramework=`
 
-9. **Validate build**:
+10. **Validate build**:
     - Execute: `dotnet restore GmailAPIHelper.sln`
     - Execute: `dotnet build GmailAPIHelper.sln -c Release`
     - On build failure: rollback file changes (`git checkout .`), delete branch, report error and abort
     - On build success: continue to commit
 
-10. **Create Commit 1**:
+11. **Create Commit 1**:
     - Stage files: `GmailAPIHelper/GmailAPIHelper.csproj`, `GmailAPIHelper.NET.Tests/packages.config`
     - Execute: `git add [files]`
     - Message: `MimeKitLite dependency update ('[currentMimeVersion]' -> '[newVersion]')`
@@ -91,22 +98,22 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 4: Commit 2 — Bump Package Version & Update Release Files
 
-11. **Calculate new project version**:
+12. **Calculate new project version**:
     - Parse `currentProjectVersion` (e.g., `1.12.2`) into parts: major, minor, patch
     - Increment patch version: `major.minor.(patch+1)`
     - Store as `newProjectVersion`
 
-12. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
+13. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
     - Find: `<Version>[currentProjectVersion]</Version>`
     - Replace with: `<Version>[newProjectVersion]</Version>`
     - Find: `<PackageReleaseNotes>...</PackageReleaseNotes>`
     - Replace with: `<PackageReleaseNotes>1. MimeKitLite dependency update ('[currentMimeVersion]' -> '[newVersion]').</PackageReleaseNotes>`
 
-13. **Update `.github/workflows/publish-nuget-Package.yml`**:
+14. **Update `.github/workflows/publish-nuget-Package.yml`**:
     - Find: `NUGET_PACKAGE_NAME_VERSION: "GmailHelper.[currentProjectVersion].nupkg"`
     - Replace with: `NUGET_PACKAGE_NAME_VERSION: "GmailHelper.[newProjectVersion].nupkg"`
 
-14. **Update `CHANGELOG.md`**:
+15. **Update `CHANGELOG.md`**:
     - Get today's date in Melbourne time (AEDT/AEST) using:
       ```
       $melbourneTime = [System.TimeZoneInfo]::ConvertTime([DateTime]::Now, [System.TimeZoneInfo]::FindSystemTimeZoneById('AUS Eastern Standard Time'))
@@ -120,7 +127,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
     ```
 
-15. **Create Commit 2**:
+16. **Create Commit 2**:
     - Stage files: `GmailAPIHelper/GmailAPIHelper.csproj`, `.github/workflows/publish-nuget-Package.yml`, `CHANGELOG.md`
     - Execute: `git add [files]`
     - Message: `Nuget package creation - v[newProjectVersion]`
@@ -130,11 +137,11 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 5: Push & Create PR
 
-16. **Push feature branch**:
+17. **Push feature branch**:
     - Execute: `git push origin [branchName]`
     - On push failure: report error and authentication/permission requirements
 
-17. **Create pull request** using GitHub CLI:
+18. **Create pull request** using GitHub CLI:
     - Execute: `gh pr create --title "Nuget Package Creation - v[newProjectVersion]" --body "[body]" --base dev --head [branchName]`
     - PR body content:
     ```
@@ -212,6 +219,6 @@ Agent output:
 - **Build validation**: Release configuration only; integration tests run in CI/CD on PR
 - **Version bump strategy**: Always increments project patch version (X.Y.Z → X.Y.Z+1)
 - **PR target**: Always `dev` branch
-- **Commit author**: abhinavminhas (abhinavminhas@users.noreply.github.com)
+- **Commit author**: copilot-agent[bot] (copilot-agent@users.noreply.github.com)
 - **Fewer files than Gmail API agent**: MimeKitLite updates only 2 files in Commit 1
 - **Reversible**: Branch can be deleted with `git branch -D [branchName]` to restart

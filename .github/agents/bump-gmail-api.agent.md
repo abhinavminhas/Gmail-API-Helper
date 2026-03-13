@@ -51,27 +51,34 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 2: Create Feature Branch
 
-5. **Check out `dev` branch first**:
+5. **Configure git user for automated commits** (branch-specific):
+   ```
+   git config user.name "copilot-agent[bot]"
+   git config user.email "copilot-agent@users.noreply.github.com"
+   ```
+   - Sets bot identity for commits on this feature branch only
+
+6. **Check out `dev` branch first**:
    ```
    git checkout dev
    git pull origin dev
    ```
    - Ensures feature branch is based on latest `dev`
 
-6. **Create branch name**: `bump/gmail-api-X-Y-Z-W` (replace dots with dashes)
+7. **Create branch name**: `bump/gmail-api-X-Y-Z-W` (replace dots with dashes)
 
-7. **Execute**: `git checkout -b [branchName]`
+8. **Execute**: `git checkout -b [branchName]`
    - If branch already exists, delete it first: `git branch -D [branchName]`
 
 ---
 
 ### Phase 3: Commit 1 — Update Dependency Versions
 
-7. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
+8. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
    - Find: `<PackageReference Include="Google.Apis.Gmail.v1" Version="[currentGmailVersion]" />`
    - Replace with: `<PackageReference Include="Google.Apis.Gmail.v1" Version="[newVersion]" />`
 
-8. **Update `GmailAPIHelper.NET.Tests/packages.config`**:
+9. **Update `GmailAPIHelper.NET.Tests/packages.config`**:
    - Extract base version from `[newVersion]` (remove last component): `[baseVersion] = [newVersion]` minus last `.W`
    - Update Gmail API package:
      - Find: `<package id="Google.Apis.Gmail.v1" version="[currentGmailVersion]" targetFramework=`
@@ -84,17 +91,17 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
      - Find: `<package id="Google.Apis.Core" version="[currentBaseVersion]" targetFramework=`
      - Replace with: `<package id="Google.Apis.Core" version="[baseVersion]" targetFramework=`
 
-9. **Update `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`** (if binding redirects exist):
+10. **Update `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`** (if binding redirects exist):
    - Find any hardcoded version references for Google.Apis.Gmail.v1
    - Replace all occurrences with `[newVersion]`
 
-10. **Validate build**:
+11. **Validate build**:
     - Execute: `dotnet restore GmailAPIHelper.sln`
     - Execute: `dotnet build GmailAPIHelper.sln -c Release`
     - On build failure: rollback file changes (`git checkout .`), delete branch, report error and abort
     - On build success: continue to commit
 
-11. **Create Commit 1**:
+12. **Create Commit 1**:
     - Stage files: `GmailAPIHelper/GmailAPIHelper.csproj`, `GmailAPIHelper.NET.Tests/packages.config`, `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
     - Execute: `git add [files]`
     - Message: `Gmail API dependency update ('[currentGmailVersion]' -> '[newVersion]')`
@@ -133,7 +140,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
     ```
 
-16. **Create Commit 2**:
+17. **Create Commit 2**:
     - Stage files: `GmailAPIHelper/GmailAPIHelper.csproj`, `.github/workflows/publish-nuget-Package.yml`, `CHANGELOG.md`
     - Execute: `git add [files]`
     - Message: `Nuget package creation - v[newProjectVersion]`
@@ -143,11 +150,11 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 5: Push & Create PR
 
-17. **Push feature branch**:
+18. **Push feature branch**:
     - Execute: `git push origin [branchName]`
     - On push failure: report error and authentication/permission requirements
 
-18. **Create pull request** using GitHub CLI:
+19. **Create pull request** using GitHub CLI:
     - Execute: `gh pr create --title "Nuget Package Creation - v[newProjectVersion]" --body "[body]" --base dev --head [branchName]`
     - PR body content:
     ```
@@ -188,7 +195,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ## Prerequisites
 
-- Git configured: user.name=abhinavminhas, user.email=abhinavminhas@users.noreply.github.com
+- Git configured: user.name=copilot-agent[bot], user.email=copilot-agent@users.noreply.github.com
 - dotnet CLI installed and on PATH
 - GitHub CLI (`gh`) installed for PR creation
 - Working directory: Gmail-API-Helper repository root
@@ -225,5 +232,5 @@ Agent output:
 - **Build validation**: Release configuration only; integration tests run in CI/CD on PR
 - **Version bump strategy**: Always increments project patch version (X.Y.Z → X.Y.Z+1)
 - **PR target**: Always `dev` branch
-- **Commit author**: abhinavminhas (abhinavminhas@users.noreply.github.com)
+- **Commit author**: copilot-agent[bot] (copilot-agent@users.noreply.github.com)
 - **Reversible**: Branch can be deleted with `git branch -D [branchName]` to restart
