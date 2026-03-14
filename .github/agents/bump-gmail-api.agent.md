@@ -100,6 +100,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
     - Execute: `dotnet build GmailAPIHelper.sln -c Release`
     - On build failure: rollback file changes (`git checkout .`), delete branch, report error and abort
     - On build success: continue to commit
+    - If the agent is running locally, create the NuGet package by executing: `dotnet pack GmailAPIHelper/GmailAPIHelper.csproj -c Release`
 
 13. **Create Commit 1**:
     - Stage files: `GmailAPIHelper/GmailAPIHelper.csproj`, `GmailAPIHelper.NET.Tests/packages.config`, `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
