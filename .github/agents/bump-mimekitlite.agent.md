@@ -10,7 +10,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ## Usage
 ```
-@copilot /bump-mimekit-lite newVersion=4.15.0
+@copilot /bump-mimekitlite newVersion=4.15.0
 ```
 
 ## Execution Flow
@@ -65,7 +65,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
    ```
    - Ensures feature branch is based on latest `dev`
 
-7. **Create branch name**: `bump/mimekit-lite-X-Y-Z` (replace dots with dashes)
+7. **Create branch name**: `bump/mimekitlite-X-Y-Z` (replace dots with dashes)
 
 8. **Execute**: `git checkout -b [branchName]`
    - If branch already exists, delete it first: `git branch -D [branchName]`
@@ -198,14 +198,14 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 ## Example Execution
 
 ```
-User request: @copilot /bump-mimekit-lite newVersion=4.15.0
+User request: @copilot /bump-mimekitlite newVersion=4.15.0
 
 Agent output:
 ✓ Validating newVersion format: 4.15.0 ✓
 ✓ Current versions detected:
   - MimeKitLite: 4.14.0
   - Project:     1.12.1
-✓ Creating branch: bump/mimekit-lite-4-15-0
+✓ Creating branch: bump/mimekitlite-4-15-0
 ✓ Updating dependency versions in 3 files...
 ✓ Building solution (Release config)...
 ✓ Build successful
