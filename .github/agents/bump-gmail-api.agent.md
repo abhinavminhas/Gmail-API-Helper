@@ -120,7 +120,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
     - Find: `<Version>[currentProjectVersion]</Version>`
     - Replace with: `<Version>[newProjectVersion]</Version>`
     - Find: `<PackageReleaseNotes>...</PackageReleaseNotes>`
-    - Replace with: `<PackageReleaseNotes>1. Gmail API dependency update ('[currentGmailVersion]' -> '[newVersion]').</PackageReleaseNotes>`
+    - Replace with: `<PackageReleaseNotes>1. Gmail API dependency update ('[currentGmailVersion]' -&gt; '[newVersion]').</PackageReleaseNotes>`
 
 16. **Update `.github/workflows/publish-nuget-Package.yml`**:
     - Find: `NUGET_PACKAGE_NAME_VERSION: "GmailHelper.[currentProjectVersion].nupkg"`
@@ -132,9 +132,10 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
       $melbourneTime = [System.TimeZoneInfo]::ConvertTime([DateTime]::Now, [System.TimeZoneInfo]::FindSystemTimeZoneById('AUS Eastern Standard Time'))
       $todayDate = $melbourneTime.ToString('yyyy-MM-dd')
       ```
-    - Prepend new entry at top of file:
+    - Prepend new entry at top of file under ## [Released] section:
     ```
-    ## [newProjectVersion] - [today]
+
+    ## [newProjectVersion](https://www.nuget.org/packages/GmailHelper/[newProjectVersion]) - [today]
     ### Changed
     - Gmail API dependency update ('[currentGmailVersion]' -> '[newVersion]')
 
@@ -163,9 +164,9 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
     - **Project Version**: [currentProjectVersion] → [newProjectVersion]
 
     ## Changes
-    - Updated dependency version across 3 project files
+    - Updated dependency version
     - Bumped NuGet package version
-    - Updated workflow configuration
+    - Updated NuGet package release workflow configuration
     - Updated CHANGELOG
 
     ## Validation
