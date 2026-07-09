@@ -157,7 +157,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
     - On push failure: report error and authentication/permission requirements
 
 20. **Create pull request** using GitHub CLI:
-    - Execute: `gh pr create --title "Nuget Package Creation - v[newProjectVersion]" --body "[body]" --base dev --head [branchName]`
+    - Execute: `gh pr create --title "Bump **Gmail API**: [currentGmailVersion] → [newVersion]" --body "[body]" --base dev --head [branchName]`
     - PR body content:
     ```
     ## Dependency Update
