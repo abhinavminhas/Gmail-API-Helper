@@ -74,17 +74,20 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 3: Commit 1 — Update Dependency Versions
 
-9. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
-   - Find: `<PackageReference Include="MimeKitLite" Version="[currentMimeVersion]" />`
-   - Replace with: `<PackageReference Include="MimeKitLite" Version="[newVersion]" />`
+9. **Update `GmailAPIHelper/GmailAPIHelper.csproj` using the .NET CLI**:
+   - Execute: `dotnet add GmailAPIHelper/GmailAPIHelper.csproj package MimeKitLite --version [newVersion]`
+   - This updates the existing `MimeKitLite` package reference in a way that works consistently in local environments and GitHub-hosted agents where the .NET SDK is available.
+   - If the command fails, fall back to editing the project file directly and preserve the same `<PackageReference Include="MimeKitLite" Version="[newVersion]" />` format.
 
-10. **Update `GmailAPIHelper.NET.Tests/packages.config`**:
-   - Find: `<package id="MimeKitLite" version="[currentMimeVersion]" targetFramework=`
-   - Replace with: `<package id="MimeKitLite" version="[newVersion]" targetFramework=`
+10. **Update the legacy .NET Framework test project with NuGet CLI**:
+   - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id MimeKitLite -Version [newVersion]`
+   - This updates the package entry in `GmailAPIHelper.NET.Tests/packages.config` and refreshes the restored package assets without manually editing the old `packages.config` or `.csproj` files.
+   - If `nuget` is unavailable, fall back to: `nuget install MimeKitLite -Version [newVersion] -OutputDirectory packages` followed by `nuget restore GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
 
-11. **Update `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`** (if binding redirects exist):
-   - Find any hardcoded version references for MimeKitLite
-   - Replace all occurrences with `[newVersion]`
+11. **Refresh dependency state for the legacy test project**:
+   - Execute: `nuget restore GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
+   - If the project still needs its package graph rehydrated, execute: `msbuild GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj /t:Restore`
+   - This keeps the update command-driven and avoids hand-editing `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj` or any binding-redirect-related configuration.
 
 12. **Validate build**:
     - Execute: `dotnet restore GmailAPIHelper.sln`

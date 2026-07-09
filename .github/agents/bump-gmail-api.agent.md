@@ -74,26 +74,25 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 3: Commit 1 — Update Dependency Versions
 
-9. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
-   - Find: `<PackageReference Include="Google.Apis.Gmail.v1" Version="[currentGmailVersion]" />`
-   - Replace with: `<PackageReference Include="Google.Apis.Gmail.v1" Version="[newVersion]" />`
+9. **Update `GmailAPIHelper/GmailAPIHelper.csproj` using the .NET CLI**:
+   - Execute: `dotnet add GmailAPIHelper/GmailAPIHelper.csproj package Google.Apis.Gmail.v1 --version [newVersion]`
+   - This updates the existing `Google.Apis.Gmail.v1` package reference in a way that works consistently in local environments and GitHub-hosted agents where the .NET SDK is available.
+   - If the command fails, fall back to editing the project file directly and preserve the same `<PackageReference Include="Google.Apis.Gmail.v1" Version="[newVersion]" />` format.
 
-10. **Update `GmailAPIHelper.NET.Tests/packages.config`**:
+10. **Update the legacy .NET Framework test project with NuGet CLI**:
    - Extract base version from `[newVersion]` (remove last component): `[baseVersion] = [newVersion]` minus last `.W`
-   - Update Gmail API package:
-     - Find: `<package id="Google.Apis.Gmail.v1" version="[currentGmailVersion]" targetFramework=`
-     - Replace with: `<package id="Google.Apis.Gmail.v1" version="[newVersion]" targetFramework=`
-   - Update related Google.Apis packages to base version:
-     - Find: `<package id="Google.Apis" version="[currentBaseVersion]" targetFramework=`
-     - Replace with: `<package id="Google.Apis" version="[baseVersion]" targetFramework=`
-     - Find: `<package id="Google.Apis.Auth" version="[currentBaseVersion]" targetFramework=`
-     - Replace with: `<package id="Google.Apis.Auth" version="[baseVersion]" targetFramework=`
-     - Find: `<package id="Google.Apis.Core" version="[currentBaseVersion]" targetFramework=`
-     - Replace with: `<package id="Google.Apis.Core" version="[baseVersion]" targetFramework=`
+   - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id Google.Apis.Gmail.v1 -Version [newVersion]`
+   - This updates the Gmail API package entry in `GmailAPIHelper.NET.Tests/packages.config` and refreshes the restored package assets without manually editing the old `packages.config` or `.csproj` files.
+   - If `nuget` is unavailable, fall back to: `nuget install Google.Apis.Gmail.v1 -Version [newVersion] -OutputDirectory packages` followed by `nuget restore GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
+   - Then update the related Google.Apis package versions using the base version:
+     - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id Google.Apis -Version [baseVersion]`
+     - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id Google.Apis.Auth -Version [baseVersion]`
+     - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id Google.Apis.Core -Version [baseVersion]`
 
-11. **Update `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`** (if binding redirects exist):
-   - Find any hardcoded version references for Google.Apis.Gmail.v1
-   - Replace all occurrences with `[newVersion]`
+11. **Refresh dependency state for the legacy test project**:
+   - Execute: `nuget restore GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
+   - If the project still needs its package graph rehydrated, execute: `msbuild GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj /t:Restore`
+   - This keeps the update command-driven and avoids hand-editing `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj` or any binding-redirect-related configuration.
 
 12. **Validate build**:
     - Execute: `dotnet restore GmailAPIHelper.sln`
