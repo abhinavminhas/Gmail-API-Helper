@@ -51,35 +51,42 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 2: Create Feature Branch
 
-5. **Configure git user for automated commits** (branch-specific):
+5. **Capture the existing Git identity before overriding it**:
+   ```bash
+   previousUserName=$(git config --get user.name)
+   previousUserEmail=$(git config --get user.email)
+   ```
+   - Stores the original values so they can be restored after the PR workflow completes
+
+6. **Configure git user for automated commits** (branch-specific):
    ```
    git config user.name "copilot-agent[bot]"
    git config user.email "copilot-agent@users.noreply.github.com"
    ```
    - Sets bot identity for commits on this feature branch only
 
-6. **Check out `dev` branch first**:
+7. **Check out `dev` branch first**:
    ```
    git checkout dev
    git pull origin dev
    ```
    - Ensures feature branch is based on latest `dev`
 
-7. **Create branch name**: `bump/gmail-api-X-Y-Z-W` (replace dots with dashes)
+8. **Create branch name**: `bump/gmail-api-X-Y-Z-W` (replace dots with dashes)
 
-8. **Execute**: `git checkout -b [branchName]`
+9. **Execute**: `git checkout -b [branchName]`
    - If branch already exists, delete it first: `git branch -D [branchName]`
 
 ---
 
 ### Phase 3: Commit 1 — Update Dependency Versions
 
-9. **Update `GmailAPIHelper/GmailAPIHelper.csproj` using the .NET CLI**:
+10. **Update `GmailAPIHelper/GmailAPIHelper.csproj` using the .NET CLI**:
    - Execute: `dotnet add GmailAPIHelper/GmailAPIHelper.csproj package Google.Apis.Gmail.v1 --version [newVersion]`
    - This updates the existing `Google.Apis.Gmail.v1` package reference in a way that works consistently in local environments and GitHub-hosted agents where the .NET SDK is available.
    - If the command fails, fall back to editing the project file directly and preserve the same `<PackageReference Include="Google.Apis.Gmail.v1" Version="[newVersion]" />` format.
 
-10. **Update the legacy .NET Framework test project with NuGet CLI**:
+11. **Update the legacy .NET Framework test project with NuGet CLI**:
    - Extract base version from `[newVersion]` (remove last component): `[baseVersion] = [newVersion]` minus last `.W`
    - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id Google.Apis.Gmail.v1 -Version [newVersion]`
    - This updates the Gmail API package entry in `GmailAPIHelper.NET.Tests/packages.config` and refreshes the restored package assets without manually editing the old `packages.config` or `.csproj` files.
@@ -89,19 +96,19 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
      - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id Google.Apis.Auth -Version [baseVersion]`
      - Execute: `nuget update GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj -Id Google.Apis.Core -Version [baseVersion]`
 
-11. **Refresh dependency state for the legacy test project**:
+12. **Refresh dependency state for the legacy test project**:
    - Execute: `nuget restore GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
    - If the project still needs its package graph rehydrated, execute: `msbuild GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj /t:Restore`
    - This keeps the update command-driven and avoids hand-editing `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj` or any binding-redirect-related configuration.
 
-12. **Validate build**:
+13. **Validate build**:
     - Execute: `dotnet restore GmailAPIHelper.sln`
     - Execute: `dotnet build GmailAPIHelper.sln -c Release`
     - On build failure: rollback file changes (`git checkout .`), delete branch, report error and abort
     - On build success: continue to commit
     - If the agent is running locally, create the NuGet package by executing: `dotnet pack GmailAPIHelper/GmailAPIHelper.csproj -c Release`
 
-13. **Create Commit 1**:
+14. **Create Commit 1**:
     - Stage files: `GmailAPIHelper/GmailAPIHelper.csproj`, `GmailAPIHelper.NET.Tests/packages.config`, `GmailAPIHelper.NET.Tests/GmailAPIHelper.NET.Tests.csproj`
     - Execute: `git add [files]`
     - Message: `Gmail API dependency update ('[currentGmailVersion]' -> '[newVersion]')`
@@ -111,22 +118,22 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 4: Commit 2 — Bump Package Version & Update Release Files
 
-14. **Calculate new project version**:
+15. **Calculate new project version**:
     - Parse `currentProjectVersion` (e.g., `1.12.1`) into parts: major, minor, patch
     - Increment patch version: `major.minor.(patch+1)`
     - Store as `newProjectVersion`
 
-15. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
+16. **Update `GmailAPIHelper/GmailAPIHelper.csproj`**:
     - Find: `<Version>[currentProjectVersion]</Version>`
     - Replace with: `<Version>[newProjectVersion]</Version>`
     - Find: `<PackageReleaseNotes>...</PackageReleaseNotes>`
     - Replace with: `<PackageReleaseNotes>1. Gmail API dependency update ('[currentGmailVersion]' -&gt; '[newVersion]').</PackageReleaseNotes>`
 
-16. **Update `.github/workflows/publish-nuget-Package.yml`**:
+17. **Update `.github/workflows/publish-nuget-Package.yml`**:
     - Find: `NUGET_PACKAGE_NAME_VERSION: "GmailHelper.[currentProjectVersion].nupkg"`
     - Replace with: `NUGET_PACKAGE_NAME_VERSION: "GmailHelper.[newProjectVersion].nupkg"`
 
-17. **Update `CHANGELOG.md`**:
+18. **Update `CHANGELOG.md`**:
     - Get today's date in Melbourne time (AEDT/AEST) using:
       ```
       $melbourneTime = [System.TimeZoneInfo]::ConvertTime([DateTime]::Now, [System.TimeZoneInfo]::FindSystemTimeZoneById('AUS Eastern Standard Time'))
@@ -141,7 +148,7 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
     ```
 
-18. **Create Commit 2**:
+19. **Create Commit 2**:
     - Stage files: `GmailAPIHelper/GmailAPIHelper.csproj`, `.github/workflows/publish-nuget-Package.yml`, `CHANGELOG.md`
     - Execute: `git add [files]`
     - Message: `Nuget package creation - v[newProjectVersion]`
@@ -151,11 +158,11 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
 
 ### Phase 5: Push & Create PR
 
-19. **Push feature branch**:
+20. **Push feature branch**:
     - Execute: `git push origin [branchName]`
     - On push failure: report error and authentication/permission requirements
 
-20. **Create pull request** using GitHub CLI:
+21. **Create pull request** using GitHub CLI:
     - Execute: `gh pr create --title "Bump **Gmail API**: [currentGmailVersion] → [newVersion]" --body "[body]" --base dev --head [branchName]`
     - PR body content:
     ```
@@ -176,7 +183,16 @@ This GitHub Copilot agent automates the complete two-commit dependency bump work
     CC: @abhinavminhas
     ```
 
-21. **Report success**:
+22. **Switch back to `dev` and restore the original Git identity**:
+    - Execute: `git checkout dev`
+    - Restore the previously captured identity using the same bash-style syntax:
+      ```bash
+      git config user.name "$previousUserName"
+      git config user.email "$previousUserEmail"
+      ```
+      - If either previous value was empty, unset it with `git config --unset user.name` or `git config --unset user.email`
+
+23. **Report success**:
     - Display PR URL
     - Show branch name
     - List all modified files
