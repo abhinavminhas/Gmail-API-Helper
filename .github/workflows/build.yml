@@ -23,7 +23,7 @@ jobs:
         
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
     
@@ -36,7 +36,7 @@ jobs:
       run: nuget restore GmailAPIHelper.sln -Verbosity quiet
 
     - name: Setup-MSBuild VS-Version (${{ matrix.vs-version }})
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
       with:
         vs-version: ${{ matrix.vs-version }}
       
@@ -79,7 +79,7 @@ jobs:
         
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -92,7 +92,7 @@ jobs:
 
     - name: Setup Dotnet [ Version - ${{ matrix.dotnet-version }} ]
       if: ${{ runner.os != 'macOS' }}
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
         
@@ -133,7 +133,7 @@ jobs:
         
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -146,7 +146,7 @@ jobs:
 
     - name: Setup Dotnet [ Version - ${{ matrix.dotnet-version }} ]
       if: ${{ runner.os != 'macOS' }}
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
         
@@ -188,11 +188,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Set Up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: 17
           distribution: 'zulu'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Cache SonarQube Cloud Packages
