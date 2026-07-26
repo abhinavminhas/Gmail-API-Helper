@@ -75,7 +75,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-2022, ubuntu-22.04, macOS-15 ]
-        dotnet-version: [ '3.1.x', '6.0.x', '8.0.x', '9.0.x' ]
+        dotnet-version: [ '3.1.x', '6.0.x', '8.0.x', '9.0.x', '10.0.x', '11.0.x' ]
         
     steps:
     - name: Checkout Repository
@@ -179,7 +179,7 @@ jobs:
     
     - name: Upload Coverage To Codecov
       if: ${{ matrix.dotnet-version == '3.1.x' }}
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v6
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -196,14 +196,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache SonarQube Cloud Packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache SonarQube Cloud Scanner
         id: cache-sonar-scanner
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ runner.temp }}\scanner
           key: ${{ runner.os }}-sonar-scanner
