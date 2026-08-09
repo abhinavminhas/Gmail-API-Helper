@@ -3,7 +3,7 @@ All notable changes to this project documented here.
 
 ## [Released]
 
-## [1.12.7](https://www.nuget.org/packages/GmailHelper/1.12.7) - 2026-08-08
+## [1.12.7](https://www.nuget.org/packages/GmailHelper/1.12.7) - 2026-08-09
 ### Changed
 - Gmail API dependency update ('1.73.0.4120' -> '1.74.0.4134').
 
