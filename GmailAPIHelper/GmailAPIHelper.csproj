@@ -36,7 +36,7 @@ Solution Version:
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Gmail.v1" Version="1.74.0.4148" />
-    <PackageReference Include="MimeKitLite" Version="4.16.0" />
+    <PackageReference Include="MimeKitLite" Version="4.17.0" />
   </ItemGroup>
 
   <ItemGroup>
